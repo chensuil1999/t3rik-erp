@@ -78,7 +78,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="finishDate != null "> and finish_date = #{finishDate}</if>
             <if test="parentId != null "> and parent_id = #{parentId}</if>
             <if test="ancestors != null  and ancestors != ''"> and ancestors = #{ancestors}</if>
-            <if test="status != null  and status != ''"> and status = #{status}</if>
+<!--            <if test="status != null  and status != ''"> and status = #{status}</if>-->
+            <if test="status != null  and status != ''"> and status IN
+             ( <if test="status != null and status != ''">
+                    <foreach collection="status.split(',')" item="item" index="index" separator=",">
+                        #{item}
+                    </foreach>
+                </if>
+             )
+            </if>
         </where>
         order by create_time desc
     </select>

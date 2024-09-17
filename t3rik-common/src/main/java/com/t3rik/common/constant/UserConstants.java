@@ -160,6 +160,7 @@ public class UserConstants {
     public static final String ORDER_STATUS_APPROVING = "APPROVING";// approving 执行
     public static final String ORDER_STATUS_APPROVED = "APPROVED";// approved 批准
     public static final String ORDER_STATUS_FINISHED = "FINISHED";// finished 完成
+    public static final String ORDER_STATUS_PRODUCING = "PRODUCING";// 排产中
 
     /**
      * 维护类型

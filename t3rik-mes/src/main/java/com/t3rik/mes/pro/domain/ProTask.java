@@ -272,4 +272,11 @@ public class ProTask extends BaseEntity {
      */
     @TableField(exist = false)
     private Long parentId;
+
+    /**
+     *
+     */
+
+//    @TableField(exist = false)
+
 }

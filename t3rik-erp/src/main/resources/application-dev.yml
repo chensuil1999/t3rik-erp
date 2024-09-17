@@ -6,9 +6,9 @@ spring:
     druid:
       # 主库数据源
       master:
-        url: jdbc:mysql://localhost:3306/mes?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8&allowMultiQueries=true
+        url: jdbc:mysql://127.0.0.1:3306/ylyhx?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8&allowMultiQueries=true
         username: root
-        password:
+        password: Lovemm198055
       # 从库数据源
       slave:
         # 从数据源开关/默认关闭
@@ -59,11 +59,11 @@ spring:
   data:
     redis:
       # 地址
-      host: localhost
+      host: 47.116.212.151
       # 端口，默认为6379
-      port: 6379
+      port: 6388
       # 数据库索引
-      database: 0
+      database: 7
       # 密码
       password:
       # 读写超时

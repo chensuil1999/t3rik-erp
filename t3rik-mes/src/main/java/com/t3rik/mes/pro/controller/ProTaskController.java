@@ -23,6 +23,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -121,7 +122,9 @@ public class ProTaskController extends BaseController {
                 }
                 BigDecimal produced = workorder.getQuantityProduced();
                 BigDecimal quantitiy = workorder.getQuantity();
-                wdata.setProgress(produced.divide(quantitiy, BigDecimal.ROUND_HALF_UP).floatValue());
+//                wdata.setProgress(produced.divide(quantitiy, BigDecimal.ROUND_HALF_UP).floatValue());
+                wdata.setProgress(produced.divide(quantitiy, RoundingMode.HALF_UP).floatValue());
+
                 wdata.setDuration(0L);
                 wdata.setType(UserConstants.GANTT_TASK_TYPE_PROJECT);
                 ganttData.add(wdata);
@@ -145,7 +148,8 @@ public class ProTaskController extends BaseController {
                         data.setWorkstation(task.getWorkstationName());
                         BigDecimal taskproduced = task.getQuantityProduced();
                         BigDecimal taskquantitiy = task.getQuantity();
-                        data.setProgress(taskproduced.divide(taskquantitiy, BigDecimal.ROUND_HALF_UP).floatValue());
+//                        data.setProgress(taskproduced.divide(taskquantitiy, BigDecimal.ROUND_HALF_UP).floatValue());
+                        data.setProgress(taskproduced.divide(taskquantitiy, RoundingMode.HALF_UP).floatValue());
                         data.setType(UserConstants.GANTT_TASK_TYPE_TASK);
                         ganttData.add(data);
                     }
@@ -201,6 +205,13 @@ public class ProTaskController extends BaseController {
         if (ajaxResult != null) {
             return ajaxResult;
         }
+        //order = this.proWorkorderService.getById(proTask.getWorkorderId());
+        if(order.getStatus() != UserConstants.ORDER_STATUS_PRODUCING) {
+            //order.setWorkorderId(proTask.getWorkorderId());
+            order.setStatus(UserConstants.ORDER_STATUS_PRODUCING);
+            proWorkorderService.updateProWorkorder(order);
+            //System.out.println("zzz:" + order);
+        }
         buildProTaskForInsert(proTask, order, route, process);
         return toAjax(proTaskService.save(proTask));
     }
@@ -233,6 +244,8 @@ public class ProTaskController extends BaseController {
     @Log(title = "生产任务", businessType = BusinessType.DELETE)
     @DeleteMapping("/{taskIds}")
     public AjaxResult remove(@PathVariable Long[] taskIds) {
+        //List<ProWorkorder> liorder = new ArrayList<>();
+
         return toAjax(proTaskService.deleteProTaskByTaskIds(taskIds));
     }
 
@@ -324,6 +337,6 @@ public class ProTaskController extends BaseController {
     private String composeTaskName(ProTask proTask) {
         Object cacheUnitMeasure = this.redisCache.getCacheObject(proTask.getUnitOfMeasure());
         String unitMeasureName = cacheUnitMeasure == null ? proTask.getUnitOfMeasure() : (String) cacheUnitMeasure;
-        return proTask.getItemName() + "【" + proTask.getQuantity().toString() + "】" + unitMeasureName;
+        return proTask.getItemName() + "-" + "【" + proTask.getQuantity().toString() + "】" + "-" + unitMeasureName;
     }
 }

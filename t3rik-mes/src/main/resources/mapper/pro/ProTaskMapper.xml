@@ -102,11 +102,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="endTime != null "> and t.end_time = #{endTime}</if>
             <if test="colorCode != null  and colorCode != ''"> and t.color_code = #{colorCode}</if>
             <if test="requestDate != null "> and t.request_date = #{requestDate}</if>
-            <if test="attr1 != null  and attr1 != ''"> and t.attr1 = #{attr1}</if>
-            <if test="attr2 != null  and attr2 != ''"> and t.attr2 = #{attr2}</if>
-            <if test="attr3 != null "> and t.attr3 = #{attr3}</if>
-            <if test="attr4 != null "> and t.attr4 = #{attr4}</if>
-            <if test="status != null  and status != ''"> and t.status = #{status}</if>
+<!--            <if test="status != null  and status != ''"> and t.status IN (#{status}, 'PRODUCING')</if>-->
             <if test="quantityQuanlify != null "> and t.quantity_quanlify = #{quantityQuanlify}</if>
             <if test="quantityUnquanlify != null "> and t.quantity_unquanlify = #{quantityUnquanlify}</if>
         </where>
