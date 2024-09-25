@@ -277,6 +277,7 @@ public class StorageCoreServiceImpl implements IStorageCoreService {
     /**
      * 产品产出
      */
+    @Override
     public void processProductProduce(List<ProductProductTxBean> lines) {
         if (CollUtil.isEmpty(lines)) {
             throw new BusinessException("没有需要处理的产品产出单行");
