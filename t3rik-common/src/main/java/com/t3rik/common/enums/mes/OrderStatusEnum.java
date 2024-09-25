@@ -17,7 +17,8 @@ import java.util.Map;
 public enum OrderStatusEnum {
 
     PREPARE("PREPARE", "草稿", 10),
-    CONFIRMED("CONFIRMED", "已确认", 20),
+    CONFIRMED("CONFIRMED", "未排产", 20),
+    PRODUCING("PRODUCING", "排产中", 21),
     APPROVING("APPROVING", "审批中", 30),
     APPROVED("APPROVED", "审批通过", 40),
     REFUSE("REFUSE", "审批拒绝", 50),
