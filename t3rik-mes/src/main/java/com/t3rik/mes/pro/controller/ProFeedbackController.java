@@ -174,6 +174,12 @@ public class ProFeedbackController extends BaseController {
     @Log(title = "生产报工记录", businessType = BusinessType.DELETE)
     @DeleteMapping("/{recordIds}")
     public AjaxResult remove(@PathVariable Long[] recordIds) {
+        Long feedbackCount = proFeedbackService.lambdaQuery().eq(ProFeedback::getStatus, OrderStatusEnum.FINISHED.getCode())
+                .in(ProFeedback::getRecordId, recordIds).count();
+        // 退料数量
+        if(feedbackCount> 0) {
+            throw new BusinessException("该记录已完成存档，不能删除!");
+        }
         return toAjax(proFeedbackService.deleteProFeedbackByRecordIds(recordIds));
     }
 
