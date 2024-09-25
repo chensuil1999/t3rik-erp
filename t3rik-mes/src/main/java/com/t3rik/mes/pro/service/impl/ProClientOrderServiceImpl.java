@@ -196,8 +196,14 @@ public class ProClientOrderServiceImpl extends ServiceImpl<ProClientOrderMapper,
         workorder.setQuantity(clientOrder.getOrderQuantity());
         // 规格
         workorder.setProductSpc(clientOrder.getProductSpec());
+        //客户订单编号
+        workorder.setClientCode(clientOrder.getClientCode());
         // 质量要求
-        workorder.setRemark(clientOrder.getQualityRequirement());
+        var qr = "";
+        if(!StringUtils.isNull(clientOrder.getQualityRequirement())) {
+            qr = qr + clientOrder.getOrderQuantity();
+        }
+        workorder.setRemark(qr + " --- 此工单来自于客户订单: " + clientOrder.getClientOrderCode());
         return workorder;
     }
 }
