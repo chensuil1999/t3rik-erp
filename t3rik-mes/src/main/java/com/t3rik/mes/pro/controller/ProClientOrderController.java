@@ -214,12 +214,17 @@ public class ProClientOrderController extends BaseController {
         LambdaQueryWrapper<ProClientOrder> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(proClientOrder.getClientOrderCode() != null, ProClientOrder::getClientOrderCode, proClientOrder.getClientOrderCode());
         queryWrapper.like(StringUtils.isNotEmpty(proClientOrder.getClientName()), ProClientOrder::getClientName, proClientOrder.getClientName());
+        //System.out.println("cc: " + proClientOrder);
         queryWrapper.eq(proClientOrder.getOrderDate() != null, ProClientOrder::getOrderDate, proClientOrder.getOrderDate());
-        queryWrapper.eq(proClientOrder.getDeliveryDate() != null, ProClientOrder::getDeliveryDate, proClientOrder.getDeliveryDate());
+        //queryWrapper.eq(proClientOrder.getDeliveryDate() != null, ProClientOrder::getDeliveryDate, proClientOrder.getDeliveryDate());
         // 默认创建时间倒序
         queryWrapper.orderByDesc(ProClientOrder::getCreateTime);
         Map<String, Object> params = proClientOrder.getParams();
-        queryWrapper.between(params.get("beginTime") != null && params.get("endTime") != null, ProClientOrder::getCreateTime, params.get("beginTime"), params.get("endTime"));
+//        System.out.println("ooo: " + params);
+//        System.out.println(params.keySet());
+        if(params.containsKey("beginDeliveryDate") && params.containsKey("endDeliveryDate")) {
+            queryWrapper.between(params.get("beginDeliveryDate") != null && params.get("endDeliveryDate") != null, ProClientOrder::getDeliveryDate, params.get("beginDeliveryDate"), params.get("endDeliveryDate"));
+        }
         return queryWrapper;
     }
 }
