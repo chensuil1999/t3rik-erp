@@ -9,6 +9,7 @@ import com.t3rik.common.core.domain.AjaxResult;
 import com.t3rik.common.core.domain.BaseEntity;
 import com.t3rik.common.core.page.TableDataInfo;
 import com.t3rik.common.enums.BusinessType;
+import com.t3rik.common.enums.mes.OrderStatusEnum;
 import com.t3rik.common.utils.StringUtils;
 import com.t3rik.common.utils.poi.ExcelUtil;
 import com.t3rik.mes.pro.domain.*;
@@ -49,6 +50,7 @@ public class ProTaskDispatchController extends BaseController {
     public TableDataInfo list(ProTask proTask) {
         // 获取查询条件
         LambdaQueryWrapper<ProTask> queryWrapper = getQueryWrapper(proTask);
+        queryWrapper.ne(ProTask::getStatus, OrderStatusEnum.FINISHED.getCode());
         // 组装分页
         Page<ProTask> page = getMPPage(proTask);
         //根据工单分组展示
@@ -102,6 +104,7 @@ public class ProTaskDispatchController extends BaseController {
                 .in(ProTask::getTaskId, taskIds)
                 .set(ProTask::getTaskBy, null)
                 .set(ProTask::getTaskUserId, null)
+                .set(ProTask::getStatus, OrderStatusEnum.PREPARE.getCode())
                 .update(new ProTask()));
     }
 
