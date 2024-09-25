@@ -2,6 +2,9 @@ package com.t3rik.mes.pro.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.t3rik.common.annotation.Log;
 import com.t3rik.common.constant.MsgConstants;
 import com.t3rik.common.constant.UserConstants;
@@ -205,12 +208,11 @@ public class ProTaskController extends BaseController {
         if (ajaxResult != null) {
             return ajaxResult;
         }
-        //order = this.proWorkorderService.getById(proTask.getWorkorderId());
-        if(order.getStatus() != UserConstants.ORDER_STATUS_PRODUCING) {
-            //order.setWorkorderId(proTask.getWorkorderId());
+        //生产工单下若有任务，则将该工单的状态改为PRODUCING(排产中）
+        if(!UserConstants.ORDER_STATUS_PRODUCING.equals(order.getStatus())) {
             order.setStatus(UserConstants.ORDER_STATUS_PRODUCING);
             proWorkorderService.updateProWorkorder(order);
-            //System.out.println("zzz:" + order);
+
         }
         buildProTaskForInsert(proTask, order, route, process);
         return toAjax(proTaskService.save(proTask));
@@ -243,10 +245,34 @@ public class ProTaskController extends BaseController {
     @PreAuthorize("@ss.hasPermi('mes:pro:protask:remove')")
     @Log(title = "生产任务", businessType = BusinessType.DELETE)
     @DeleteMapping("/{taskIds}")
+    @Transactional
     public AjaxResult remove(@PathVariable Long[] taskIds) {
         //List<ProWorkorder> liorder = new ArrayList<>();
 
-        return toAjax(proTaskService.deleteProTaskByTaskIds(taskIds));
+        LambdaQueryWrapper<ProTask> wap = new LambdaQueryWrapper<>();
+        //删除生产任务，如果任务已经有生产数量则不可删除，若数量为零则可以删除。
+        ProTask ptc = proTaskService.getOne(wap.gt(ProTask::getQuantityProduced, BigDecimal.ZERO).in(ProTask::getTaskId, taskIds));
+        if (ptc != null && StringUtils.isNotNull(ptc.getTaskId())) {
+            return AjaxResult.error(ptc.getTaskCode() + "任务存在生产数据,不可删除");
+        }
+        wap.clear();
+        ProTask pt = proTaskService.getOne(wap.in(ProTask::getTaskId, taskIds));
+        if (pt == null) {
+            return AjaxResult.error("数据不存在,请刷新后重试");
+        }
+        //System.out.println("pt: " + pt);
+        int ret = proTaskService.deleteProTaskByTaskIds(taskIds);
+        //System.out.println("ret: " + ret);
+        wap.clear();
+        ProTask pw = proTaskService.getOne(wap.eq(ProTask::getWorkorderId, pt.getWorkorderId()));
+        //System.out.println("pw: " + pw);
+        if(pw == null) {
+            ProWorkorder proWorkorder = new ProWorkorder();
+            proWorkorder.setWorkorderId(pt.getWorkorderId());
+            proWorkorder.setStatus(UserConstants.ORDER_STATUS_CONFIRMED);
+            proWorkorderService.updateProWorkorder(proWorkorder);
+        }
+        return toAjax(ret);
     }
 
 
