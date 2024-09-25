@@ -22,6 +22,7 @@ import com.t3rik.system.strategy.AutoCodeUtil;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -247,7 +248,6 @@ public class ProTaskController extends BaseController {
     @DeleteMapping("/{taskIds}")
     @Transactional
     public AjaxResult remove(@PathVariable Long[] taskIds) {
-        //List<ProWorkorder> liorder = new ArrayList<>();
 
         LambdaQueryWrapper<ProTask> wap = new LambdaQueryWrapper<>();
         //删除生产任务，如果任务已经有生产数量则不可删除，若数量为零则可以删除。
