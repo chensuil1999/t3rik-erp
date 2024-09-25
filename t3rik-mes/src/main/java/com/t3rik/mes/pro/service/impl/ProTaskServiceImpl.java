@@ -128,7 +128,8 @@ public class ProTaskServiceImpl extends ServiceImpl<ProTaskMapper, ProTask> impl
                 .in(ProTask::getTaskId, taskIds)
                 .list()
                 .stream()
-                .filter(proTask -> !(proTask.getTaskUserId() != null && proTask.getEndTime().compareTo(nowDate) < 1))
+                .filter(proTask -> !proTask.getStatus().equals(OrderStatusEnum.FINISHED.getCode()))
+                //.filter(proTask -> !(proTask.getTaskUserId() != null && proTask.getEndTime().compareTo(nowDate) < 1))
                 .map(ProTask::getTaskId)
                 .toList();
         // 更新任务指派用户
@@ -146,13 +147,14 @@ public class ProTaskServiceImpl extends ServiceImpl<ProTaskMapper, ProTask> impl
                 .in(ProTask::getTaskId, taskIds)
                 .list()
                 .stream()
-                .filter(proTask -> proTask.getTaskUserId() != null && proTask.getEndTime().compareTo(nowDate) < 1)
+                //.filter(proTask -> proTask.getTaskUserId() != null && proTask.getEndTime().compareTo(nowDate) < 1)
+                .filter(proTask -> proTask.getEndTime().compareTo(nowDate) < 1)
                 .map(ProTask::getTaskCode)
                 .toList();
         // 返回提示信息
         StringBuilder sb = new StringBuilder();
         if (!codeList.isEmpty()) {
-            sb.append("编号为：").append(String.join(",", codeList)).append("的任务已超过设定完成生产时间，不能再指派！");
+            sb.append("编号为：").append(String.join(",", codeList)).append("的任务已超过设定完成生产时间！");
         }
         return sb.toString();
     }
