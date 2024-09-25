@@ -1,22 +1,29 @@
 package com.t3rik.mes.pro.controller;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.lang.Assert;
 import com.t3rik.common.annotation.Log;
+import com.t3rik.common.constant.MsgConstants;
 import com.t3rik.common.constant.UserConstants;
 import com.t3rik.common.core.controller.BaseController;
 import com.t3rik.common.core.domain.AjaxResult;
 import com.t3rik.common.core.page.TableDataInfo;
 import com.t3rik.common.enums.BusinessType;
+import com.t3rik.common.enums.mes.ClientOrderStatusEnum;
 import com.t3rik.common.enums.mes.OrderStatusEnum;
+import com.t3rik.common.exception.BusinessException;
 import com.t3rik.common.utils.poi.ExcelUtil;
 import com.t3rik.mes.md.domain.MdProductBom;
 import com.t3rik.mes.md.service.IMdProductBomService;
+import com.t3rik.mes.pro.domain.ProClientOrder;
 import com.t3rik.mes.pro.domain.ProTask;
 import com.t3rik.mes.pro.domain.ProWorkorder;
 import com.t3rik.mes.pro.domain.ProWorkorderBom;
+import com.t3rik.mes.pro.service.IProClientOrderService;
 import com.t3rik.mes.pro.service.IProTaskService;
 import com.t3rik.mes.pro.service.IProWorkorderBomService;
 import com.t3rik.mes.pro.service.IProWorkorderService;
+import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,6 +56,9 @@ public class ProWorkorderController extends BaseController {
 
     @Autowired
     private IProTaskService proTaskService;
+
+    @Resource
+    private IProClientOrderService proClientOrderService;
 
     /**
      * 查询生产工单列表
@@ -142,13 +152,25 @@ public class ProWorkorderController extends BaseController {
     @PreAuthorize("@ss.hasPermi('mes:pro:workorder:remove')")
     @Log(title = "生产工单", businessType = BusinessType.DELETE)
     @DeleteMapping("/{workorderIds}")
+    @Transactional
     public AjaxResult remove(@PathVariable Long[] workorderIds) {
-        for (Long id : workorderIds
-        ) {
+        for (Long id : workorderIds) {
             ProWorkorder workorder = proWorkorderService.selectProWorkorderByWorkorderId(id);
             if (!UserConstants.ORDER_STATUS_PREPARE.equals(workorder.getStatus())) {
                 return AjaxResult.error("只能删除草稿状态单据！");
             }
+            //删除可能存在的clientorder,如果返回多个data会报错。
+            ProClientOrder data = this.proClientOrderService.lambdaQuery()
+                    .eq(ProClientOrder::getClientOrderCode, workorder.getClientOrderCode()).one();
+            // 校验数据是否存在
+            //System.out.println("ooo: " + data);
+            //System.out.println(workorder.getClientOrderCode());
+            //Assert.isNull(data, () -> new BusinessException("存在相同订单编码,请联系管理员"));
+            if(data != null && !data.getClientOrderCode().isEmpty() && data.getStatus().equals(ClientOrderStatusEnum.WORK_ORDER_FINISHED.getCode())) {
+                data.setStatus(ClientOrderStatusEnum.PREPARE.getCode());
+                this.proClientOrderService.updateById(data);
+            }
+            //删除物料
             removeBomLine(id);
         }
         return toAjax(proWorkorderService.deleteProWorkorderByWorkorderIds(workorderIds));
