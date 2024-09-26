@@ -11,7 +11,7 @@ import java.util.Map;
  */
 @Getter
 @AllArgsConstructor
-public enum DefaultDataEnum {
+public enum  DefaultDataEnum {
 
     /**
      * 系统管理员
@@ -46,7 +46,7 @@ public enum DefaultDataEnum {
     /**
      * 预置仓库
      */
-    WH00_DEFAULT("WH000", "预置仓库", "wm_warehouse"),
+    WH00_DEFAULT("WH001", "主仓", "wm_warehouse"),
     /**
      * 默认线边库-仓库
      */
