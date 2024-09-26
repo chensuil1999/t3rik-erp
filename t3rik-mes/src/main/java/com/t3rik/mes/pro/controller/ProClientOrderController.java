@@ -163,7 +163,7 @@ public class ProClientOrderController extends BaseController {
         // 获取查询条件
         LambdaQueryWrapper<ProClientOrder> queryWrapper = getQueryWrapper(proClientOrder);
         List<ProClientOrder> list = this.proClientOrderService.list(queryWrapper);
-        ExcelUtil<ProClientOrder> util = new ExcelUtil<ProClientOrder>(ProClientOrder.class);
+        ExcelUtil<ProClientOrder> util = new ExcelUtil<>(ProClientOrder.class);
         util.exportExcel(response, list, "客户订单数据");
     }
 
