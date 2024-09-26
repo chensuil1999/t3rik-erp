@@ -69,7 +69,7 @@ public class ProFeedbackController extends BaseController {
     @PostMapping("/export")
     public void export(HttpServletResponse response, ProFeedback proFeedback) {
         List<ProFeedback> list = proFeedbackService.selectProFeedbackList(proFeedback);
-        ExcelUtil<ProFeedback> util = new ExcelUtil<ProFeedback>(ProFeedback.class);
+        ExcelUtil<ProFeedback> util = new ExcelUtil<>(ProFeedback.class);
         util.exportExcel(response, list, "生产报工记录数据");
     }
 
