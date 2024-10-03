@@ -2,6 +2,7 @@ package com.t3rik.mobile.mes.controller
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils
+import com.t3rik.common.annotation.RepeatSubmit
 import com.t3rik.common.constant.MsgConstants
 import com.t3rik.common.constant.UserConstants
 import com.t3rik.common.core.controller.BaseController
@@ -22,6 +23,7 @@ import com.t3rik.mobile.mes.service.IFeedbackService
 import io.swagger.annotations.ApiOperation
 import jakarta.annotation.Resource
 import kotlinx.coroutines.runBlocking
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
 
 
@@ -61,12 +63,19 @@ class AuditController : BaseController() {
      */
     @ApiOperation("审核通过")
     @PutMapping("/pass")
+    @RepeatSubmit
+    @Transactional
     fun passed(@RequestParam ids: MutableList<Long>): AjaxResult {
         checkParam(ids)
-        this.proFeedbackService.lambdaUpdate()
-            .set(ProFeedback::getStatus, OrderStatusEnum.FINISHED.code)
-            .`in`(ProFeedback::getRecordId, ids)
-            .update(ProFeedback())
+        ids.forEach{idx ->
+            val pfs = proFeedbackService.selectProFeedbackByRecordId(idx)
+            val pt = proTaskService.selectProTaskByTaskId(pfs.taskId);
+                    // 判断当前生产任务的状态，如果已经完成则不能再报工
+            if (UserConstants.ORDER_STATUS_FINISHED == pt.status) {
+                return AjaxResult.error("当前生产工单的状态为已完成，不能继续报工，请刷新生产任务列表！")
+            }
+            proFeedbackService.executeFeedback(pfs, pt);
+        }
         return AjaxResult.success()
     }
 
@@ -88,10 +97,10 @@ class AuditController : BaseController() {
         if (CollectionUtils.isEmpty(ids)) {
             throw BusinessException(MsgConstants.SELECT_AT_LEAST_ONE)
         }
-        // todo 上线时打开审核权限校验
-//        if (!SecurityUtils.isAdmin(SecurityUtils.getUserId())) {
-//            throw BusinessException(MsgConstants.NO_AUDIT_AUTH)
-//        }
+//         todo 上线时打开审核权限校验
+        if (!SecurityUtils.isAdmin(SecurityUtils.getUserId())) {
+            throw BusinessException(MsgConstants.NO_OPERATION_AUTH)
+        }
     }
 
     /**
