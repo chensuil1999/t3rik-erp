@@ -14,10 +14,13 @@ import com.t3rik.mes.pro.service.IProTaskService
 import com.t3rik.mobile.common.ktextend.isNonPositive
 import com.t3rik.mobile.mes.service.IFeedbackService
 import io.swagger.annotations.ApiOperation
+import isGreater
+import isGreaterOrEqual
 import isZero
 import jakarta.annotation.Resource
 import kotlinx.coroutines.runBlocking
 import org.springframework.web.bind.annotation.*
+import java.math.BigDecimal
 
 /**
  * 报工相关
@@ -76,11 +79,14 @@ class FeedbackController : BaseController() {
     @PostMapping
     fun feedback(@RequestBody feedback: ProFeedback): AjaxResult {
         val task = this.taskService.getById(feedback.taskId) ?: return AjaxResult.error(MsgConstants.PARAM_ERROR)
-        if (feedback.quantityQualified == null || feedback.quantityQualified.isZero()) {
+        if(feedback.quantityUnquanlified == null) {
+            feedback.quantityUnquanlified = BigDecimal.ZERO
+        }
+        if (feedback.quantityQualified == null || !feedback.quantityQualified.isGreater(BigDecimal.ZERO)) {
             return AjaxResult.error(MsgConstants.CAN_NOT_BE_ZERO)
         }
         // 确认排产数量
         feedback.quantity = task.quantity
-        return AjaxResult.success(this.feedbackService.addFeedback(feedback))
+        return AjaxResult.success(this.feedbackService.addFeedbackNotChange(feedback))
     }
 }
