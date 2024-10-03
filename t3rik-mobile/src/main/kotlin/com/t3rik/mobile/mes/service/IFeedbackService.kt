@@ -30,6 +30,10 @@ interface IFeedbackService {
     fun addFeedback(proFeedback: ProFeedback): String
 
     /**
+     * 新增加报工
+     */
+    fun addFeedbackNotChange(proFeedback: ProFeedback): String
+    /**
      * 获取报工详细信息以及报工列表
      */
     suspend fun getTaskAndFeedback(taskId: Long, status: OrderStatusEnum? = null): TaskAndFeedbackDTO
