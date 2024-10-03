@@ -284,8 +284,8 @@ public class ProWorkorderController extends BaseController {
                 proTaskService.updateProTask(task);
             }
         }
-
-        workorder.setStatus(UserConstants.ORDER_STATUS_FINISHED); // 更新工单的状态
+        // 更新工单的状态
+        workorder.setStatus(UserConstants.ORDER_STATUS_FINISHED);
         proWorkorderService.updateProWorkorder(workorder);
         return AjaxResult.success();
     }

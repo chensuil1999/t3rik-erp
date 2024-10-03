@@ -1,8 +1,13 @@
 package com.t3rik.mes.pro.domain;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.t3rik.common.annotation.Excel;
 import com.t3rik.common.core.domain.BaseEntity;
 import lombok.Data;
@@ -198,7 +203,11 @@ public class ProFeedback extends BaseEntity {
     /**
      * 报工时间
      */
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    //@JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    //@JsonSerialize(using = LocalDateTimeSerializer.class)
+    //@JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    //@JsonFormat(pattern = "yyyy-MM-dd")
+//    @TableField(fill = FieldFill.INSERT) //进行添加操作时有值
     @Excel(name = "报工时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date feedbackTime;
 

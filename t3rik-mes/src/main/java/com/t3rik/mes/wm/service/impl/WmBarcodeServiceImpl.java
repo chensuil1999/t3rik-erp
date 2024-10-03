@@ -11,6 +11,7 @@ import com.t3rik.mes.wm.mapper.WmBarcodeMapper;
 import com.t3rik.mes.wm.service.IWmBarcodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -115,8 +116,11 @@ public class WmBarcodeServiceImpl implements IWmBarcodeService
     @Override
     public String generateBarcode(WmBarcode wmBarcode) {
 		File buf = BarcodeUtil.generateBarCode(wmBarcode.getBarcodeContent(), wmBarcode.getBarcodeFormart(),
-				"./tmp/barcode/" + wmBarcode.getBarcodeContent() + ".png");
-        // MultipartFile file = FileUtils.getMultipartFile(buf);
+				"tmp/barcode/" + wmBarcode.getBarcodeContent() + ".png");
+        System.out.println(buf.getAbsolutePath());
+//        MultipartFile file = FileUtils.getMultipartFile(buf);
+//        MultipartFile cMultiFile = getMultipartFile(file);
+
         String fileName = null;
         try {
             // todo 后期需要修改使用minio的升级类

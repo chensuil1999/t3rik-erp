@@ -26,6 +26,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -93,6 +95,8 @@ public class ProFeedbackServiceImpl extends ServiceImpl<ProFeedbackMapper, ProFe
      */
     @Override
     public int insertProFeedback(ProFeedback proFeedback) {
+        //System.out.println(DateUtils.getNowDate());
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         proFeedback.setCreateTime(DateUtils.getNowDate());
         return proFeedbackMapper.insertProFeedback(proFeedback);
     }
@@ -121,8 +125,9 @@ public class ProFeedbackServiceImpl extends ServiceImpl<ProFeedbackMapper, ProFe
         Long wastCount = wmWasteHeaderService.lambdaQuery().in(WmWasteHeader::getRecordId, recordIds).count();
         // 退料数量
         Long rtIssuecount = wmRtIssueService.lambdaQuery().in(WmRtIssue::getRecordId, recordIds).count();
-        if (wastCount > 0 || rtIssuecount > 0)
+        if (wastCount > 0 || rtIssuecount > 0) {
             throw new BusinessException("该记录已关联废料或退料，不能删除!");
+        }
         // 删除退料、废料记录
         wmRtIssueService.deleteWmRtIssueByRtIds(recordIds);
         wmWasteHeaderService.delWmWasteHeaderIds(List.of(recordIds));
@@ -161,7 +166,10 @@ public class ProFeedbackServiceImpl extends ServiceImpl<ProFeedbackMapper, ProFe
         task.setQuantityUnquanlify(quantityUnquanlify.add(feedback.getQuantityUnquanlified()));
 
         proTaskService.updateProTask(task);
-
+//        System.out.println(task.getQuantityProduced().intValue());
+//        if(task.getQuantityProduced().intValue() > 360){
+//            throw new BusinessException("未知错误，请联系管理员");
+//        
         // 如果是关键工序，则更新当前工单的已生产数量，进行产品产出动作
         if (proRouteProcessService.checkKeyProcess(feedback)) {
             // 更新生产工单的生产数量
