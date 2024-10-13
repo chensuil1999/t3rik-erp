@@ -157,14 +157,12 @@ public class ProWorkorderController extends BaseController {
         for (Long id : workorderIds) {
             ProWorkorder workorder = proWorkorderService.selectProWorkorderByWorkorderId(id);
             if (!UserConstants.ORDER_STATUS_PREPARE.equals(workorder.getStatus())) {
-                return AjaxResult.error("只能删除草稿状态单据！");
+                return AjaxResult.error("只能删除草稿或未排产单据！");
             }
             //删除可能存在的clientorder,如果返回多个data会报错。
             ProClientOrder data = this.proClientOrderService.lambdaQuery()
                     .eq(ProClientOrder::getClientOrderCode, workorder.getClientOrderCode()).one();
             // 校验数据是否存在
-            //System.out.println("ooo: " + data);
-            //System.out.println(workorder.getClientOrderCode());
             //Assert.isNull(data, () -> new BusinessException("存在相同订单编码,请联系管理员"));
             if(data != null && !data.getClientOrderCode().isEmpty() && data.getStatus().equals(ClientOrderStatusEnum.WORK_ORDER_FINISHED.getCode())) {
                 data.setStatus(ClientOrderStatusEnum.PREPARE.getCode());
@@ -223,7 +221,7 @@ public class ProWorkorderController extends BaseController {
     @PreAuthorize("@ss.hasPermi('mes:pro:workorder:list')")
     @GetMapping("/listItems")
     public TableDataInfo listItemss(ProWorkorder proWorkorder) {
-        List<MdProductBom> result = new ArrayList<MdProductBom>();
+        List<MdProductBom> result = new ArrayList<>();
         ProWorkorderBom param = new ProWorkorderBom();
         param.setWorkorderId(proWorkorder.getWorkorderId());
         List<ProWorkorderBom> boms = proWorkorderBomService.selectProWorkorderBomList(param);
@@ -240,7 +238,7 @@ public class ProWorkorderController extends BaseController {
 
     private List<MdProductBom> getBoms(MdProductBom item, BigDecimal quantity, int count) {
         MdProductBom param = new MdProductBom();
-        List<MdProductBom> results = new ArrayList<MdProductBom>();
+        List<MdProductBom> results = new ArrayList<>();
         if (count > 20) {
             return results;
         }
