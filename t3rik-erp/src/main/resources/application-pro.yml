@@ -6,9 +6,10 @@ spring:
     druid:
       # 主库数据源
       master:
-        url:  jdbc:mysql://1.92.89.102:3306/mes-pro?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8&allowMultiQueries=true
-        username: root
-        password: BswcOs31Dw5ScXSbuILCfWwqAAWrUvWiLF8BNXVzL4/I9WUne76M5Am1fBPY8Nw8tMFV1H/Z00cB9pU5ct6g4g==
+        url:  jdbc:mysql://118.89.93.85:3306/ylyhx?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8&allowMultiQueries=true
+        username: ylyhx
+        #password: bBhRCdzFtbDwhNjY
+        password: lPEq3fsIpluL6QzL0P8pGj7UzNbZWrVv5ym5cnzTJQBMX8waYXNNRH2EFsK7nsPIXljrDYhmQnDvNhEYsQG8rw==
         connection-properties: config.decrypt=true;config.decrypt.key=${publicKey}
         filters: config
       # 从库数据源
@@ -61,13 +62,15 @@ spring:
   data:
     redis:
       # 地址
-      host: ${IP}
+      #host: ${IP}
+      host: 127.0.0.1
       # 端口，默认为6379
       port: 6379
       # 数据库索引
       database: 0
       # 密码
-      password: ${PASSWORD_REDIS}
+      #password: ${PASSWORD_REDIS}
+      password: Lovemm198055
       # 读写超时
       timeout: 30s
       # 连接超时
@@ -83,4 +86,4 @@ spring:
           max-wait: -1ms
       connect-timeout: 60s
 #数据库链接公钥
-publicKey: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAIYNjaUHGDqD8nlWSKV9Uez6thB3XB/x7/iwcVU3tqQm4hdDWywBPmtz7UtsH3V2NA9hjDaLue/3tENmA2vIHNsCAwEAAQ==
+publicKey: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKo5sRBwpMU1TNGD2aykwKWFx7OG2mvoXDYr5S+5DfcC8m+NTNAla4sL2hKBmvB5T2pAeiYEjSUU7Tvjx3ESrjMCAwEAAQ==
