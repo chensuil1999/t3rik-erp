@@ -195,11 +195,11 @@ class FeedbackServiceImpl : IFeedbackService {
 
         //下面的globalscope.async如果在里面取userid将会出现缓存现象。
         //就是上次用的1号登录，下次你用2号登录，但是函数体内却是1号的userid
-        println("login: " + SecurityUtils.getLoginUser().userId)
-        println("userid: " + SecurityUtils.getUserId())
+//        println("login: " + SecurityUtils.getLoginUser().userId)
+//        println("userid: " + SecurityUtils.getUserId())
         val userid = SecurityUtils.getUserId()
         val isadmin = SecurityUtils.isAdmin(SecurityUtils.getUserId())
-        println(isadmin)
+//        println(isadmin)
         val taskJob = GlobalScope.async {
 //        val taskJob = CoroutineScope(Dispatchers.IO).async {
             val task = async {
