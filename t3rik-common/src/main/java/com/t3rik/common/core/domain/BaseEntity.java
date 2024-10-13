@@ -17,6 +17,17 @@ import java.util.Map;
 public class BaseEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    public String getCurrentIndex() {
+        return currentIndex;
+    }
+
+    public void setCurrentIndex(String currentIndex) {
+        this.currentIndex = currentIndex;
+    }
+
+    /** 手机端，全部，待排产，已排产，已完成 */
+    @TableField(exist = false)
+    private String currentIndex;
     @TableField(exist = false)
     /** 搜索值 */
     private String searchValue;

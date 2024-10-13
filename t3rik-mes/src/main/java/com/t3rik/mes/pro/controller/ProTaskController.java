@@ -79,7 +79,7 @@ public class ProTaskController extends BaseController {
     @PostMapping("/export")
     public void export(HttpServletResponse response, ProTask proTask) {
         List<ProTask> list = proTaskService.selectProTaskList(proTask);
-        ExcelUtil<ProTask> util = new ExcelUtil<ProTask>(ProTask.class);
+        ExcelUtil<ProTask> util = new ExcelUtil<>(ProTask.class);
         util.exportExcel(response, list, "生产任务数据");
     }
 

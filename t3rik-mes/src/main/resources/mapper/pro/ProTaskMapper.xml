@@ -318,6 +318,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                      pt.workstation_name,
                      pt.end_time,
                      pt.status,
+                     pt.quantity,
                      pt.quantity_quanlify,
                      pt.quantity_unquanlify,
                      pt.task_id,

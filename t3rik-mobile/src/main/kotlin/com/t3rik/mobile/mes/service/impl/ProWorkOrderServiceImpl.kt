@@ -2,6 +2,7 @@ package com.t3rik.mobile.mes.service.impl
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page
+import com.t3rik.common.core.domain.AjaxResult
 import com.t3rik.common.enums.mes.OrderStatusEnum
 import com.t3rik.common.utils.SecurityUtils
 import com.t3rik.common.utils.StringUtils
@@ -61,5 +62,11 @@ class ProWorkOrderServiceImpl : IProWorkOrderService{
                 .orderByDesc(ProWorkorder::getCreateTime)
                 .orderByAsc(ProWorkorder::getStatus)
                 .page(page)
+    }
+
+    override fun getWorkOrderDetailById(workOrderId: Long): ProWorkorder {
+//        TODO("Not yet implemented")
+        return this.proWorkOrderService.lambdaQuery()
+                .eq(ProWorkorder::getWorkorderId, workOrderId).one()
     }
 }

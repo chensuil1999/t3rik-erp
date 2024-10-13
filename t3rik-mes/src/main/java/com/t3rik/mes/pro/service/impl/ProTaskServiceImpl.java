@@ -15,6 +15,8 @@ import com.t3rik.mes.pro.service.IProTaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.awt.event.ComponentAdapter;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -171,7 +173,8 @@ public class ProTaskServiceImpl extends ServiceImpl<ProTaskMapper, ProTask> impl
         // 查询
         this.page(page, queryWrapper);
         // 分组
-        Map<Long, List<ProTask>> listMap = page.getRecords().stream().collect(groupingBy(ProTask::getWorkorderId));
+        Map<Long, List<ProTask>> listMap = page.getRecords().stream()
+                .collect(groupingBy(ProTask::getWorkorderId));
         // 构建 ProTask返回值列表
         List<ProTask> proTaskList = listMap.values().stream()
                 .map(proTasks -> {
@@ -183,7 +186,7 @@ public class ProTaskServiceImpl extends ServiceImpl<ProTaskMapper, ProTask> impl
                     proTasks.forEach(task -> task.setParentId(parentId));
                     proTask.setChildTasks(proTasks);
                     return proTask;
-                })
+                }).sorted(Comparator.comparing(ProTask::getWorkorderCode).reversed())
                 .collect(Collectors.toList());
 
         // 更新分页对象的记录为 ProTask 列表
