@@ -77,9 +77,12 @@ class MobileLoginController {
         }
     }
 
-    @PostMapping("/logout")
+
+    @PostMapping("/logout1")
     fun logout(request: HttpServletRequest): AjaxResult {
         // 获取当前用户
+        //println("zzzzz")
+        //println("oooo" + this.tokenService.getLoginUser(request))
         this.tokenService.getLoginUser(request)?.let { loginUser ->
             // 删除当前用户信息,登出操作
             this.tokenService.delLoginUser(loginUser.token)
