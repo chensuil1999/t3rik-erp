@@ -185,7 +185,7 @@ public class ProFeedbackServiceImpl extends ServiceImpl<ProFeedbackMapper, ProFe
         }
 
         // 根据当前工序的物料BOM配置，进行物料消耗
-        // 先生成消耗单
+        // 先生成消耗单，这里有问题？工序的物料bom不存在。
         WmItemConsume itemConsume = wmItemConsumeService.generateItemConsume(feedback);
         if (StringUtils.isNotNull(itemConsume)) {
             // 再执行库存消耗动作
