@@ -51,6 +51,8 @@ public class MdItemServiceImpl extends ServiceImpl<MdItemMapper, MdItem> impleme
     public String checkItemCodeUnique(MdItem mdItem) {
         MdItem item = mdItemMapper.checkItemCodeUnique(mdItem);
         Long itemId = mdItem.getItemId() == null ? -1L : mdItem.getItemId();
+        //System.out.println("11111 " + item.getItemId().longValue());
+        //System.out.println(itemId.longValue());
         if (StringUtils.isNotNull(item) && item.getItemId().longValue() != itemId.longValue()) {
             return UserConstants.NOT_UNIQUE;
         } else {
@@ -58,6 +60,7 @@ public class MdItemServiceImpl extends ServiceImpl<MdItemMapper, MdItem> impleme
         }
     }
 
+    //下面这个方法作废，没用。不需要产品不同。
     @Override
     public String checkItemNameUnique(MdItem mdItem) {
         MdItem item = mdItemMapper.checkItemNameUnique(mdItem);

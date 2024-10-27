@@ -72,16 +72,13 @@ public class MdItemController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('mes:md:mditem:add')")
     @Log(title = "物料管理", businessType = BusinessType.INSERT)
-    @BarcodeGen(barcodeType = UserConstants.BARCODE_TYPE_ITEM)
+    //@BarcodeGen(barcodeType = UserConstants.BARCODE_TYPE_ITEM)
     @PostMapping
     public AjaxResult add(@Validated @RequestBody MdItem mdItem) {
         if (UserConstants.NOT_UNIQUE.equals(mdItemService.checkItemCodeUnique(mdItem))) {
             return AjaxResult.error("新增物料" + mdItem.getItemCode() + "失败，物料编码已存在");
         }
-        if (UserConstants.NOT_UNIQUE.equals(mdItemService.checkItemNameUnique(mdItem))) {
-            return AjaxResult.error("新增物料" + mdItem.getItemCode() + "失败，物料名称已存在");
-        }
-
+        //此处删掉同名判断函数，此注释仅作标记。
         ItemType type = iItemTypeService.selectItemTypeById(mdItem.getItemTypeId());
         if (StringUtils.isNotNull(type)) {
             mdItem.setItemTypeCode(type.getItemTypeCode());
@@ -90,7 +87,7 @@ public class MdItemController extends BaseController {
         }
         mdItem.setCreateBy(getUsername());
         mdItemService.insertMdItem(mdItem);
-        barcodeUtil.generateBarCode(UserConstants.BARCODE_TYPE_ITEM, mdItem.getItemId(), mdItem.getItemCode(), mdItem.getItemName());
+        //barcodeUtil.generateBarCode(UserConstants.BARCODE_TYPE_ITEM, mdItem.getItemId(), mdItem.getItemCode(), mdItem.getItemName());
         return AjaxResult.success(mdItem.getItemId());
     }
 
@@ -114,13 +111,14 @@ public class MdItemController extends BaseController {
     }
 
     /**
-     * 新增-只新增产品品类
+     * 新增-只新增产品品类,这个似乎没有运行到。
      */
     @PreAuthorize("@ss.hasPermi('mes:md:mditem:add')")
     @Log(title = "物料管理", businessType = BusinessType.INSERT)
     @BarcodeGen(barcodeType = UserConstants.BARCODE_TYPE_ITEM)
     @PostMapping("/product/{type}")
     public AjaxResult addProduct(@Validated @RequestBody MdItem mdItem, @PathVariable("type") String type) {
+        System.out.println("yes it me");
         if (UserConstants.NOT_UNIQUE.equals(mdItemService.checkItemCodeUnique(mdItem))) {
             return AjaxResult.error("新增物料" + mdItem.getItemCode() + "失败，物料编码已存在");
         }
@@ -141,9 +139,9 @@ public class MdItemController extends BaseController {
         if (UserConstants.NOT_UNIQUE.equals(mdItemService.checkItemCodeUnique(mdItem))) {
             return AjaxResult.error("新增物料" + mdItem.getItemCode() + "失败，物料编码已存在");
         }
-        if (UserConstants.NOT_UNIQUE.equals(mdItemService.checkItemNameUnique(mdItem))) {
-            return AjaxResult.error("新增物料" + mdItem.getItemCode() + "失败，物料名称已存在");
-        }
+//        if(StringUtils.isNull(mdItem)) {
+//            return AjaxResult.error("更新物料出错");
+//        }
         ItemType type = iItemTypeService.selectItemTypeById(mdItem.getItemTypeId());
         if (StringUtils.isNotNull(type)) {
             mdItem.setItemTypeCode(type.getItemTypeCode());

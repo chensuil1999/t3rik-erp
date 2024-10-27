@@ -29,6 +29,33 @@ public class MdItem extends BaseEntity {
     private String attr2;
     private String attr3;
     private String attr4;
+    private Double thofWeight;
+    private String imgurl;
+    private String metal;
+
+    public Double getThofWeight() {
+        return thofWeight;
+    }
+
+    public void setThofWeight(Double thofWeight) {
+        this.thofWeight = thofWeight;
+    }
+
+    public String getImgurl() {
+        return imgurl;
+    }
+
+    public void setImgurl(String imgurl) {
+        this.imgurl = imgurl;
+    }
+
+    public String getMetal() {
+        return metal;
+    }
+
+    public void setMetal(String metal) {
+        this.metal = metal;
+    }
 
     public Long getItemId() {
         return itemId;
