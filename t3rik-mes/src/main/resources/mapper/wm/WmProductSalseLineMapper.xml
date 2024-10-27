@@ -36,10 +36,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
+        <result property="countOfPackage"    column="count_package"    />
+        <result property="packageOfWeight"    column="package_weight"    />
+        <result property="amount"    column="amount"    />
+        <result property="workorderId"    column="workorder_id"    />
+        <result property="workorderCode"    column="workorder_code"    />
+        <result property="itemThOfWeight"    column="item_thofweight"    />
     </resultMap>
 
     <sql id="selectWmProductSalseLineVo">
-        select line_id, salse_id, material_stock_id, item_id, item_code, item_name, specification, unit_of_measure, quantity_salse, batch_code, warehouse_id, warehouse_code, warehouse_name, location_id, location_code, location_name, area_id, area_code, area_name, oqc_check,oqc_id,oqc_code, remark, attr1, attr2, attr3, attr4, create_by, create_time, update_by, update_time from wm_product_salse_line
+        select t.line_id, t.salse_id, t.material_stock_id, t.item_id, t.item_code, t.item_name,
+               t.specification, t.workorder_id, t.workorder_code, t.unit_of_measure, t.quantity_salse,
+               t.batch_code, t.warehouse_id, t.warehouse_code, t.warehouse_name, t.location_id, t.location_code,
+               t.location_name, t.area_id, t.area_code, t.area_name, t.oqc_check,t.oqc_id,t.oqc_code, t.remark, t.attr1,
+               t.attr2, t.attr3, t.attr4, t.create_by, t.create_time, t.update_by, t.update_time, t.count_package, p.item_thofweight,
+               t.package_weight, t.amount from wm_product_salse_line t left join md_item p
+                                                                                   on t.item_id = p.item_id
     </sql>
 
     <select id="selectWmProductSalseLineList" parameterType="WmProductSalseLine" resultMap="WmProductSalseLineResult">
@@ -63,6 +75,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="areaId != null "> and area_id = #{areaId}</if>
             <if test="areaCode != null  and areaCode != ''"> and area_code = #{areaCode}</if>
             <if test="areaName != null  and areaName != ''"> and area_name like concat('%', #{areaName}, '%')</if>
+            <if test="workorderCode != null  and workorderCode != ''"> and workorder_code like concat('%', #{workorderCode}, '%')</if>
         </where>
         order by create_time desc
     </select>
@@ -105,6 +118,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time,</if>
             <if test="updateBy != null">update_by,</if>
             <if test="updateTime != null">update_time,</if>
+            <if test="countOfPackage != null">count_package,</if>
+            <if test="packageOfWeight != null">package_weight,</if>
+            <if test="amount != null">amount,</if>
+            <if test="workorderId != null">workorder_id,</if>
+            <if test="workorderCode != null">workorder_code,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="salseId != null">#{salseId},</if>
@@ -137,6 +155,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">#{createTime},</if>
             <if test="updateBy != null">#{updateBy},</if>
             <if test="updateTime != null">#{updateTime},</if>
+            <if test="countOfPackage != null">#{countOfPackage},</if>
+            <if test="packageOfWeight != null">#{packageOfWeight},</if>
+            <if test="amount != null">#{amount},</if>
+            <if test="workorderId != null">#{workorderId},</if>
+            <if test="workorderCode != null">#{workorderCode},</if>
          </trim>
     </insert>
 
@@ -173,6 +196,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="countOfPackage != null">count_package = #{countOfPackage},</if>
+            <if test="packageOfWeight != null">package_weight = #{packageOfWeight},</if>
+            <if test="amount != null">amount = #{amount},</if>
+            <if test="workorderId != null">workorder_id = #{workorderId},</if>
+            <if test="workorderCode != null">workorder_code = #{workorderCode},</if>
         </trim>
         where line_id = #{lineId}
     </update>

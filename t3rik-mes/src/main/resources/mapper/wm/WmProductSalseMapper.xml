@@ -35,6 +35,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
+        <result property="address"    column="address"    />
+        <result property="tel"    column="tel"    />
     </resultMap>
 
 
@@ -73,7 +75,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectWmProductSalseVo">
-        select salse_id, salse_code, salse_name, oqc_id, oqc_code, so_code, client_id, client_code, client_name, client_nick, warehouse_id, warehouse_code, warehouse_name, location_id, location_code, location_name, area_id, area_code, area_name, salse_date, status, remark, attr1, attr2, attr3, attr4, create_by, create_time, update_by, update_time from wm_product_salse
+        select t.salse_id,t.salse_code,t.salse_name,t.oqc_id,t.oqc_code,
+               t.so_code, t.client_id, t.client_code, t.client_name, t.client_nick,
+               t.warehouse_id, t.warehouse_code, t.warehouse_name, t.location_id,
+               t.location_code, t.location_name, t.area_id, t.area_code, t.area_name,p.address, p.tel,
+               t.salse_date, t.status, t.remark, t.attr1, t.attr2, t.attr3, t.attr4, t.create_by,
+               t.create_time, t.update_by, t.update_time from wm_product_salse  t left join md_client p
+                                                                                              on t.client_id = p.client_id
     </sql>
 
     <select id="selectWmProductSalseList" parameterType="WmProductSalse" resultMap="WmProductSalseResult">

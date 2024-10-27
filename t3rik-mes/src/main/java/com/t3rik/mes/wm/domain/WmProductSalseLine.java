@@ -54,6 +54,30 @@ public class WmProductSalseLine extends BaseEntity
     @Excel(name = "批次号")
     private String batchCode;
 
+    /** 生产工单ID */
+    @Excel(name = "生产工单ID")
+    private Long workorderId;
+
+    /** 生产工单编码 */
+    @Excel(name = "生产工单编码")
+    private String workorderCode;
+
+    public Long getWorkorderId() {
+        return workorderId;
+    }
+
+    public void setWorkorderId(Long workorderId) {
+        this.workorderId = workorderId;
+    }
+
+    public String getWorkorderCode() {
+        return workorderCode;
+    }
+
+    public void setWorkorderCode(String workorderCode) {
+        this.workorderCode = workorderCode;
+    }
+
     /** 仓库ID */
     @Excel(name = "仓库ID")
     private Long warehouseId;
@@ -89,6 +113,51 @@ public class WmProductSalseLine extends BaseEntity
     /** 库位名称 */
     @Excel(name = "库位名称")
     private String areaName;
+
+    /** 件数名称 */
+    @Excel(name = "件数")
+    private int countOfPackage;
+    /** 重量/件 */
+    @Excel(name = "重量/件")
+    private int packageOfWeight;
+    /** 金额 */
+    @Excel(name = "金额")
+    private Double amount;
+
+    public Double getItemThOfWeight() {
+        return itemThOfWeight;
+    }
+
+    public void setItemThOfWeight(Double itemThOfWeight) {
+        this.itemThOfWeight = itemThOfWeight;
+    }
+
+    @Excel(name = "千斤重系数")
+    private Double itemThOfWeight;
+
+    public int getCountOfPackage() {
+        return countOfPackage;
+    }
+
+    public void setCountOfPackage(int countOfPackage) {
+        this.countOfPackage = countOfPackage;
+    }
+
+    public int getPackageOfWeight() {
+        return packageOfWeight;
+    }
+
+    public void setPackageOfWeight(int packageOfWeight) {
+        this.packageOfWeight = packageOfWeight;
+    }
+
+    public Double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Double amount) {
+        this.amount = amount;
+    }
 
     /**
      * 是否出厂检验

@@ -56,6 +56,30 @@ public class WmProductSalse extends BaseEntity
     @Excel(name = "客户简称")
     private String clientNick;
 
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getTel() {
+        return tel;
+    }
+
+    public void setTel(String tel) {
+        this.tel = tel;
+    }
+
+    /** 客户地址 */
+    @Excel(name = "客户地址")
+    private String address;
+
+    /** 客户电话 */
+    @Excel(name = "客户电话")
+    private String tel;
+
     /** 仓库ID */
     @Excel(name = "仓库ID")
     private Long warehouseId;
