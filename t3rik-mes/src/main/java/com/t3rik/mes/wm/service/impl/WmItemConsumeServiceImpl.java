@@ -165,6 +165,7 @@ public class WmItemConsumeServiceImpl implements IWmItemConsumeService
 
         //生成行信息
         //先获取当前生产的产品在此道工序中配置的物料BOM
+        //下面这张表为空，全部返回null
         ProRouteProductBom param = new ProRouteProductBom();
         param.setProductId(feedback.getItemId());
         param.setRouteId(route.getRouteId());

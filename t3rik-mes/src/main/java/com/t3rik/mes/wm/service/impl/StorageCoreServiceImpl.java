@@ -243,6 +243,7 @@ public class StorageCoreServiceImpl implements IStorageCoreService {
     /**
      * 库存消耗
      */
+    @Override
     public void processItemConsume(List<ItemConsumeTxBean> lines) {
         if (CollUtil.isEmpty(lines)) {
             throw new BusinessException("没有需要处理的原料消耗单行");
@@ -257,15 +258,15 @@ public class StorageCoreServiceImpl implements IStorageCoreService {
             transaction.setStorageCheckFlag(false);// 库存可以为负
             transaction.setTransactionDate(new Date());
 
-            WmWarehouse warehouse = wmWarehouseService.selectWmWarehouseByWarehouseCode(UserConstants.VIRTUAL_WH);
+            WmWarehouse warehouse = wmWarehouseService.selectWmWarehouseByWarehouseCode(UserConstants.WH001);
             transaction.setWarehouseId(warehouse.getWarehouseId());
             transaction.setWarehouseCode(warehouse.getWarehouseCode());
             transaction.setWarehouseName(warehouse.getWarehouseName());
-            WmStorageLocation location = wmStorageLocationService.selectWmStorageLocationByLocationCode(UserConstants.VIRTUAL_WS);
+            WmStorageLocation location = wmStorageLocationService.selectWmStorageLocationByLocationCode(UserConstants.WS004);
             transaction.setLocationId(location.getLocationId());
             transaction.setLocationCode(location.getLocationCode());
             transaction.setLocationName(location.getLocationName());
-            WmStorageArea area = wmStorageAreaService.selectWmStorageAreaByAreaCode(UserConstants.VIRTUAL_WA);
+            WmStorageArea area = wmStorageAreaService.selectWmStorageAreaByAreaCode(UserConstants.WA007);
             transaction.setAreaId(area.getAreaId());
             transaction.setAreaCode(area.getAreaCode());
             transaction.setAreaName(area.getAreaName());
@@ -275,7 +276,7 @@ public class StorageCoreServiceImpl implements IStorageCoreService {
     }
 
     /**
-     * 产品产出
+     * 产品产出,直接入库到主仓。
      */
     @Override
     public void processProductProduce(List<ProductProductTxBean> lines) {
@@ -291,15 +292,15 @@ public class StorageCoreServiceImpl implements IStorageCoreService {
             transaction.setTransactionFlag(1); // 库存增加
             transaction.setTransactionDate(new Date());
 
-            WmWarehouse warehouse = wmWarehouseService.selectWmWarehouseByWarehouseCode(UserConstants.VIRTUAL_WH);
+            WmWarehouse warehouse = wmWarehouseService.selectWmWarehouseByWarehouseCode(UserConstants.WH001);
             transaction.setWarehouseId(warehouse.getWarehouseId());
             transaction.setWarehouseCode(warehouse.getWarehouseCode());
             transaction.setWarehouseName(warehouse.getWarehouseName());
-            WmStorageLocation location = wmStorageLocationService.selectWmStorageLocationByLocationCode(UserConstants.VIRTUAL_WS);
+            WmStorageLocation location = wmStorageLocationService.selectWmStorageLocationByLocationCode(UserConstants.WS004);
             transaction.setLocationId(location.getLocationId());
             transaction.setLocationCode(location.getLocationCode());
             transaction.setLocationName(location.getLocationName());
-            WmStorageArea area = wmStorageAreaService.selectWmStorageAreaByAreaCode(UserConstants.VIRTUAL_WA);
+            WmStorageArea area = wmStorageAreaService.selectWmStorageAreaByAreaCode(UserConstants.WA007);
             transaction.setAreaId(area.getAreaId());
             transaction.setAreaCode(area.getAreaCode());
             transaction.setAreaName(area.getAreaName());
