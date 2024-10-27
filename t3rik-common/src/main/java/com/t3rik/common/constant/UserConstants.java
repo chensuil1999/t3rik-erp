@@ -254,6 +254,9 @@ public class UserConstants {
     public static final String VIRTUAL_WH = "XBK_VIRTUAL";
     public static final String VIRTUAL_WS = "XBKKQ_VIRTUAL";
     public static final String VIRTUAL_WA = "XBKKW_VIRTUAL";
+    public static final String WH001 = "WH001";
+    public static final String WS004 = "L004";
+    public static final String WA007 = "A0007";
 
     /**
      * 仓库
