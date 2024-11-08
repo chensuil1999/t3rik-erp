@@ -1,6 +1,7 @@
 package com.t3rik.mes.pro.domain;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -30,7 +31,7 @@ public class ProFeedback extends BaseEntity {
     /**
      * 记录ID
      */
-    @TableId
+    @TableId//(type = IdType.AUTO)
     private Long recordId;
     /**
      * 客户订单号
@@ -242,7 +243,7 @@ public class ProFeedback extends BaseEntity {
     /**
      * 预留字段2
      */
-    private String attr2;
+    private Double attr2;
 
     /**
      * 预留字段3
@@ -252,7 +253,7 @@ public class ProFeedback extends BaseEntity {
     /**
      * 预留字段4
      */
-    private Long attr4;
+    private Double attr4;
 
     @TableField(exist = false)
     private Boolean checked;

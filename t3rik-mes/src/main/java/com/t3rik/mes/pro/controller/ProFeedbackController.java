@@ -89,6 +89,10 @@ public class ProFeedbackController extends BaseController {
     @Log(title = "生产报工记录", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody ProFeedback proFeedback) {
+        ProTask task = this.proTaskService.getById(proFeedback.getTaskId());
+        if (StringUtils.isNull(task)) {
+            return AjaxResult.error("当前报工对应的生产任务不存在！");
+        }
         MdWorkstation workstation = mdWorkstationService.selectMdWorkstationByWorkstationId(proFeedback.getWorkstationId());
         if (StringUtils.isNull(workstation)) {
             return AjaxResult.error("当前生产任务对应的工作站不存在！");
@@ -121,6 +125,8 @@ public class ProFeedbackController extends BaseController {
         String feedbackCode = autoCodeUtil.genSerialCode(UserConstants.FEEDBACK_CODE, "");
         proFeedback.setFeedbackCode(feedbackCode);
         proFeedback.setCreateBy(getUsername());
+
+        proFeedback.setQuantity(task.getQuantity());
         proFeedbackService.insertProFeedback(proFeedback);
         return AjaxResult.success(proFeedback.getRecordId());
     }
@@ -223,16 +229,18 @@ public class ProFeedbackController extends BaseController {
     @PreAuthorize("@ss.hasPermi('mes:pro:feedback:edit')")
     @Log(title = "生产报工执行", businessType = BusinessType.UPDATE)
     @Transactional
-    @PutMapping("/{recordId}")
-    public AjaxResult execute(@PathVariable("recordId") Long recordId) {
+    @PutMapping("/{recordId}/{fdcnt}")
+    public AjaxResult execute(@PathVariable("recordId") Long recordId, @PathVariable("fdcnt") Long fdcnt) {
 
         if (!StringUtils.isNotNull(recordId)) {
             return AjaxResult.error("请先保存单据");
         }
-        ProFeedback feedback = proFeedbackService.selectProFeedbackByRecordId(recordId);
-        if (feedback.getQuantityFeedback().compareTo(BigDecimal.ZERO) != 1) {
-            return AjaxResult.error("报工数量必须大于0");
+        if (!StringUtils.isNotNull(fdcnt) || fdcnt.compareTo(Long.valueOf(1)) != 1) {
+            return AjaxResult.error("报工数异常，不能小于1");
         }
+        ProFeedback feedback = proFeedbackService.selectProFeedbackByRecordId(recordId);
+        //如果报工单数为1，那就要将此数更新为报工审核人员报工数
+
         ProTask task = proTaskService.selectProTaskByTaskId(feedback.getTaskId());
         // 判断当前生产任务的状态，如果已经完成则不能再报工
         if (UserConstants.ORDER_STATUS_FINISHED.equals(task.getStatus())) {
@@ -241,6 +249,13 @@ public class ProFeedbackController extends BaseController {
         // 仍旧有待检数量时不能执行
         if (StringUtils.isNotNull(feedback.getQuantityUncheck()) && feedback.getQuantityUncheck().compareTo(BigDecimal.ZERO) > 0) {
             return AjaxResult.error("当前报工单未完成检验（待检数量大于0），无法执行报工！");
+        }
+        feedback.setQuantity(task.getQuantity());
+        if (feedback.getQuantityFeedback().compareTo(BigDecimal.ONE) == 0) {
+
+            feedback.setQuantityFeedback(BigDecimal.valueOf(fdcnt));
+            feedback.setQuantityQualified(BigDecimal.valueOf(fdcnt));
+            proFeedbackService.updateById(feedback);
         }
         this.proFeedbackService.executeFeedback(feedback, task);
         return AjaxResult.success();
