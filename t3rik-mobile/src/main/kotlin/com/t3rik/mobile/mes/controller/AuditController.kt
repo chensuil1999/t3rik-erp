@@ -97,8 +97,7 @@ class AuditController : BaseController() {
         if (CollectionUtils.isEmpty(ids)) {
             throw BusinessException(MsgConstants.SELECT_AT_LEAST_ONE)
         }
-//         todo 上线时打开审核权限校验
-        if (!SecurityUtils.isAdmin(SecurityUtils.getUserId())) {
+        if (SecurityUtils.getDeptId().compareTo(116) != 0) {
             throw BusinessException(MsgConstants.NO_OPERATION_AUTH)
         }
     }
