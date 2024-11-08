@@ -2,6 +2,7 @@ package com.t3rik.mes.md.service;
 
 import java.util.List;
 import com.t3rik.mes.md.domain.MdClient;
+import com.t3rik.mes.md.domain.MdVendor;
 
 /**
  * 客户Service接口
@@ -64,4 +65,10 @@ public interface IMdClientService
      * @return 结果
      */
     public int deleteMdClientByClientId(Long clientId);
+
+    /**
+     *
+     */
+    public String importVendor(List<MdClient> clientList, Boolean isUpdateSupport, String operName);
+
 }

@@ -8,6 +8,7 @@ import com.t3rik.common.core.page.TableDataInfo;
 import com.t3rik.common.enums.BusinessType;
 import com.t3rik.common.utils.poi.ExcelUtil;
 import com.t3rik.mes.md.domain.MdClient;
+import com.t3rik.mes.md.domain.MdVendor;
 import com.t3rik.mes.md.service.IMdClientService;
 import com.t3rik.mes.wm.utils.WmBarCodeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 
 /**
@@ -56,6 +59,32 @@ public class MdClientController extends BaseController
         ExcelUtil<MdClient> util = new ExcelUtil<MdClient>(MdClient.class);
         util.exportExcel(response, list, "客户数据");
     }
+
+    /**
+     *
+     */
+    @PostMapping("/importTemplate")
+    public void importTemplate(HttpServletResponse response)
+    {
+        ExcelUtil<MdClient> util = new ExcelUtil<>(MdClient.class);
+        util.importTemplateExcel(response, "客户数据");
+    }
+
+    /**
+     *
+     */
+    @Log(title = "客户", businessType = BusinessType.IMPORT)
+    @PreAuthorize("@ss.hasPermi('system:user:import')")
+    @PostMapping("/importData")
+    public AjaxResult importData(MultipartFile file, boolean updateSupport) throws Exception
+    {
+        ExcelUtil<MdClient> util = new ExcelUtil<>(MdClient.class);
+        List<MdClient> clientList = util.importExcel(file.getInputStream());
+        String operName = getUsername();
+        String message = mdClientService.importVendor(clientList, updateSupport, operName);
+        return AjaxResult.success(message);
+    }
+
 
     /**
      * 获取客户详细信息
