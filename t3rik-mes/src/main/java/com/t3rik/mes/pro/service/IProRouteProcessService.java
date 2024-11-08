@@ -22,6 +22,11 @@ public interface IProRouteProcessService extends IService<ProRouteProcess> {
     public ProRouteProcess selectProRouteProcessByRecordId(Long recordId);
 
     /**
+     * 根据工单号获得该工单对应产品的工艺路线
+     */
+    public List<ProRouteProcess> selectProRouteProcessByWorkorderId(Long workorderId);
+
+    /**
      * 查询工艺组成列表
      *
      * @param proRouteProcess 工艺组成

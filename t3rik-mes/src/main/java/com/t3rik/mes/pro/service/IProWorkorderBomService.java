@@ -69,4 +69,10 @@ public interface IProWorkorderBomService extends IService<ProWorkorderBom>
      */
     public int deleteProWorkorderBomByWorkorderId(Long workorderId);
 
+    /**
+     * 获取产品bom，另外从md_item_bom取得用料比例。
+     */
+
+    public List<ProWorkorderBom> selectProWorkorderBomBywId(Long workorderId);
+
 }

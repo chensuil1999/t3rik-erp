@@ -15,14 +15,17 @@ import com.t3rik.common.support.ItemTypeSupport;
 import com.t3rik.common.utils.StringUtils;
 import com.t3rik.mes.aspect.BarcodeGen;
 import com.t3rik.mes.md.domain.MdItem;
+import com.t3rik.mes.md.domain.MdProductBom;
 import com.t3rik.mes.md.service.IItemTypeService;
 import com.t3rik.mes.md.service.IMdItemService;
+import com.t3rik.mes.md.service.IMdProductBomService;
 import com.t3rik.mes.wm.utils.WmBarCodeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -38,6 +41,8 @@ public class MdItemController extends BaseController {
     @Autowired
     private WmBarCodeUtil barcodeUtil;
 
+    @Autowired
+    private IMdProductBomService mdProductBomService;
     /**
      * 列表查询
      *
@@ -49,6 +54,26 @@ public class MdItemController extends BaseController {
         startPage();
         List<MdItem> list = mdItemService.selectMdItemList(mdItem);
         return getDataTable(list);
+    }
+    //生产任务单需要的物料数据
+    @GetMapping("/queryForTask/{itemId}")
+    public TableDataInfo listForTask(@PathVariable("itemId") Long itemId) {
+        MdProductBom mdbom = new MdProductBom();
+        mdbom.setItemId(itemId);
+        List<MdProductBom> listItemBom = mdProductBomService.selectMdProductBomList(mdbom);
+        //System.out.println("ooo" + listItemBom);
+//        Long[] ids = listItemBom.
+        // 将List中的age属性列转为int数组
+        long[]  ids = listItemBom.stream()
+                .mapToLong(MdProductBom::getBomItemId)
+                .toArray();
+        // 使用Stream API将long[]转换为Long[]
+        Long[] lids = Arrays.stream(ids)
+                .boxed()
+                .toArray(Long[]::new);
+        List<MdItem> listItem = mdItemService.lambdaQuery().in(MdItem::getItemId, lids).list();
+        startPage();
+        return getDataTable(listItem);
     }
 
 
