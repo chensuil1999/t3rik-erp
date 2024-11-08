@@ -60,7 +60,7 @@ class WmsStockMobServiceImpl : IWmsStockMobService {
         return this.wmMaterialStockService.lambdaQuery()
                 .like(StringUtils.isNotBlank(wmMaterialStock.itemName), WmMaterialStock::getItemName, wmMaterialStock.itemName)
                 .`in`(CollectionUtils.isNotEmpty(paramByCurrentIndex), WmMaterialStock::getWarehouseId, paramByCurrentIndex)
-                .gt(WmMaterialStock::getQuantityOnhand, 0)
+                .ne(WmMaterialStock::getQuantityOnhand, 0)
                 .orderByDesc(WmMaterialStock::getRecptDate)
                 .orderByAsc(WmMaterialStock::getWarehouseCode)
                 .page(page)
