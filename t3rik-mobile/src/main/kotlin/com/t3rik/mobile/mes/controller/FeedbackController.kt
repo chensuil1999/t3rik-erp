@@ -55,10 +55,8 @@ class FeedbackController : BaseController() {
     fun getTaskInfo(@PathVariable taskId: Long): AjaxResult {
         // 小于等于0 抛异常
         taskId.isNonPositive { MsgConstants.PARAM_ERROR }
-        val task = this.taskService.lambdaQuery()
-            .eq(ProTask::getTaskId, taskId)
-            .eq(ProTask::getTaskUserId, SecurityUtils.getUserId())
-            .one() ?: throw BusinessException(MsgConstants.PARAM_ERROR)
+        //奇怪这里返回的数据attr1-4格式有问题，竟然是有string的。
+        val task = this.taskService.selectProTaskByTaskId(taskId)
         return AjaxResult.success(task)
     }
 

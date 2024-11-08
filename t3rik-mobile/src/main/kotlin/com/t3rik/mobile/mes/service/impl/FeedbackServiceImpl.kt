@@ -19,6 +19,7 @@ import com.t3rik.mes.md.service.IMdWorkstationService
 import com.t3rik.mes.pro.domain.ProFeedback
 import com.t3rik.mes.pro.domain.ProRouteProcess
 import com.t3rik.mes.pro.domain.ProTask
+import com.t3rik.mes.pro.mapper.ProTaskMapper
 import com.t3rik.mes.pro.service.IProFeedbackService
 import com.t3rik.mes.pro.service.IProRouteProcessService
 import com.t3rik.mes.pro.service.IProTaskService
@@ -29,11 +30,15 @@ import com.t3rik.system.strategy.AutoCodeUtil
 import isGreater
 import isGreaterOrEqual
 import jakarta.annotation.Resource
-import kotlinx.coroutines.*
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import orZero
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.math.BigDecimal
+import java.util.stream.Collectors
 
 
 /**
@@ -71,6 +76,17 @@ class FeedbackServiceImpl : IFeedbackService {
     @Resource
     lateinit var proRouteProcessService: IProRouteProcessService
 
+//    @Resource
+//    lateinit var proRouteProcessService: IUserService
+//    @Autowired
+//    lateinit var proTaskMapper: ProTaskMapper
+
+//    @Autowired
+//    private val proTaskService: IProTaskService? = null
+//    @Resource
+//    private ProFeedbackMapper proFeedbackMapper;
+
+
 
     /**
      * 根据传入的前端页码，返回数据
@@ -92,7 +108,7 @@ class FeedbackServiceImpl : IFeedbackService {
      */
 
     /**
-     * 新增报工
+     * 新增报工,此了函数作废
      */
     @Transactional
     override fun addFeedback(proFeedback: ProFeedback): String {
@@ -102,7 +118,9 @@ class FeedbackServiceImpl : IFeedbackService {
         // 构建报工数据
         buildFeedback(proFeedback, workstation, routeProcess)
         // 保存更新
-        this.proFeedbackService.save(proFeedback)
+//        this.proFeedbackService.save(proFeedback)
+        //println(proFeedback)
+        this.proFeedbackService.insertProFeedback(proFeedback)
         // 回写任务，更新任务表中的数量数据
         // 计算合格品数量
         val task = this.taskService.getById(proFeedback.taskId).let { t ->
@@ -148,7 +166,8 @@ class FeedbackServiceImpl : IFeedbackService {
         // 构建报工数据
         buildFeedback(proFeedback, workstation, routeProcess)
         // 保存更新
-        proFeedbackService.save(proFeedback)
+        //println(proFeedback)
+        proFeedbackService.insertProFeedback(proFeedback)
         // 回写任务，更新任务表中的数量数据
         // 计算合格品数量
         val task = this.taskService.getById(proFeedback.taskId).let { t ->
@@ -171,11 +190,15 @@ class FeedbackServiceImpl : IFeedbackService {
         val subtract = task.quantityQuanlify.subtract(task.quantity)
         val msg: String
         // 如果报工大于排产，给出提示
-        if (subtract.isGreaterOrEqual(BigDecimal.ZERO)) {
+//        println("oooo" + proFeedback.quantityQualified)
+        if (proFeedback.quantityQualified.equals(BigDecimal.ONE))
+        {
+            msg = "当前任务报工只数*待定*,当前任务报工合格品总数量：「${task.quantityQuanlify.subtract(BigDecimal.ONE)}」, 排产数量 「${proFeedback.quantity}」, 距完成任务，还缺少数量: 「${subtract.abs().add((BigDecimal.ONE))}」"
+            //println(msg)
+        }
+        else if (subtract.isGreaterOrEqual(BigDecimal.ZERO)) {
             msg =
                     "当前任务报工合格品总数量：「${task.quantityQuanlify}」 已大于排产数量 「${proFeedback.quantity}」"
-            // 状态改为已完成
-            //task.status = OrderStatusEnum.FINISHED.code
         } else {
             msg =
                     "当前任务报工合格品总数量：「${task.quantityQuanlify}」, 排产数量 「${proFeedback.quantity}」, 距完成任务，还缺少数量: 「${subtract.abs()}」"
@@ -192,50 +215,51 @@ class FeedbackServiceImpl : IFeedbackService {
      */
     @OptIn(DelicateCoroutinesApi::class)
     override suspend fun getTaskAndFeedback(taskId: Long, status: OrderStatusEnum?): TaskAndFeedbackDTO {
-
         //下面的globalscope.async如果在里面取userid将会出现缓存现象。
         //就是上次用的1号登录，下次你用2号登录，但是函数体内却是1号的userid
 //        println("login: " + SecurityUtils.getLoginUser().userId)
 //        println("userid: " + SecurityUtils.getUserId())
+
         val userid = SecurityUtils.getUserId()
-        val isadmin = SecurityUtils.isAdmin(SecurityUtils.getUserId())
-//        println(isadmin)
+        //val isadmin = SecurityUtils.isAdmin(SecurityUtils.getUserId())
+//        val ismanage =
+        val dptid = SecurityUtils.getDeptId()
+//        println(SecurityUtils.getLoginUser().deptId)
+//        println(dptid.compareTo(116) != 0)
+//        println("ooooo: " + userid)
+//        println("ooooo: " + isadmin)
         val taskJob = GlobalScope.async {
 //        val taskJob = CoroutineScope(Dispatchers.IO).async {
             val task = async {
-//                val wap2 = LambdaQueryWrapper<ProTask>()
-//                if(!isadmin) {
-//                    wap2.eq(ProTask::getTaskUserId, userid)
-//                }
-//                taskService.getOne(wap2.eq(ProTask::getTaskId, taskId))
                 taskService.lambdaQuery()
                     .eq(ProTask::getTaskId, taskId)
-                    //.eq(ProTask::getTaskUserId, SecurityUtils.getUserId())
                     .one()
             }
-            //println(task)
             val feedbackList = async {
-                //LambdaQueryWrapper<ProFeedback> ldQuery = new LambdaQueryWrapper<>()
-                //
+
                 val wap = LambdaQueryWrapper<ProFeedback>()
-                if(!isadmin) {
-                    println("oooooadmin not admin")
+                if(dptid.compareTo(116) != 0) {
+                    //println("oooooadmin not admin")
                     wap.eq(ProFeedback::getUserId, userid)
                 }
                 proFeedbackService.list(wap.eq(ProFeedback::getTaskId, taskId)
                         .eq(status != null, ProFeedback::getStatus, status?.code)
-                        )
-
-//                    .eq(ProFeedback::getTaskId, taskId)
-//                    //.eq(ProFeedback::getUserId, SecurityUtils.getUserId())
-//                    .eq(status != null, ProFeedback::getStatus, status?.code)
-//                    .list()
+                        ).stream().sorted(Comparator.comparing(ProFeedback::getFeedbackTime).reversed()).collect(Collectors.toList());
             }
-            //println(feedbackList)
-
             TaskAndFeedbackDTO(task.await(), feedbackList.await())
         }
         return taskJob.await()
+    }
+
+    /**
+     *
+     */
+    override fun getTaskDetailById(taskId: Long): ProTask {
+        TODO("Not yet implemented")
+        //return null;
+        //return proTaskService.selectProTaskByTaskId(taskId);
+        //return proTaskMapper.selectProTaskByTaskId(taskId);
+
     }
 
 

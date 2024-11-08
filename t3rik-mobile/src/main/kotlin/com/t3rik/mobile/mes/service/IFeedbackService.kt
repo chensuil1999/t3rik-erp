@@ -37,4 +37,8 @@ interface IFeedbackService {
      * 获取报工详细信息以及报工列表
      */
     suspend fun getTaskAndFeedback(taskId: Long, status: OrderStatusEnum? = null): TaskAndFeedbackDTO
+    /**
+     * 获取详细任务单
+     */
+    fun getTaskDetailById(taskId: Long): ProTask
 }
