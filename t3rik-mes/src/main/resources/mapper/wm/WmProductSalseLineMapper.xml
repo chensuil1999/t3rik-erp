@@ -41,7 +41,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="amount"    column="amount"    />
         <result property="workorderId"    column="workorder_id"    />
         <result property="workorderCode"    column="workorder_code"    />
-        <result property="itemThOfWeight"    column="item_thofweight"    />
+        <result property="itemThOfWeight"    column="thof_weight"    />
     </resultMap>
 
     <sql id="selectWmProductSalseLineVo">
@@ -49,7 +49,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                t.specification, t.workorder_id, t.workorder_code, t.unit_of_measure, t.quantity_salse,
                t.batch_code, t.warehouse_id, t.warehouse_code, t.warehouse_name, t.location_id, t.location_code,
                t.location_name, t.area_id, t.area_code, t.area_name, t.oqc_check,t.oqc_id,t.oqc_code, t.remark, t.attr1,
-               t.attr2, t.attr3, t.attr4, t.create_by, t.create_time, t.update_by, t.update_time, t.count_package, p.item_thofweight,
+               t.attr2, t.attr3, t.attr4, t.create_by, t.create_time, t.update_by, t.update_time, t.count_package, p.thof_weight,
                t.package_weight, t.amount from wm_product_salse_line t left join md_item p
                                                                                    on t.item_id = p.item_id
     </sql>

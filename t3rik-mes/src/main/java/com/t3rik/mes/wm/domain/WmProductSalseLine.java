@@ -119,7 +119,7 @@ public class WmProductSalseLine extends BaseEntity
     private int countOfPackage;
     /** 重量/件 */
     @Excel(name = "重量/件")
-    private int packageOfWeight;
+    private Double packageOfWeight;
     /** 金额 */
     @Excel(name = "金额")
     private Double amount;
@@ -143,11 +143,11 @@ public class WmProductSalseLine extends BaseEntity
         this.countOfPackage = countOfPackage;
     }
 
-    public int getPackageOfWeight() {
+    public Double getPackageOfWeight() {
         return packageOfWeight;
     }
 
-    public void setPackageOfWeight(int packageOfWeight) {
+    public void setPackageOfWeight(Double packageOfWeight) {
         this.packageOfWeight = packageOfWeight;
     }
 
