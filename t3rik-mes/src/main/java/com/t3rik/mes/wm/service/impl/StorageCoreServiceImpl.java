@@ -221,7 +221,7 @@ public class StorageCoreServiceImpl implements IStorageCoreService {
             /** 库存方向 */
             transaction_out.setTransactionFlag(-1);// 库存减少
             //检查库存不能为负数
-            transaction_out.setStorageCheckFlag(Boolean.TRUE);//是否校验库存量
+            //transaction_out.setStorageCheckFlag(Boolean.TRUE);//是否校验库存量
             wmTransactionService.processTransaction(transaction_out);
 
             // 构造一条目的库存增加的事务
@@ -232,7 +232,7 @@ public class StorageCoreServiceImpl implements IStorageCoreService {
             transaction_in.setTransactionDate(new Date());
             // 由于是新增的库存记录所以需要将查询出来的库存记录ID置为空
             transaction_in.setMaterialStockId(null);
-            transaction_in.setStorageCheckFlag(Boolean.TRUE);
+            //transaction_in.setStorageCheckFlag(Boolean.TRUE);
             // 设置入库相关联的出库事务ID
             transaction_in.setRelatedTransactionId(transaction_out.getTransactionId());
 
@@ -248,6 +248,7 @@ public class StorageCoreServiceImpl implements IStorageCoreService {
         if (CollUtil.isEmpty(lines)) {
             throw new BusinessException("没有需要处理的原料消耗单行");
         }
+        //System.out.println("----------: " + lines);
         String transactionType = UserConstants.TRANSACTION_TYPE_ITEM_CONSUME;
         for (int i = 0; i < lines.size(); i++) {
             ItemConsumeTxBean line = lines.get(i);
@@ -258,15 +259,15 @@ public class StorageCoreServiceImpl implements IStorageCoreService {
             transaction.setStorageCheckFlag(false);// 库存可以为负
             transaction.setTransactionDate(new Date());
 
-            WmWarehouse warehouse = wmWarehouseService.selectWmWarehouseByWarehouseCode(UserConstants.WH001);
+            WmWarehouse warehouse = wmWarehouseService.selectWmWarehouseByWarehouseCode(UserConstants.VIRTUAL_WH);
             transaction.setWarehouseId(warehouse.getWarehouseId());
             transaction.setWarehouseCode(warehouse.getWarehouseCode());
             transaction.setWarehouseName(warehouse.getWarehouseName());
-            WmStorageLocation location = wmStorageLocationService.selectWmStorageLocationByLocationCode(UserConstants.WS004);
+            WmStorageLocation location = wmStorageLocationService.selectWmStorageLocationByLocationCode(UserConstants.VIRTUAL_WS);
             transaction.setLocationId(location.getLocationId());
             transaction.setLocationCode(location.getLocationCode());
             transaction.setLocationName(location.getLocationName());
-            WmStorageArea area = wmStorageAreaService.selectWmStorageAreaByAreaCode(UserConstants.WA007);
+            WmStorageArea area = wmStorageAreaService.selectWmStorageAreaByAreaCode(UserConstants.VIRTUAL_WA);
             transaction.setAreaId(area.getAreaId());
             transaction.setAreaCode(area.getAreaCode());
             transaction.setAreaName(area.getAreaName());

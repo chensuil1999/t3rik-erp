@@ -16,6 +16,8 @@ import com.t3rik.mes.wm.domain.tx.OutsourceRecptTxBean;
 import com.t3rik.mes.wm.service.IStorageCoreService;
 import com.t3rik.mes.wm.service.IWmOutsourceRecptLineService;
 import com.t3rik.mes.wm.service.IWmOutsourceRecptService;
+import com.t3rik.mes.wm.utils.WmWarehouseUtil;
+import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,7 +48,8 @@ public class WmOutsourceRecptController extends BaseController {
 
     @Autowired
     private IProWorkorderService proWorkorderService;
-
+    @Resource
+    private WmWarehouseUtil warehouseUtil;
 
     /**
      * 查询外协入库单列表
@@ -87,6 +90,8 @@ public class WmOutsourceRecptController extends BaseController {
     @Log(title = "外协入库单", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody WmOutsourceRecpt wmOutsourceRecpt) {
+        warehouseUtil.setWarehouseInfo(wmOutsourceRecpt);
+        wmOutsourceRecpt.setCreateBy(getUsername());
         return toAjax(wmOutsourceRecptService.insertWmOutsourceRecpt(wmOutsourceRecpt));
     }
 
@@ -97,6 +102,7 @@ public class WmOutsourceRecptController extends BaseController {
     @Log(title = "外协入库单", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody WmOutsourceRecpt wmOutsourceRecpt) {
+        warehouseUtil.setWarehouseInfo(wmOutsourceRecpt);
         return toAjax(wmOutsourceRecptService.updateWmOutsourceRecpt(wmOutsourceRecpt));
     }
 
@@ -139,21 +145,21 @@ public class WmOutsourceRecptController extends BaseController {
         storageCoreService.processOutsourceRecpt(beans);
 
         // 根据当前入库的物料更新对应的生产工单/生产任务 已生产数量
-        ProWorkorder workorder = proWorkorderService.selectProWorkorderByWorkorderId(recpt.getWorkorderId());
-        if (!StringUtils.isNotNull(workorder)) {
-            return AjaxResult.error("未找到对应的外协工单/外协任务！");
-        }
+        //ProWorkorder workorder = proWorkorderService.selectProWorkorderByWorkorderId(recpt.getWorkorderId());
+//        if (!StringUtils.isNotNull(workorder)) {
+//            return AjaxResult.error("未找到对应的外协工单/外协任务！");
+//        }
 
-        // 正常外协入库的产品必须先经过检验，确认合格数量后才能执行入库，并且更新外协工单的进度。此处暂时先直接根据入库数量更新外协工单的生产数量。
-        BigDecimal produced = workorder.getQuantityProduced() == null ? new BigDecimal(0) : workorder.getQuantityProduced();
-        for (int i = 0; i < lines.size(); i++) {
-            WmOutsourceRecptLine line = lines.get(i);
-            // 判断入库的物资，如果是生产工单中的产品，则更新已生产数量
-            if (line.getItemCode().equals(workorder.getProductCode())) {
-                workorder.setQuantityProduced(produced.add(line.getQuantityRecived()));
-            }
-        }
-        proWorkorderService.updateProWorkorder(workorder);
+//        // 正常外协入库的产品必须先经过检验，确认合格数量后才能执行入库，并且更新外协工单的进度。此处暂时先直接根据入库数量更新外协工单的生产数量。
+//        BigDecimal produced = workorder.getQuantityProduced() == null ? new BigDecimal(0) : workorder.getQuantityProduced();
+//        for (int i = 0; i < lines.size(); i++) {
+//            WmOutsourceRecptLine line = lines.get(i);
+//            // 判断入库的物资，如果是生产工单中的产品，则更新已生产数量
+//            if (line.getItemCode().equals(workorder.getProductCode())) {
+//                workorder.setQuantityProduced(produced.add(line.getQuantityRecived()));
+//            }
+//        }
+//        proWorkorderService.updateProWorkorder(workorder);
 
         // 更新单据状态
         recpt.setStatus(UserConstants.ORDER_STATUS_FINISHED);

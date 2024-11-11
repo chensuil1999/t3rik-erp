@@ -105,6 +105,7 @@ public class WmItemConsumeServiceImpl implements IWmItemConsumeService
     public int updateWmItemConsume(WmItemConsume wmItemConsume)
     {
         wmItemConsume.setUpdateTime(DateUtils.getNowDate());
+        //System.out.println("ppppp:" + wmItemConsume);
         return wmItemConsumeMapper.updateWmItemConsume(wmItemConsume);
     }
 
@@ -163,6 +164,7 @@ public class WmItemConsumeServiceImpl implements IWmItemConsumeService
         itemConsume.setStatus(UserConstants.ORDER_STATUS_PREPARE);
         wmItemConsumeMapper.insertWmItemConsume(itemConsume);
 
+        //System.out.println("------------");
         //生成行信息
         //先获取当前生产的产品在此道工序中配置的物料BOM
         //下面这张表为空，全部返回null
@@ -170,6 +172,7 @@ public class WmItemConsumeServiceImpl implements IWmItemConsumeService
         param.setProductId(feedback.getItemId());
         param.setRouteId(route.getRouteId());
         List<ProRouteProductBom> boms = proRouteProductBomMapper.selectProRouteProductBomList(param);
+        //System.out.println("----------: " + boms);
         if(CollectionUtil.isNotEmpty(boms)){
             for (ProRouteProductBom bom: boms
                  ) {
@@ -182,6 +185,7 @@ public class WmItemConsumeServiceImpl implements IWmItemConsumeService
                 p.setItemId(bom.getItemId()); //指定物料
                 p.setWarehouseCode(UserConstants.VIRTUAL_WH); //线边库
                 List<WmMaterialStock> ms = wmMaterialStockMapper.selectWmMaterialStockList(p);
+                //System.out.println("----------: " + ms);
                 if(CollectionUtil.isNotEmpty(ms)){
                     WmMaterialStock theStock = null;
                     for(int i=0;i<ms.size();i++){
@@ -250,6 +254,7 @@ public class WmItemConsumeServiceImpl implements IWmItemConsumeService
                     line.setUnitOfMeasure(bom.getUnitOfMeasure());
                     line.setQuantityConsume(bom.getQuantity().multiply(feedback.getQuantityFeedback()));
                     line.setBatchCode(workorder.getBatchCode());
+                    //System.out.println("----------: " + line);
                     wmItemConsumeLineMapper.insertWmItemConsumeLine(line);
                 }
             }

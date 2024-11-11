@@ -2,6 +2,7 @@ package com.t3rik.mes.wm.controller;
 
 import cn.hutool.core.collection.CollUtil;
 import com.t3rik.common.annotation.Log;
+import com.t3rik.common.constant.MsgConstants;
 import com.t3rik.common.constant.UserConstants;
 import com.t3rik.common.core.controller.BaseController;
 import com.t3rik.common.core.domain.AjaxResult;
@@ -14,6 +15,8 @@ import com.t3rik.mes.wm.domain.tx.OutsourceIssueTxBean;
 import com.t3rik.mes.wm.service.IStorageCoreService;
 import com.t3rik.mes.wm.service.IWmOutsourceIssueLineService;
 import com.t3rik.mes.wm.service.IWmOutsourceIssueService;
+import com.t3rik.mes.wm.utils.WmWarehouseUtil;
+import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,7 +42,8 @@ public class WmOutsourceIssueController extends BaseController {
 
     @Autowired
     private IStorageCoreService storageCoreService;
-
+    @Resource
+    private WmWarehouseUtil warehouseUtil;
     /**
      * 查询外协领料单头列表
      */
@@ -79,6 +83,12 @@ public class WmOutsourceIssueController extends BaseController {
     @Log(title = "外协领料单头", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody WmOutsourceIssue wmOutsourceIssue) {
+        if (UserConstants.NOT_UNIQUE.equals(wmOutsourceIssueService.checkOutsourceIssueCodeUnique(wmOutsourceIssue))) {
+            return AjaxResult.error(MsgConstants.CODE_ALREADY_EXISTS);
+        }
+//        // 设置仓库相关信息
+        warehouseUtil.setWarehouseInfo(wmOutsourceIssue);
+        wmOutsourceIssue.setCreateBy(getUsername());
         return toAjax(wmOutsourceIssueService.insertWmOutsourceIssue(wmOutsourceIssue));
     }
 
@@ -89,6 +99,10 @@ public class WmOutsourceIssueController extends BaseController {
     @Log(title = "外协领料单头", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody WmOutsourceIssue wmOutsourceIssue) {
+        if (UserConstants.NOT_UNIQUE.equals(wmOutsourceIssueService.checkOutsourceIssueCodeUnique(wmOutsourceIssue))) {
+            return AjaxResult.error(MsgConstants.CODE_ALREADY_EXISTS);
+        }
+        warehouseUtil.setWarehouseInfo(wmOutsourceIssue);
         return toAjax(wmOutsourceIssueService.updateWmOutsourceIssue(wmOutsourceIssue));
     }
 

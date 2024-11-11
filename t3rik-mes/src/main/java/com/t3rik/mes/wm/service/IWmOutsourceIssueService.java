@@ -1,6 +1,8 @@
 package com.t3rik.mes.wm.service;
 
 import java.util.List;
+
+import com.t3rik.mes.wm.domain.WmIssueHeader;
 import com.t3rik.mes.wm.domain.WmOutsourceIssue;
 import com.t3rik.mes.wm.domain.tx.OutsourceIssueTxBean;
 
@@ -44,6 +46,8 @@ public interface IWmOutsourceIssueService
      */
     public int updateWmOutsourceIssue(WmOutsourceIssue wmOutsourceIssue);
 
+    public String checkOutsourceIssueCodeUnique(WmOutsourceIssue wmOutsourceIssue);
+
     /**
      * 批量删除外协领料单头
      * 
@@ -61,4 +65,6 @@ public interface IWmOutsourceIssueService
     public int deleteWmOutsourceIssueByIssueId(Long issueId);
 
     public List<OutsourceIssueTxBean> getTxBeans(Long issueId);
+
+    //checkOutsourceIssueCodeUnique
 }

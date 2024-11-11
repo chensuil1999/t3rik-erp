@@ -1,6 +1,8 @@
 package com.t3rik.mes.wm.mapper;
 
 import java.util.List;
+
+import com.t3rik.mes.wm.domain.WmIssueHeader;
 import com.t3rik.mes.wm.domain.WmOutsourceIssue;
 import com.t3rik.mes.wm.domain.tx.OutsourceIssueTxBean;
 
@@ -44,6 +46,7 @@ public interface WmOutsourceIssueMapper
      */
     public int updateWmOutsourceIssue(WmOutsourceIssue wmOutsourceIssue);
 
+    public WmOutsourceIssue checkOutsourceIssueCodeUnique(WmOutsourceIssue wmOutsourceIssue);
     /**
      * 删除外协领料单头
      * 

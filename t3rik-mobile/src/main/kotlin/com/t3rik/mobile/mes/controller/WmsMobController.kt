@@ -29,6 +29,5 @@ class WmsMobController : BaseController()  {
     @ApiOperation("查询库存列表")
     @GetMapping("/list")
     fun getProWorkOrderList(wmMaterialStock: WmMaterialStock): TableDataInfo {
-        println("qq: " + wmMaterialStock.itemName)
         return getDataTableWithPage(wmsStockMobService.getPageByCurrentIndex(wmMaterialStock, getMPPage(wmMaterialStock))) }
 }
