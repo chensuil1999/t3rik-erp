@@ -216,7 +216,7 @@ public class ProTaskController extends BaseController {
 
         }
         buildProTaskForInsert(proTask, order, route, process);
-        return toAjax(proTaskService.save(proTask));
+        return toAjax(proTaskService.insertProTask(proTask));
     }
 
     /**
@@ -291,7 +291,9 @@ public class ProTaskController extends BaseController {
             return AjaxResult.error("生产时长必须大于0！");
         }
         // 生产工单
-        ProWorkorder dbOrder = this.proWorkorderService.getById(proTask.getWorkorderId());
+        //ProWorkorder dbOrder = this.proWorkorderService.getById(proTask.getWorkorderId());
+        //selectProWorkorderByWorkorderId
+        ProWorkorder dbOrder = this.proWorkorderService.selectProWorkorderByWorkorderId(proTask.getWorkorderId());
         if (dbOrder == null) {
             return AjaxResult.error(MsgConstants.PARAM_ERROR);
         }
