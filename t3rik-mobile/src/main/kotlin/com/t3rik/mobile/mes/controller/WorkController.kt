@@ -13,6 +13,7 @@ import com.t3rik.mes.md.service.IMdProductBomService
 import com.t3rik.mes.pro.domain.ProTask
 import com.t3rik.mes.pro.domain.ProWorkorder
 import com.t3rik.mes.pro.domain.ProWorkorderBom
+import com.t3rik.mes.pro.service.IProRouteProcessService
 import com.t3rik.mes.pro.service.IProTaskService
 import com.t3rik.mes.pro.service.IProWorkorderBomService
 import com.t3rik.mobile.common.ktextend.isNonPositive
@@ -35,6 +36,11 @@ class WorkController : BaseController() {
     lateinit var proWorkorderBomService: IProWorkorderBomService
     @Resource
     lateinit var proTaskService: IProTaskService
+//    @Resource
+//    lateinit var mdProductBomService: IMdProductBomService
+@Resource
+lateinit var proRouteProcessService: IProRouteProcessService
+
     /**
      * 查询任务列表
      */
@@ -59,20 +65,38 @@ class WorkController : BaseController() {
     fun getBom(@PathVariable workOrderId: Long): AjaxResult {
         // 小于等于0 抛异常
         workOrderId.isNonPositive { MsgConstants.PARAM_ERROR }
-//        val proWorkOrderDetail = this.proWorkOrderService.getWorkOrderDetailById(workOrderId)
-        val pwb = proWorkorderBomService.lambdaQuery()
-                .eq(ProWorkorderBom::getWorkorderId, workOrderId).list()
+//        val pwb = proWorkorderBomService.lambdaQuery()
+//                .eq(ProWorkorderBom::getWorkorderId, workOrderId)
+//                .list()
+//        //println("oooo" + pwb)
+//        //val bomitem = mdProductBomService.lambdaQuery()
+//        return AjaxResult.success(pwb)
+        val pwb = proWorkorderBomService.selectProWorkorderBomBywId(workOrderId)
+        //println("oooo:" + pwb)
         return AjaxResult.success(pwb)
     }
 
     @ApiOperation("查询生产工单对应生产任务料信息")
     @GetMapping("/protask/{workOrderId}")
     fun getProtask(@PathVariable workOrderId: Long): AjaxResult {
-        // 小于等于0 抛异常
+        // 小于等于0 抛异常route
         workOrderId.isNonPositive { MsgConstants.PARAM_ERROR }
-//        val proWorkOrderDetail = this.proWorkOrderService.getWorkOrderDetailById(workOrderId)
+
         val pt = proTaskService.lambdaQuery()
                 .eq(ProTask::getWorkorderId, workOrderId).orderByAsc(ProTask::getProcessName).list()
         return AjaxResult.success(pt)
     }
+
+    /**
+     *
+     */
+    @ApiOperation("查询生产工单对应产品工艺路线")
+    @GetMapping("/route/{workOrderId}")
+    fun getRoute(@PathVariable workOrderId: Long): AjaxResult {
+        // 小于等于0 抛异常
+        workOrderId.isNonPositive { MsgConstants.PARAM_ERROR }
+        val proute = proRouteProcessService.selectProRouteProcessByWorkorderId(workOrderId)
+        return AjaxResult.success(proute)
+    }
+
 }
