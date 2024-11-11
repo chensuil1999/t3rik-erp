@@ -126,6 +126,7 @@ public class WmWasteHeaderController extends BaseController {
             wmWasteHeader.setAreaCode(area.getAreaCode());
             wmWasteHeader.setAreaName(area.getAreaName());
         }
+        //下面这行代码有问题，会导致数据库主键非常大
         return toAjax(this.wmWasteHeaderService.save(wmWasteHeader));
     }
 
