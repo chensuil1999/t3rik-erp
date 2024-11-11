@@ -27,13 +27,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result property="updateBy"      column="update_by"     />
 		<result property="updateTime"    column="update_time"   />
 		<result property="remark"        column="remark"        />
-		<result property="thofWeight"        column="item_thofweight"        />
-		<result property="metal"        column="item_metal"        />
-		<result property="imgurl"        column="item_img_url"        />
+		<result property="thofWeight"    column="thof_weight"        />
+		<result property="metal"        column="metal"        />
+		<result property="imgurl"        column="imgurl"        />
 	</resultMap>
 	
 	<sql id="selectMdItemVo">
-        select item_id, item_code, item_name, specification, unit_of_measure, item_or_product,item_thofweight,item_metal,item_img_url,
+        select item_id, item_code, item_name, specification, unit_of_measure, item_or_product,thof_weight,metal,imgurl,
         item_type_id,item_type_code,item_type_name,enable_flag,safe_stock_flag,min_stock,max_stock, create_by, create_time, remark
 		from md_item
     </sql>
@@ -52,6 +52,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			</if>
 			<if test="itemName != null and itemName != ''">
 				AND item_name like concat('%', #{itemName}, '%')
+			</if>
+			<if test="specification != null and specification != ''">
+				AND specification like concat('%', #{specification}, '%')
 			</if>
 			<if test="enableFlag != null and enableFlag != ''">
 				AND enable_flag = #{enableFlag}
@@ -99,9 +102,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="attr3 !=null and attr3 !=0">attr3,</if>
 			<if test="attr4 !=null and attr4 !=0">attr4,</if>
 			<if test="createBy !=null and createBy !=''">create_by,</if>
-		<if test="thofWeight !=null and thofWeight !=''">item_thofweight,</if>
-		<if test="metal !=null and metal !=''">item_metal,</if>
-		<if test="imgurl !=null">item_img_url,</if>
+		<if test="thofWeight !=null and thofWeight !=''">thof_weight,</if>
+		<if test="metal !=null and metal !=''">metal,</if>
+		<if test="imgurl !=null">imgurl,</if>
 			create_time
 		)
 		values (
@@ -150,9 +153,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="attr3 !=null and attr3 !=0">attr3=#{attr3},</if>
 			<if test="attr4 !=null and attr4 !=0">attr4=#{attr4},</if>
 			<if test="updateBy !=null and updateBy !=''">update_by=#{updateBy},</if>
-			<if test="thofWeight !=null and thofWeight !=''">item_thofweight = #{thofWeight},</if>
-			<if test="metal !=null and metal !=''">item_metal = #{metal},</if>
-			<if test="imgurl !=null">item_img_url = #{imgurl},</if>
+			<if test="thofWeight !=null and thofWeight !=''">thof_weight = #{thofWeight},</if>
+			<if test="metal !=null and metal !=''">metal = #{metal},</if>
+			<if test="imgurl !=null">imgurl = #{imgurl},</if>
 			update_time = sysdate()
 		</set>
 		where item_id = #{itemId}

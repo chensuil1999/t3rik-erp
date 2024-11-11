@@ -29,6 +29,9 @@ public interface ProRouteProcessMapper extends BaseMapper<ProRouteProcess> {
      * @return 工艺组成集合
      */
     public List<ProRouteProcess> selectProRouteProcessList(ProRouteProcess proRouteProcess);
+    //
+    public List<ProRouteProcess> selectProRouteProcessByWorkorderId(Long workorderId);
+
 
     public ProRouteProcess checkOrderNumExists(ProRouteProcess proRouteProcess);
 

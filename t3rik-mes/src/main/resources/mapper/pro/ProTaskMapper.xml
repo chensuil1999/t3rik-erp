@@ -49,6 +49,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
+        <result property="taskBy"    column="task_by"    />
 
     </resultMap>
 
@@ -56,7 +57,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <sql id="selectProTaskVo">
         select t.task_id, t.task_code, t.task_name, t.workorder_id, t.workorder_code, t.workorder_name,
                t.workstation_id, t.workstation_code, t.workstation_name,
-               t.route_id, t.route_code,
+               t.route_id, t.route_code,t.task_by,
                t.process_id, t.process_code, t.process_name,p.is_check,
                t.item_id, t.item_code, t.item_name, t.specification, t.unit_of_measure,
                t.quantity, t.quantity_produced, t.quantity_changed,

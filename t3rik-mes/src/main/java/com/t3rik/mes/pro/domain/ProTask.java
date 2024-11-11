@@ -239,7 +239,7 @@ public class ProTask extends BaseEntity {
     /**
      * 预留字段2
      */
-    private String attr2;
+    private Double attr2;
 
     /**
      * 预留字段3
@@ -249,7 +249,7 @@ public class ProTask extends BaseEntity {
     /**
      * 预留字段4
      */
-    private Long attr4;
+    private Double attr4;
 
     /**
      * 分配任务人id

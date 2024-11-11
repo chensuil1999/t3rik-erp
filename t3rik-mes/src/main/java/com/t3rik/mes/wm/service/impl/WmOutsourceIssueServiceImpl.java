@@ -1,7 +1,11 @@
 package com.t3rik.mes.wm.service.impl;
 
 import java.util.List;
+
+import com.t3rik.common.constant.UserConstants;
 import com.t3rik.common.utils.DateUtils;
+import com.t3rik.common.utils.StringUtils;
+import com.t3rik.mes.wm.domain.WmIssueHeader;
 import com.t3rik.mes.wm.domain.tx.OutsourceIssueTxBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,7 +15,7 @@ import com.t3rik.mes.wm.service.IWmOutsourceIssueService;
 
 /**
  * 外协领料单头Service业务层处理
- *
+ *WmOutsourceIssueMapper
  * @author yinjinlu
  * @date 2023-10-30
  */
@@ -65,6 +69,16 @@ public class WmOutsourceIssueServiceImpl implements IWmOutsourceIssueService {
     public int updateWmOutsourceIssue(WmOutsourceIssue wmOutsourceIssue) {
         wmOutsourceIssue.setUpdateTime(DateUtils.getNowDate());
         return wmOutsourceIssueMapper.updateWmOutsourceIssue(wmOutsourceIssue);
+    }
+
+    @Override
+    public String checkOutsourceIssueCodeUnique(WmOutsourceIssue wmOutsourceIssue) {
+        WmOutsourceIssue header = wmOutsourceIssueMapper.checkOutsourceIssueCodeUnique(wmOutsourceIssue);
+        Long headerId = wmOutsourceIssue.getIssueId() == null ? -1l : wmOutsourceIssue.getIssueId();
+        if (StringUtils.isNotNull(header) && headerId.longValue() != header.getIssueId().longValue()) {
+            return UserConstants.NOT_UNIQUE;
+        }
+        return UserConstants.UNIQUE;
     }
 
     /**

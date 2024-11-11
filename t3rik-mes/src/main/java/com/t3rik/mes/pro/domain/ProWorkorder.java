@@ -202,6 +202,24 @@ public class ProWorkorder extends TreeEntity {
      * 预留字段4
      */
     private Long attr4;
+    private Double thofWeight;
+    private String imgurl;
+
+    public Double getThofWeight() {
+        return thofWeight;
+    }
+
+    public void setThofWeight(Double thofWeight) {
+        this.thofWeight = thofWeight;
+    }
+
+    public String getImgurl() {
+        return imgurl;
+    }
+
+    public void setImgurl(String imgurl) {
+        this.imgurl = imgurl;
+    }
 
     @TableField(exist = false)
     private List<ProTask> tasks;

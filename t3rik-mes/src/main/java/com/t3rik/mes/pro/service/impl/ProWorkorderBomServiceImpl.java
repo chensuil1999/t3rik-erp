@@ -93,4 +93,9 @@ public class ProWorkorderBomServiceImpl extends ServiceImpl<ProWorkorderBomMappe
     public int deleteProWorkorderBomByWorkorderId(Long workorderId) {
         return proWorkorderBomMapper.deleteProWorkorderBomByWorkorderId(workorderId);
     }
+
+    @Override
+    public List<ProWorkorderBom> selectProWorkorderBomBywId(Long workorderId) {
+        return proWorkorderBomMapper.selectProWorkorderBomBywId(workorderId);
+    }
 }

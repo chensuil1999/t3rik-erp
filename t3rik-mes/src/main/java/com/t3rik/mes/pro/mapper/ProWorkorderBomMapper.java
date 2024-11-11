@@ -23,6 +23,10 @@ public interface ProWorkorderBomMapper extends BaseMapper<ProWorkorderBom> {
     public ProWorkorderBom selectProWorkorderBomByLineId(Long lineId);
 
     /**
+     *
+     */
+    public List<ProWorkorderBom> selectProWorkorderBomBywId(Long workorderId);
+    /**
      * 查询生产工单BOM组成列表
      *
      * @param proWorkorderBom 生产工单BOM组成

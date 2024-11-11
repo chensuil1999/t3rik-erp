@@ -1,19 +1,18 @@
 package com.t3rik.mobile.mes.service.impl
 
+//import com.alibaba.druid.sql.visitor.SQLEvalVisitorUtils.like
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page
-import com.t3rik.common.core.domain.AjaxResult
 import com.t3rik.common.enums.mes.OrderStatusEnum
-import com.t3rik.common.utils.SecurityUtils
 import com.t3rik.common.utils.StringUtils
-import com.t3rik.mes.pro.domain.ProTask
 import com.t3rik.mes.pro.domain.ProWorkorder
-import com.t3rik.mes.pro.service.IProTaskService
 import com.t3rik.mes.pro.service.IProWorkorderService
 import com.t3rik.mobile.common.enums.CurrentIndexEnum
 import com.t3rik.mobile.mes.service.IProWorkOrderService
 import jakarta.annotation.Resource
 import org.springframework.stereotype.Service
+
 
 /**
  * @Author: Wywzyy
@@ -55,8 +54,41 @@ class ProWorkOrderServiceImpl : IProWorkOrderService{
 
     override fun getPageByCurrentIndex(proWorkOrder: ProWorkorder, page: Page<ProWorkorder>): Page<ProWorkorder> {
         val paramByCurrentIndex = this.getParamByCurrentIndex(proWorkOrder.currentIndex)
+        //val queryWrapper: LambdaQueryWrapper<ProWorkorder> = LambdaQueryWrapper<ProWorkorder>()
+//        queryWrappe .select(ProWorkorder.class, x->x.getColumn().equal("thof_weight"))
+        //queryWrapper.
+                //LambdaQueryWrapper<ProWorkorder> = Wrapper.<ProWorkOrder>lambdaQuery()
         return this.proWorkOrderService.lambdaQuery()
-                //.eq(proWorkOrder::get, SecurityUtils.getUserId())
+                .select(ProWorkorder::getWorkorderId,
+                        ProWorkorder::getClientOrderId,
+                        ProWorkorder::getClientOrderCode,
+                        ProWorkorder::getWorkorderCode, ProWorkorder::getWorkorderName,
+                        ProWorkorder::getWorkorderType,ProWorkorder::getOrderSource,ProWorkorder::getSourceCode
+                        ,ProWorkorder::getProductId
+                        ,ProWorkorder::getProductCode
+                        ,ProWorkorder::getProductName
+                        ,ProWorkorder::getProductSpc
+                        ,ProWorkorder::getUnitOfMeasure
+                        ,ProWorkorder::getBatchCode
+                        ,ProWorkorder::getQuantity
+                        ,ProWorkorder::getQuantityProduced
+                        ,ProWorkorder::getQuantityChanged
+                        ,ProWorkorder::getQuantityScheduled
+                        ,ProWorkorder::getClientId
+                        ,ProWorkorder::getClientCode
+                        ,ProWorkorder::getClientName
+                        ,ProWorkorder::getVendorId
+                        ,ProWorkorder::getVendorCode
+                        ,ProWorkorder::getVendorName
+                        ,ProWorkorder::getRequestDate
+                        ,ProWorkorder::getFinishDate
+                        ,ProWorkorder::getStatus
+                        ,ProWorkorder::getAttr1
+                        ,ProWorkorder::getAttr2
+                        ,ProWorkorder::getAttr3
+                        ,ProWorkorder::getAttr4
+                        ,ProWorkorder::getCreateTime
+                        )
                 .like(StringUtils.isNotBlank(proWorkOrder.workorderName), ProWorkorder::getWorkorderName, proWorkOrder.workorderName)
                 .`in`(CollectionUtils.isNotEmpty(paramByCurrentIndex), ProWorkorder::getStatus, paramByCurrentIndex)
                 .orderByDesc(ProWorkorder::getCreateTime)
@@ -67,6 +99,36 @@ class ProWorkOrderServiceImpl : IProWorkOrderService{
     override fun getWorkOrderDetailById(workOrderId: Long): ProWorkorder {
 //        TODO("Not yet implemented")
         return this.proWorkOrderService.lambdaQuery()
+                .select(ProWorkorder::getWorkorderId,
+                        ProWorkorder::getClientOrderId,
+                        ProWorkorder::getClientOrderCode,
+                        ProWorkorder::getWorkorderCode, ProWorkorder::getWorkorderName,
+                        ProWorkorder::getWorkorderType,ProWorkorder::getOrderSource,ProWorkorder::getSourceCode
+                        ,ProWorkorder::getProductId
+                        ,ProWorkorder::getProductCode
+                        ,ProWorkorder::getProductName
+                        ,ProWorkorder::getProductSpc
+                        ,ProWorkorder::getUnitOfMeasure
+                        ,ProWorkorder::getBatchCode
+                        ,ProWorkorder::getQuantity
+                        ,ProWorkorder::getQuantityProduced
+                        ,ProWorkorder::getQuantityChanged
+                        ,ProWorkorder::getQuantityScheduled
+                        ,ProWorkorder::getClientId
+                        ,ProWorkorder::getClientCode
+                        ,ProWorkorder::getClientName
+                        ,ProWorkorder::getVendorId
+                        ,ProWorkorder::getVendorCode
+                        ,ProWorkorder::getVendorName
+                        ,ProWorkorder::getRequestDate
+                        ,ProWorkorder::getFinishDate
+                        ,ProWorkorder::getStatus
+                        ,ProWorkorder::getAttr1
+                        ,ProWorkorder::getAttr2
+                        ,ProWorkorder::getAttr3
+                        ,ProWorkorder::getAttr4
+                        ,ProWorkorder::getCreateTime
+                )
                 .eq(ProWorkorder::getWorkorderId, workOrderId).one()
     }
 }

@@ -52,6 +52,11 @@ public class ProRouteProcessServiceImpl extends ServiceImpl<ProRouteProcessMappe
         return proRouteProcessMapper.selectProRouteProcessByRecordId(recordId);
     }
 
+    @Override
+    public List<ProRouteProcess> selectProRouteProcessByWorkorderId(Long workorderId) {
+        return proRouteProcessMapper.selectProRouteProcessByWorkorderId(workorderId);
+    }
+
     /**
      * 查询工艺组成列表
      *

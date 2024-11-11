@@ -44,10 +44,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
+        <result property="thofWeight"    column="thof_weight"    />
+        <result property="imgurl"    column="imgurl"    />
     </resultMap>
 
     <sql id="selectProWorkorderVo">
-        select client_order_id,client_order_code, workorder_id, workorder_code, workorder_name, workorder_type, order_source, source_code, product_id, product_code, product_name, product_spc, unit_of_measure,batch_code, quantity,quantity_produced, client_id, client_code, client_name, vendor_id, vendor_code, vendor_name, request_date, parent_id, ancestors, status, remark, attr1, attr2, attr3, attr4, create_by, create_time, update_by, update_time from pro_workorder
+        select t.client_order_id,t.client_order_code, t.workorder_id, t.workorder_code,
+               t.workorder_name, t.workorder_type, t.order_source, t.source_code, t.product_id,
+               t.product_code, t.product_name, t.product_spc, t.unit_of_measure,t.batch_code,
+               t.quantity,t.quantity_produced, t.client_id, t.client_code, t.client_name,
+               t.vendor_id, t.vendor_code, t.vendor_name, t.request_date, t.parent_id, t.ancestors,
+               t.status, t.remark, t.attr1, t.attr2, t.attr3, t.attr4, t.create_by, t.create_time,
+               t.update_by, t.update_time, p.thof_weight, p.imgurl from pro_workorder t left join md_item p
+                                                                             on t.product_id = p.item_id
     </sql>
 
     <select id="selectProWorkorderList" parameterType="ProWorkorder" resultMap="ProWorkorderResult">

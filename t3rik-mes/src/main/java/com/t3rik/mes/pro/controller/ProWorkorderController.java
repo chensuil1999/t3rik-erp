@@ -66,7 +66,7 @@ public class ProWorkorderController extends BaseController {
     @GetMapping("/list")
     public TableDataInfo list(ProWorkorder proWorkorder) {
         startPage();
-        //System.out.println("ooo: " + proWorkorder.getStatus());
+        //System.out.println("ooo: " + proWorkorder);
         List<ProWorkorder> list = proWorkorderService.selectProWorkorderList(proWorkorder);
         return getDataTable(list);
     }
