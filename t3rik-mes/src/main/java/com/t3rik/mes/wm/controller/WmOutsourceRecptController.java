@@ -8,7 +8,9 @@ import com.t3rik.common.core.page.TableDataInfo;
 import com.t3rik.common.enums.BusinessType;
 import com.t3rik.common.utils.StringUtils;
 import com.t3rik.common.utils.poi.ExcelUtil;
+import com.t3rik.mes.pro.domain.ProTask;
 import com.t3rik.mes.pro.domain.ProWorkorder;
+import com.t3rik.mes.pro.service.IProTaskService;
 import com.t3rik.mes.pro.service.IProWorkorderService;
 import com.t3rik.mes.wm.domain.WmOutsourceRecpt;
 import com.t3rik.mes.wm.domain.WmOutsourceRecptLine;
@@ -48,6 +50,9 @@ public class WmOutsourceRecptController extends BaseController {
 
     @Autowired
     private IProWorkorderService proWorkorderService;
+
+    @Autowired
+    private IProTaskService proTaskService;
     @Resource
     private WmWarehouseUtil warehouseUtil;
 
@@ -145,21 +150,25 @@ public class WmOutsourceRecptController extends BaseController {
         storageCoreService.processOutsourceRecpt(beans);
 
         // 根据当前入库的物料更新对应的生产工单/生产任务 已生产数量
-        //ProWorkorder workorder = proWorkorderService.selectProWorkorderByWorkorderId(recpt.getWorkorderId());
-//        if (!StringUtils.isNotNull(workorder)) {
-//            return AjaxResult.error("未找到对应的外协工单/外协任务！");
-//        }
-
-//        // 正常外协入库的产品必须先经过检验，确认合格数量后才能执行入库，并且更新外协工单的进度。此处暂时先直接根据入库数量更新外协工单的生产数量。
-//        BigDecimal produced = workorder.getQuantityProduced() == null ? new BigDecimal(0) : workorder.getQuantityProduced();
-//        for (int i = 0; i < lines.size(); i++) {
-//            WmOutsourceRecptLine line = lines.get(i);
-//            // 判断入库的物资，如果是生产工单中的产品，则更新已生产数量
-//            if (line.getItemCode().equals(workorder.getProductCode())) {
-//                workorder.setQuantityProduced(produced.add(line.getQuantityRecived()));
-//            }
-//        }
-//        proWorkorderService.updateProWorkorder(workorder);
+        // 下面代码存在问题，直接更新工单的生产数，肯定是错误的。因为对应的任务没找到。
+        //
+        ProWorkorder workorder = proWorkorderService.selectProWorkorderByWorkorderId(recpt.getWorkorderId());
+        if (!StringUtils.isNotNull(workorder)) {
+            return AjaxResult.error("未找到对应的外协工单/外协任务！");
+        }
+        ProTask proTask = proTaskService.selectProTaskByTaskId(Long.valueOf(recpt.getAttr2()));
+        if (StringUtils.isNotNull(proTask)) {
+        // 正常外协入库的产品必须先经过检验，确认合格数量后才能执行入库，并且更新外协工单的进度。此处暂时先直接根据入库数量更新外协工单的生产数量。
+        BigDecimal produced = proTask.getQuantityProduced() == null ? new BigDecimal(0) : proTask.getQuantityProduced();
+        for (int i = 0; i < lines.size(); i++) {
+            WmOutsourceRecptLine line = lines.get(i);
+            // 判断入库的物资，如果是生产工单中的产品，则更新已生产数量
+            if (line.getItemCode().equals(proTask.getItemCode())) {
+                proTask.setQuantityProduced(produced.add(line.getQuantityRecived()));
+            }
+        }
+            proTaskService.updateProTask(proTask);
+        }
 
         // 更新单据状态
         recpt.setStatus(UserConstants.ORDER_STATUS_FINISHED);

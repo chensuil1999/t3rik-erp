@@ -100,6 +100,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="recptDate != null "> and recpt_date = #{recptDate}</if>
             <if test="status != null  and status != ''"> and status = #{status}</if>
         </where>
+        order by create_time desc
     </select>
     
     <select id="selectWmOutsourceRecptByRecptId" parameterType="Long" resultMap="WmOutsourceRecptResult">
