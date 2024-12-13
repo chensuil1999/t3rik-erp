@@ -74,6 +74,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                irl.`warehouse_id`,irl.`warehouse_code`,irl.`warehouse_name`,
                irl.`location_id`,irl.`location_code`,irl.`location_name`,
                irl.`area_id`,irl.`area_code`,irl.`area_name`,
+               irl.attr4, irl.attr3,
                'RTSALSE' AS source_doc_type,ir.`rt_id` AS source_doc_id,
                ir.`rt_code` AS source_doc_code,
                irl.`line_id` AS source_doc_line_id,

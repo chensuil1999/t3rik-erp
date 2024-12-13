@@ -191,12 +191,7 @@ public class ProTaskServiceImpl extends ServiceImpl<ProTaskMapper, ProTask> impl
 
         // 更新分页对象的记录为 ProTask 列表
         page.setRecords(proTaskList);
-//        int pagesum = 0;
-//        for(ProTask pt : proTaskList) {
-//            pagesum += pt.getChildTasks().size();
-//        }
         page.setTotal(proTaskList.size());
-//        page.setTotal(pagesum);
     }
 
     /**

@@ -241,19 +241,30 @@ public class ProFeedback extends BaseEntity {
     private String attr1;
 
     /**
-     * 预留字段2
+     * 零头重量
      */
     private Double attr2;
 
     /**
-     * 预留字段3
+     * 件数
      */
-    private Long attr3;
+    private Integer attr3;
 
     /**
-     * 预留字段4
+     * 每件重量
      */
     private Double attr4;
+
+    /**
+     * 每件只数
+     *
+     */
+    private Integer maincnt;
+
+    /**
+     * 零头只数
+     */
+    private Integer seccnt;
 
     @TableField(exist = false)
     private Boolean checked;

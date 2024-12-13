@@ -51,6 +51,14 @@ public class StorageCoreServiceImpl implements IStorageCoreService {
             BeanUtils.copyBeanProp(transaction, line);
             transaction.setTransactionFlag(1); // 库存增加
             transaction.setTransactionDate(new Date());
+            transaction.setAttr4(line.getAttr4());
+//            transaction.setAttr1(bean.getAmount());
+            transaction.setAttr2(line.getAttr3());
+            transaction.setAttr3(0);
+            transaction.setAttr1(line.getAmount());
+//            System.out.println("ooooo: " + transaction);
+//            System.out.println("ooooo: " + line);
+
             wmTransactionService.processTransaction(transaction);
         }
 
@@ -73,8 +81,11 @@ public class StorageCoreServiceImpl implements IStorageCoreService {
             WmTransaction transaction = new WmTransaction();
             transaction.setTransactionType(transactionType);
             BeanUtils.copyBeanProp(transaction, line);
-            transaction.setTransactionFlag(-1); // 库存减少
+            transaction.setTransactionFlag(-1); // 库存增加
             transaction.setTransactionDate(new Date());
+            transaction.setAttr4(line.getAttr4());
+            transaction.setAttr2(line.getAttr3());
+            transaction.setAttr3(0);
             wmTransactionService.processTransaction(transaction);
         }
 
@@ -154,6 +165,10 @@ public class StorageCoreServiceImpl implements IStorageCoreService {
             BeanUtils.copyBeanProp(transaction_out, line);
             transaction_out.setTransactionFlag(-1);// 库存减少
             transaction_out.setTransactionDate(new Date());
+            transaction_out.setAttr4(line.getAttr4());
+            transaction_out.setAttr2(line.getAttr3());
+            transaction_out.setAttr3(0);
+            transaction_out.setAttr1(null);
             wmTransactionService.processTransaction(transaction_out);
         }
     }
@@ -172,6 +187,10 @@ public class StorageCoreServiceImpl implements IStorageCoreService {
             BeanUtils.copyBeanProp(transaction, line);
             transaction.setTransactionFlag(1); // 库存增加
             transaction.setTransactionDate(new Date());
+            transaction.setAttr4(line.getAttr4());
+            transaction.setAttr2(line.getAttr3());
+            transaction.setAttr3(0);
+            transaction.setAttr1(null);
             wmTransactionService.processTransaction(transaction);
         }
     }
@@ -278,6 +297,7 @@ public class StorageCoreServiceImpl implements IStorageCoreService {
 
     /**
      * 产品产出,直接入库到主仓。
+     * 报工数据入主仓，
      */
     @Override
     public void processProductProduce(List<ProductProductTxBean> lines) {
@@ -291,6 +311,11 @@ public class StorageCoreServiceImpl implements IStorageCoreService {
             transaction.setTransactionType(transactionType);
             BeanUtils.copyBeanProp(transaction, line);
             transaction.setTransactionFlag(1); // 库存增加
+            //入库件数。
+            int ltcnt = (line.getLtjs() == 0 || line.getLtjs() == null) ? 0 : 1;
+            transaction.setAttr4(line.getJs()+ ltcnt);
+            transaction.setAttr3(line.getLtjs());
+            transaction.setAttr2(line.getCntjs());
             transaction.setTransactionDate(new Date());
 
             WmWarehouse warehouse = wmWarehouseService.selectWmWarehouseByWarehouseCode(UserConstants.WH001);
@@ -305,6 +330,7 @@ public class StorageCoreServiceImpl implements IStorageCoreService {
             transaction.setAreaId(area.getAreaId());
             transaction.setAreaCode(area.getAreaCode());
             transaction.setAreaName(area.getAreaName());
+            //System.out.println("dddd: " + transaction);
 
             wmTransactionService.processTransaction(transaction);
         }
@@ -377,7 +403,7 @@ public class StorageCoreServiceImpl implements IStorageCoreService {
         if (CollUtil.isEmpty(lines)) {
             throw new BusinessException("没有需要处理的产品销售出库单行");
         }
-
+        //System.out.println(lines);
         String transactionType = UserConstants.TRANSACTION_TYPE_PRODUCT_ISSUE;
         for (int i = 0; i < lines.size(); i++) {
             ProductSalseTxBean bean = lines.get(i);
@@ -386,6 +412,11 @@ public class StorageCoreServiceImpl implements IStorageCoreService {
             BeanUtils.copyBeanProp(transaction, bean);
             transaction.setTransactionFlag(-1); // 库存减少
             transaction.setTransactionDate(new Date());
+            transaction.setAttr4(bean.getCountPackage());
+            transaction.setAttr1(bean.getAmount());
+            transaction.setAttr2(bean.getAttr4());
+            transaction.setAttr3(0);
+            //System.out.println("zzzz" + transaction);
             wmTransactionService.processTransaction(transaction);
         }
     }
@@ -403,6 +434,10 @@ public class StorageCoreServiceImpl implements IStorageCoreService {
             BeanUtils.copyBeanProp(transaction, bean);
             transaction.setTransactionFlag(1); // 库存增加
             transaction.setTransactionDate(new Date());
+            transaction.setAttr4(bean.getAttr4());
+//            transaction.setAttr1(bean.getAmount());
+            transaction.setAttr2(bean.getAttr3());
+            transaction.setAttr3(0);
             wmTransactionService.processTransaction(transaction);
         }
     }
@@ -466,8 +501,9 @@ public class StorageCoreServiceImpl implements IStorageCoreService {
     @Override
     public void processWmWaste(List<WmWasteTxBean> beans) {
         //校验数据是否为空
-        if (CollUtil.isEmpty(beans))
+        if (CollUtil.isEmpty(beans)) {
             throw new BusinessException("没有需要处理废料的单行！");
+        }
 
         //废料退料-入库事务
         String transactionType_in = DefaultDataEnum.TRANSACTION_TYPE_ITEM_WM_WASTE_IN.getCode();

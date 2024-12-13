@@ -166,6 +166,11 @@ public class WmProductProduceServiceImpl implements IWmProductProduceService
         line.setSpecification(feedback.getSpecification());
         line.setUnitOfMeasure(feedback.getUnitOfMeasure());
         line.setQuantityProduce(feedback.getQuantityFeedback());
+        line.setAttr2(feedback.getAttr2());
+        line.setAttr3(feedback.getAttr3());
+        line.setAttr4(feedback.getAttr4());
+        line.setMaincnt(feedback.getMaincnt());
+        line.setSeccnt(feedback.getSeccnt());
         line.setBatchCode(workorder.getBatchCode());
         wmProductProduceLineMapper.insertWmProductProduceLine(line);
         return productProduce;

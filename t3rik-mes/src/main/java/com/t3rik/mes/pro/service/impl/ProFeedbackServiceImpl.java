@@ -180,17 +180,17 @@ public class ProFeedbackServiceImpl extends ServiceImpl<ProFeedbackMapper, ProFe
 
             // 生成产品产出记录单
             WmProductProduce productRecord = wmProductProduceService.generateProductProduce(feedback);
-            // 执行产品产出入线边库
+            // 执行产品产出入主库（原来是出入线边库，我直接到主仓。因为旭虹并不需要线边库，多一道操作没必要）
             executeProductProduce(productRecord);
         }
 
         // 根据当前工序的物料BOM配置，进行物料消耗
         // 先生成消耗单。
-        WmItemConsume itemConsume = wmItemConsumeService.generateItemConsume(feedback);
-        if (StringUtils.isNotNull(itemConsume)) {
+        //WmItemConsume itemConsume = wmItemConsumeService.generateItemConsume(feedback);
+        //if (StringUtils.isNotNull(itemConsume)) {
             // 再执行库存消耗动作
-            executeItemConsume(itemConsume);
-        }
+            //executeItemConsume(itemConsume);
+        //}
         // 更新报工单的状态
         feedback.setStatus(OrderStatusEnum.FINISHED.getCode());
         this.updateProFeedback(feedback);
@@ -217,6 +217,7 @@ public class ProFeedbackServiceImpl extends ServiceImpl<ProFeedbackMapper, ProFe
      */
     private void executeProductProduce(WmProductProduce record) {
         List<ProductProductTxBean> beans = wmProductProduceService.getTxBeans(record.getRecordId());
+        //System.out.println("ooooo: " + beans);
         storageCoreService.processProductProduce(beans);
         record.setStatus(UserConstants.ORDER_STATUS_FINISHED);
         wmProductProduceService.updateWmProductProduce(record);

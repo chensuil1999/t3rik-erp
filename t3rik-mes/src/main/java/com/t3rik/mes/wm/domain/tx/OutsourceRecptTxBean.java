@@ -90,6 +90,28 @@ public class OutsourceRecptTxBean extends BaseEntity {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date expireDate;
 
+    /** 每件只数 */
+    private Integer attr3;
+
+    public Integer getAttr3() {
+        return attr3;
+    }
+
+    public void setAttr3(Integer attr3) {
+        this.attr3 = attr3;
+    }
+
+    public Integer getAttr4() {
+        return attr4;
+    }
+
+    public void setAttr4(Integer attr4) {
+        this.attr4 = attr4;
+    }
+
+    /** 总件数*/
+    private Integer attr4;
+
 
     public Long getItemId() {
         return itemId;

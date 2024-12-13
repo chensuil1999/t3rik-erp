@@ -70,6 +70,19 @@ public class ProductProductTxBean extends BaseEntity {
     /** 事务数量 */
     private BigDecimal transactionQuantity;
 
+    private Integer cntjs;
+    private Integer ltjs;
+
+    public Integer getJs() {
+        return js;
+    }
+
+    public void setJs(Integer js) {
+        this.js = js;
+    }
+
+    private Integer js;
+
     /** 生产工单ID */
     @Excel(name = "生产工单ID")
     private Long workorderId;
@@ -90,6 +103,34 @@ public class ProductProductTxBean extends BaseEntity {
     /** 库存有效期 */
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date expireDate;
+
+    /**
+     * 入库件数
+     * @return
+     */
+
+
+    public Integer getCntjs() {
+        return cntjs;
+    }
+
+    public void setCntjs(Integer cntjs) {
+        this.cntjs = cntjs;
+    }
+
+    public Integer getLtjs() {
+        return ltjs;
+    }
+
+    public void setLtjs(Integer ltjs) {
+        this.ltjs = ltjs;
+    }
+
+
+
+
+
+
 
     public Long getItemId() {
         return itemId;
@@ -311,6 +352,9 @@ public class ProductProductTxBean extends BaseEntity {
                 ", workorderName='" + workorderName + '\'' +
                 ", produceDate=" + produceDate +
                 ", expireDate=" + expireDate +
+                ", cntjs=" + cntjs +
+                ", ltjs=" + ltjs +
+                ", js=" + js +
                 '}';
     }
 

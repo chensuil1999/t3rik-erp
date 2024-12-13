@@ -264,7 +264,8 @@ public class ProTaskController extends BaseController {
         int ret = proTaskService.deleteProTaskByTaskIds(taskIds);
         //System.out.println("ret: " + ret);
         wap.clear();
-        ProTask pw = proTaskService.getOne(wap.eq(ProTask::getWorkorderId, pt.getWorkorderId()));
+        //System.out.println(proTaskService.getOne(wap.eq(ProTask::getWorkorderId, pt.getWorkorderId())));
+        ProTask pw = proTaskService.getOne(wap.eq(ProTask::getWorkorderId, pt.getWorkorderId()), false);
         //System.out.println("pw: " + pw);
         if(pw == null) {
             ProWorkorder proWorkorder = new ProWorkorder();

@@ -92,6 +92,28 @@ public class OutsourceIssueTxBean extends BaseEntity {
      */
     private String workorderCode;
 
+    /** 件数 */
+    private Integer attr4;
+
+    public Integer getAttr4() {
+        return attr4;
+    }
+
+    public void setAttr4(Integer attr4) {
+        this.attr4 = attr4;
+    }
+
+    public Integer getAttr3() {
+        return attr3;
+    }
+
+    public void setAttr3(Integer attr3) {
+        this.attr3 = attr3;
+    }
+
+    /** 每件只数 */
+    private Integer attr3;
+
     public Long getMaterialStockId() {
         return materialStockId;
     }

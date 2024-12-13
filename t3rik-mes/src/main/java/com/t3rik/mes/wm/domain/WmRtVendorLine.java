@@ -95,10 +95,10 @@ public class WmRtVendorLine extends BaseEntity
     private String attr2;
 
     /** 预留字段3 */
-    private Long attr3;
+    private Integer attr3;
 
     /** 预留字段4 */
-    private Long attr4;
+    private Integer attr4;
 
     public void setLineId(Long lineId) 
     {
@@ -289,21 +289,21 @@ public class WmRtVendorLine extends BaseEntity
     {
         return attr2;
     }
-    public void setAttr3(Long attr3) 
+    public void setAttr3(Integer attr3)
     {
         this.attr3 = attr3;
     }
 
-    public Long getAttr3() 
+    public Integer getAttr3()
     {
         return attr3;
     }
-    public void setAttr4(Long attr4) 
+    public void setAttr4(Integer attr4)
     {
         this.attr4 = attr4;
     }
 
-    public Long getAttr4() 
+    public Integer getAttr4()
     {
         return attr4;
     }

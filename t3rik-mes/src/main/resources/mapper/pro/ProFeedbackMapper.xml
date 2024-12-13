@@ -52,6 +52,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
+        <result property="maincnt"    column="maincnt"    />
+        <result property="seccnt"    column="seccnt"    />
     </resultMap>
 
     <sql id="selectProFeedbackVo">
@@ -100,7 +102,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                f.create_by,
                f.create_time,
                f.update_by,
-               f.update_time
+               f.update_time,
+               f.maincnt,
+               f.seccnt
         from pro_feedback f
                  left join pro_route_process p
                            on f.process_id = p.process_id and f.route_id = p.route_id
@@ -198,6 +202,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time,</if>
             <if test="updateBy != null">update_by,</if>
             <if test="updateTime != null">update_time,</if>
+            <if test="maincnt != null">maincnt,</if>
+            <if test="seccnt != null">seccnt,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="recordUserId !=null ">#{recordUserId},</if>
@@ -244,6 +250,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">#{createTime},</if>
             <if test="updateBy != null">#{updateBy},</if>
             <if test="updateTime != null">#{updateTime},</if>
+            <if test="maincnt != null">#{maincnt},</if>
+            <if test="seccnt != null">#{seccnt},</if>
          </trim>
     </insert>
 
@@ -294,6 +302,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="maincnt != null">maincnt = #{maincnt},</if>
+            <if test="seccnt != null">seccnt = #{seccnt},</if>
         </trim>
         where record_id = #{recordId}
     </update>

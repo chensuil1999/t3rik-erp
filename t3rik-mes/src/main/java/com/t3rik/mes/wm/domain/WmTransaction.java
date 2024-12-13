@@ -169,20 +169,20 @@ public class WmTransaction extends BaseEntity
     private boolean storageCheckFlag;
 
     /** 预留字段1 */
-    @Excel(name = "预留字段1")
-    private String attr1;
+    @Excel(name = "总金额")
+    private Double attr1;
 
     /** 预留字段2 */
-    @Excel(name = "预留字段2")
-    private String attr2;
+    @Excel(name = "大头只数")
+    private Integer attr2;
 
     /** 预留字段3 */
-    @Excel(name = "预留字段3")
-    private Long attr3;
+    @Excel(name = "小头只数")
+    private Integer attr3;
 
     /** 预留字段4 */
-    @Excel(name = "预留字段4")
-    private Long attr4;
+    @Excel(name = "整件数")
+    private Integer attr4;
 
     public void setTransactionId(Long transactionId) 
     {
@@ -497,39 +497,39 @@ public class WmTransaction extends BaseEntity
     {
         return expireDate;
     }
-    public void setAttr1(String attr1) 
+    public void setAttr1(Double attr1)
     {
         this.attr1 = attr1;
     }
 
-    public String getAttr1() 
+    public Double getAttr1()
     {
         return attr1;
     }
-    public void setAttr2(String attr2) 
+    public void setAttr2(Integer attr2)
     {
         this.attr2 = attr2;
     }
 
-    public String getAttr2() 
+    public Integer getAttr2()
     {
         return attr2;
     }
-    public void setAttr3(Long attr3) 
+    public void setAttr3(Integer attr3)
     {
         this.attr3 = attr3;
     }
 
-    public Long getAttr3() 
+    public Integer getAttr3()
     {
         return attr3;
     }
-    public void setAttr4(Long attr4) 
+    public void setAttr4(Integer attr4)
     {
         this.attr4 = attr4;
     }
 
-    public Long getAttr4() 
+    public Integer getAttr4()
     {
         return attr4;
     }

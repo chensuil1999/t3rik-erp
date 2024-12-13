@@ -44,29 +44,41 @@ public class WmTransactionServiceImpl implements IWmTransactionService
         validate(wmTransaction);
         //初始化赋值声明库存记录信息
         initStock(wmTransaction,stock);
-        //查询库存记录通过构建好的库存记录
+        //查询库存记录通过构建好的库存记录,供应商，工单号都是不同的库存记录
         WmMaterialStock ms = wmMaterialStockMapper.loadMaterialStock(stock);
         //扣减或者新增数量 = 事务数量/事务方向
         BigDecimal quantity = wmTransaction.getTransactionQuantity().multiply(new BigDecimal(wmTransaction.getTransactionFlag()));
+        Integer quantityjs = wmTransaction.getAttr4();
+        if(wmTransaction.getTransactionFlag() < 0) {
+            quantityjs = (~quantityjs) + 1;
+        }
+        //System.out.println("库存方向数: " + quantityjs);
+
         if(StringUtils.isNotNull(ms)){
             //MS已存在扣减库存/添加库存
-            BigDecimal resultQuantity =ms.getQuantityOnhand().add(quantity);
+            BigDecimal resultQuantity = ms.getQuantityOnhand().add(quantity);
+            Integer resultQuantityjs = ms.getAttr4() + quantityjs;
             //检查库存量是否充足
             if(wmTransaction.isStorageCheckFlag() && resultQuantity.compareTo(new BigDecimal(0))<0){
                 throw new BusinessException("库存数量不足！");
             }
             //更新在库数量
             stock.setQuantityOnhand(resultQuantity);
+            stock.setAttr4(resultQuantityjs);
             stock.setMaterialStockId(ms.getMaterialStockId());
+            //System.out.println("stock: " + stock);
             wmMaterialStockMapper.updateWmMaterialStock(stock);
         }else {
             //MS不存在
             stock.setQuantityOnhand(quantity);
+            stock.setAttr4(quantityjs);
             wmMaterialStockMapper.insertWmMaterialStock(stock);//新增库存记录
         }
         wmTransaction.setMaterialStockId(stock.getMaterialStockId());
         wmTransaction.setTransactionQuantity(quantity);//事务数量
+        wmTransaction.setAttr4(quantityjs);//事务件量
         wmTransactionMapper.insertWmTransaction(wmTransaction);
+
         return wmTransaction;
     }
 

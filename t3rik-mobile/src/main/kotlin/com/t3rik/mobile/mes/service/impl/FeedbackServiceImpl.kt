@@ -193,7 +193,7 @@ class FeedbackServiceImpl : IFeedbackService {
 //        println("oooo" + proFeedback.quantityQualified)
         if (proFeedback.quantityQualified.equals(BigDecimal.ONE))
         {
-            msg = "当前任务报工只数*待定*,当前任务报工合格品总数量：「${task.quantityQuanlify.subtract(BigDecimal.ONE)}」, 排产数量 「${proFeedback.quantity}」, 距完成任务，还缺少数量: 「${subtract.abs().add((BigDecimal.ONE))}」"
+            msg = "当前任务报工只数*待定*,当前任务报工合格品总数量：「${task.quantityQuanlify.subtract(BigDecimal.ONE)}」, 排产数量 「${proFeedback.quantity}」, 距完成任务，还缺少数量: 「${subtract.add((BigDecimal.ONE))}」"
             //println(msg)
         }
         else if (subtract.isGreaterOrEqual(BigDecimal.ZERO)) {

@@ -175,7 +175,7 @@ public class WmProductSalseLine extends BaseEntity
     private String oqcCode;
 
     /** 预留字段1 */
-    private String attr1;
+    private Double attr1;
 
     /** 预留字段2 */
     private String attr2;
@@ -184,7 +184,7 @@ public class WmProductSalseLine extends BaseEntity
     private Long attr3;
 
     /** 预留字段4 */
-    private Long attr4;
+    private Integer attr4;
 
     public void setLineId(Long lineId) 
     {
@@ -382,12 +382,12 @@ public class WmProductSalseLine extends BaseEntity
         this.oqcCode = oqcCode;
     }
 
-    public void setAttr1(String attr1)
+    public void setAttr1(Double attr1)
     {
         this.attr1 = attr1;
     }
 
-    public String getAttr1() 
+    public Double getAttr1()
     {
         return attr1;
     }
@@ -409,12 +409,12 @@ public class WmProductSalseLine extends BaseEntity
     {
         return attr3;
     }
-    public void setAttr4(Long attr4) 
+    public void setAttr4(Integer attr4)
     {
         this.attr4 = attr4;
     }
 
-    public Long getAttr4() 
+    public Integer getAttr4()
     {
         return attr4;
     }

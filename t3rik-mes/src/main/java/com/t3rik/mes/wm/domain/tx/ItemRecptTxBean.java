@@ -90,6 +90,37 @@ public class ItemRecptTxBean extends BaseEntity {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date expireDate;
 
+    private Integer attr4;
+    /**只数每件
+     *
+     */
+    private Integer attr3;
+
+    private Double amount;
+
+    public Double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Double amount) {
+        this.amount = amount;
+    }
+
+    public Integer getAttr4() {
+        return attr4;
+    }
+
+    public void setAttr4(Integer attr4) {
+        this.attr4 = attr4;
+    }
+
+    public Integer getAttr3() {
+        return attr3;
+    }
+
+    public void setAttr3(Integer attr3) {
+        this.attr3 = attr3;
+    }
 
     public Long getItemId() {
         return itemId;
@@ -328,6 +359,9 @@ public class ItemRecptTxBean extends BaseEntity {
                 ", transactionQuantity=" + transactionQuantity +
                 ", recptDate=" + recptDate +
                 ", expireDate=" + expireDate +
+                ", attr4=" + attr4 +
+                ", attr3=" + attr3 +
+                ", amount=" + amount +
                 '}';
     }
 }

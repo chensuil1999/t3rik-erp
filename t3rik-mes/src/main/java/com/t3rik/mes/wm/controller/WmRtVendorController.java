@@ -7,6 +7,8 @@ import com.t3rik.common.core.domain.AjaxResult;
 import com.t3rik.common.core.page.TableDataInfo;
 import com.t3rik.common.enums.BusinessType;
 import com.t3rik.common.utils.poi.ExcelUtil;
+import com.t3rik.mes.wm.domain.WmRtSalse;
+import com.t3rik.mes.wm.domain.WmRtSalseLine;
 import com.t3rik.mes.wm.domain.WmRtVendor;
 import com.t3rik.mes.wm.domain.tx.RtVendorTxBean;
 import com.t3rik.mes.wm.service.IStorageCoreService;
@@ -15,6 +17,7 @@ import com.t3rik.mes.wm.service.IWmRtVendorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -132,10 +135,12 @@ public class WmRtVendorController extends BaseController
     @PutMapping("/{rtId}")
     public AjaxResult execute(@PathVariable Long rtId){
         //判断单据状态
-        WmRtVendor wmRtVendor = wmRtVendorService.selectWmRtVendorByRtId(rtId);
-
+        //WmRtVendor wmRtVendor = wmRtVendorService.selectWmRtVendorByRtId(rtId);
         //构造事务Bean
         List<RtVendorTxBean> beans = wmRtVendorService.getTxBeans(rtId);
+        if (CollectionUtils.isEmpty(beans)) {
+            return AjaxResult.error("请添加退货单行信息！");
+        }
 
         //调用库存核心
         storageCoreService.processRtVendor(beans);

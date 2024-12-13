@@ -32,10 +32,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
+        <result property="maincnt"    column="maincnt"    />
+        <result property="seccnt"    column="seccnt"    />
     </resultMap>
 
     <sql id="selectWmProductProduceLineVo">
-        select line_id, record_id, item_id, item_code, item_name, specification, unit_of_measure, quantity_produce, batch_code, warehouse_id, warehouse_code, warehouse_name, location_id, location_code, location_name, area_id, area_code, area_name, remark, attr1, attr2, attr3, attr4, create_by, create_time, update_by, update_time from wm_product_produce_line
+        select line_id, record_id, item_id, item_code, item_name, specification, unit_of_measure, quantity_produce, batch_code, warehouse_id, warehouse_code, warehouse_name, location_id, location_code, location_name, area_id, area_code, area_name, remark, attr1, attr2, attr3, attr4, create_by, create_time, update_by, update_time, maincnt, seccnt from wm_product_produce_line
     </sql>
 
     <select id="selectWmProductProduceLineList" parameterType="WmProductProduceLine" resultMap="WmProductProduceLineResult">
@@ -95,6 +97,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time,</if>
             <if test="updateBy != null">update_by,</if>
             <if test="updateTime != null">update_time,</if>
+            <if test="maincnt != null">maincnt,</if>
+            <if test="seccnt != null">seccnt,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="recordId != null">#{recordId},</if>
@@ -123,6 +127,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">#{createTime},</if>
             <if test="updateBy != null">#{updateBy},</if>
             <if test="updateTime != null">#{updateTime},</if>
+            <if test="maincnt != null">#{maincnt},</if>
+            <if test="seccnt != null">#{seccnt},</if>
          </trim>
     </insert>
 
@@ -155,6 +161,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="maincnt != null">maincnt = #{maincnt},</if>
+            <if test="seccnt != null">seccnt = #{seccnt},</if>
         </trim>
         where line_id = #{lineId}
     </update>

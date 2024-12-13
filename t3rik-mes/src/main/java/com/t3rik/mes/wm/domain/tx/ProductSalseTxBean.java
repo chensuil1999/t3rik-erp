@@ -94,6 +94,48 @@ public class ProductSalseTxBean extends BaseEntity {
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     private Date salseDate;
 
+    public Integer getCountPackage() {
+        return countPackage;
+    }
+
+    public void setCountPackage(Integer countPackage) {
+        this.countPackage = countPackage;
+    }
+
+    public Integer getAttr4() {
+        return attr4;
+    }
+
+    public void setAttr4(Integer attr4) {
+        this.attr4 = attr4;
+    }
+
+    public Double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Double amount) {
+        this.amount = amount;
+    }
+
+    /**
+     * 件数，总数量
+     * @return
+     */
+    private Integer countPackage;
+
+    /**
+     * 每件只数
+     * @return
+     */
+    private Integer attr4;
+
+    /**
+     * 总金额
+     * @return
+     */
+    private Double amount;
+
     public Long getMaterialStockId() {
         return materialStockId;
     }
@@ -349,6 +391,9 @@ public class ProductSalseTxBean extends BaseEntity {
                 ", sourceDocLineId=" + sourceDocLineId +
                 ", transactionQuantity=" + transactionQuantity +
                 ", salseDate=" + salseDate +
+                ", amount=" + amount +
+                ", attr4=" + attr4 +
+                ", countPackage=" + countPackage +
                 '}';
     }
 }

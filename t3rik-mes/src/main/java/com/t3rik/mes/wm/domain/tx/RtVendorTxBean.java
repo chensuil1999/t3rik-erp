@@ -82,6 +82,32 @@ public class RtVendorTxBean extends BaseEntity {
     /** 事务数量 */
     private BigDecimal transactionQuantity;
 
+    /**
+     *件数
+     * @return
+     */
+    private Integer Attr4;
+    /**只数每件
+     *
+     */
+    private Integer Attr3;
+
+    public Integer getAttr4() {
+        return Attr4;
+    }
+
+    public void setAttr4(Integer attr4) {
+        Attr4 = attr4;
+    }
+
+    public Integer getAttr3() {
+        return Attr3;
+    }
+
+    public void setAttr3(Integer attr3) {
+        Attr3 = attr3;
+    }
+
     public Long getMaterialStockId() {
         return materialStockId;
     }

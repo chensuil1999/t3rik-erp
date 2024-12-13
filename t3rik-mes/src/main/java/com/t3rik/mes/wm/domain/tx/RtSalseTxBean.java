@@ -85,6 +85,32 @@ public class RtSalseTxBean extends BaseEntity {
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     private Date rtDate;
 
+    /**
+     *件数
+     * @return
+     */
+    private Integer Attr4;
+    /**只数每件
+     *
+     */
+    private Integer Attr3;
+
+    public Integer getAttr4() {
+        return Attr4;
+    }
+
+    public void setAttr4(Integer attr4) {
+        Attr4 = attr4;
+    }
+
+    public Integer getAttr3() {
+        return Attr3;
+    }
+
+    public void setAttr3(Integer attr3) {
+        Attr3 = attr3;
+    }
+
     public Long getItemId() {
         return itemId;
     }

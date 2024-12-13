@@ -90,14 +90,31 @@ public class WmProductProduceLine extends BaseEntity
     /** 预留字段1 */
     private String attr1;
 
-    /** 预留字段2 */
-    private String attr2;
+    /**
+     * 预留字段2
+     */
+    private Double attr2;
 
-    /** 预留字段3 */
-    private Long attr3;
+    /**
+     * 预留字段3
+     */
+    private Integer attr3;
 
-    /** 预留字段4 */
-    private Long attr4;
+    /**
+     * 预留字段4
+     */
+    private Double attr4;
+
+    /**
+     * 主件只数
+     *
+     */
+    private Integer maincnt;
+
+    /**
+     * 零头只数
+     */
+    private Integer seccnt;
 
     public void setLineId(Long lineId) 
     {
@@ -270,30 +287,46 @@ public class WmProductProduceLine extends BaseEntity
     {
         return attr1;
     }
-    public void setAttr2(String attr2) 
+    public void setAttr2(Double attr2)
     {
         this.attr2 = attr2;
     }
 
-    public String getAttr2() 
+    public Double getAttr2()
     {
         return attr2;
     }
-    public void setAttr3(Long attr3) 
+    public void setAttr3(Integer attr3)
     {
         this.attr3 = attr3;
     }
 
-    public Long getAttr3() 
+    public Integer getAttr3()
     {
         return attr3;
     }
-    public void setAttr4(Long attr4) 
+    public void setAttr4(Double attr4)
     {
         this.attr4 = attr4;
     }
 
-    public Long getAttr4() 
+    public Integer getMaincnt() {
+        return maincnt;
+    }
+
+    public void setMaincnt(Integer maincnt) {
+        this.maincnt = maincnt;
+    }
+
+    public Integer getSeccnt() {
+        return seccnt;
+    }
+
+    public void setSeccnt(Integer seccnt) {
+        this.seccnt = seccnt;
+    }
+
+    public Double getAttr4()
     {
         return attr4;
     }

@@ -113,7 +113,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                irl.`warehouse_id`,irl.`warehouse_code`,irl.`warehouse_name`,irl.`location_id`,irl.`location_code`,irl.`location_name`,irl.`area_id`,irl.`area_code`,irl.`area_name`,
                ir.`vendor_id`,ir.`vendor_code`,ir.`vendor_name`,ir.`vendor_nick`,
                'IR' AS source_doc_type,ir.`recpt_id` AS source_doc_id,ir.`recpt_code` AS source_doc_code,irl.`line_id` AS source_doc_line_id,
-               irl.`quantity_recived` AS transaction_quantity,ir.recpt_date, irl.`expire_date`,
+               irl.`quantity_recived` AS transaction_quantity,ir.recpt_date, irl.`expire_date`,irl.attr4, irl.attr3,
                ir.`create_by`,ir.`create_time`,ir.`update_by`,ir.`update_time`
         FROM wm_outsource_recpt ir
                  LEFT JOIN wm_outsource_recpt_line irl

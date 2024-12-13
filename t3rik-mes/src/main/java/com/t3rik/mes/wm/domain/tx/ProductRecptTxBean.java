@@ -91,6 +91,11 @@ public class ProductRecptTxBean extends BaseEntity {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date expireDate;
 
+    /**
+     * 总件数
+     * @return
+     */
+
     public Long getMaterialStockId() {
         return materialStockId;
     }

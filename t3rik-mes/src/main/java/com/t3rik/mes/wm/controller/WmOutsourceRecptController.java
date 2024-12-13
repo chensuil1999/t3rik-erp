@@ -164,7 +164,9 @@ public class WmOutsourceRecptController extends BaseController {
             WmOutsourceRecptLine line = lines.get(i);
             // 判断入库的物资，如果是生产工单中的产品，则更新已生产数量
             if (line.getItemCode().equals(proTask.getItemCode())) {
+                //更新已生产数和符合产品质量数。
                 proTask.setQuantityProduced(produced.add(line.getQuantityRecived()));
+                proTask.setQuantityQuanlify(produced.add(line.getQuantityRecived()));
             }
         }
             proTaskService.updateProTask(proTask);

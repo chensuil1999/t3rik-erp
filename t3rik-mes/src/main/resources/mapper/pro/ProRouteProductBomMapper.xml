@@ -41,7 +41,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="itemName != null  and itemName != ''"> and item_name like concat('%', #{itemName}, '%')</if>
             <if test="specification != null  and specification != ''"> and specification = #{specification}</if>
             <if test="unitOfMeasure != null  and unitOfMeasure != ''"> and unit_of_measure = #{unitOfMeasure}</if>
-            <if test="quantity != null "> and quantity = #{quantity}</if>
+
         </where>
     </select>
     

@@ -196,7 +196,7 @@ public class WmMaterialStock extends BaseEntity {
      * 预留字段4
      */
     @Excel(name = "预留字段4")
-    private Long attr4;
+    private Integer attr4;
 
     public void setMaterialStockId(Long materialStockId) {
         this.materialStockId = materialStockId;
@@ -430,11 +430,11 @@ public class WmMaterialStock extends BaseEntity {
         return attr3;
     }
 
-    public void setAttr4(Long attr4) {
+    public void setAttr4(Integer attr4) {
         this.attr4 = attr4;
     }
 
-    public Long getAttr4() {
+    public Integer getAttr4() {
         return attr4;
     }
 

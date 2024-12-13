@@ -25,6 +25,7 @@ import jakarta.annotation.Resource
 import kotlinx.coroutines.runBlocking
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
+import java.math.BigDecimal
 
 
 /**
@@ -73,6 +74,10 @@ class AuditController : BaseController() {
                     // 判断当前生产任务的状态，如果已经完成则不能再报工
             if (UserConstants.ORDER_STATUS_FINISHED == pt.status) {
                 return AjaxResult.error("当前生产工单的状态为已完成，不能继续报工，请刷新生产任务列表！")
+            }
+            // 仍旧有待检数量时不能执行
+            if (pfs.quantityFeedback.compareTo(BigDecimal.ONE) <= 0) {
+                return AjaxResult.error("当前报工数异常，无法执行报工！")
             }
             proFeedbackService.executeFeedback(pfs, pt);
         }

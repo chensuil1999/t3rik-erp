@@ -52,6 +52,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select t1.workorder_id, t1.item_id, t1.item_code, t1.item_name, t1.item_spc, t1.quantity,
                t1.unit_of_measure, t2.quantity as attr1
             from pro_workorder_bom t1 left join md_product_bom t2 on t1.item_id = t2.bom_item_id
+            and t2.item_id = (select product_id FROM pro_workorder where workorder_id = #{workorderId})
         where t1.workorder_id = #{workorderId}
     </select>
         

@@ -128,6 +128,7 @@ public class MdItemController extends BaseController {
         startPage();
         // 根据类型查询
         String itemTypeId = ItemTypeSupport.getDefaultDataIdByItemType(type);
+        //System.out.println("dddddddd:" + type);
         Assert.notNull(itemTypeId, () -> new BusinessException(MsgConstants.PARAM_ERROR));
         mdItem.setItemTypeId(Long.valueOf(itemTypeId));
         mdItem.setEnableFlag(EnableFlagEnum.YES.getCode());

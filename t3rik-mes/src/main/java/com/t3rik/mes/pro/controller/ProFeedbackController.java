@@ -220,7 +220,7 @@ public class ProFeedbackController extends BaseController {
     /**
      * 执行报工
      * 1.更新生产任务和生产工单的进度
-     * 2.物料消耗
+     * 2.物料消耗（旭虹不使用物料消耗,因为无法确定消耗系数）
      * 3.产品产出
      *
      * @param recordId
@@ -229,17 +229,20 @@ public class ProFeedbackController extends BaseController {
     @PreAuthorize("@ss.hasPermi('mes:pro:feedback:edit')")
     @Log(title = "生产报工执行", businessType = BusinessType.UPDATE)
     @Transactional
-    @PutMapping("/{recordId}/{fdcnt}")
-    public AjaxResult execute(@PathVariable("recordId") Long recordId, @PathVariable("fdcnt") Long fdcnt) {
+    @PutMapping("/{recordId}/{fdcnt}/{maincnt}/{seccnt}")
+    public AjaxResult execute(@PathVariable("recordId") Long recordId, @PathVariable("fdcnt") Long fdcnt,
+                              @PathVariable("maincnt") Integer maincnt, @PathVariable("seccnt") Integer seccnt) {
 
         if (!StringUtils.isNotNull(recordId)) {
             return AjaxResult.error("请先保存单据");
         }
-        if (!StringUtils.isNotNull(fdcnt) || fdcnt.compareTo(Long.valueOf(1)) != 1) {
-            return AjaxResult.error("报工数异常，不能小于1");
+        if (!StringUtils.isNotNull(fdcnt) || fdcnt.compareTo(Long.valueOf(0)) == 0) {
+            return AjaxResult.error("报工数异常，不能为零");
+        }
+        if (!StringUtils.isNotNull(maincnt) || maincnt.compareTo(Integer.valueOf(0)) == 0 ) {
+            return AjaxResult.error("报工数异常，不能为零");
         }
         ProFeedback feedback = proFeedbackService.selectProFeedbackByRecordId(recordId);
-        //如果报工单数为1，那就要将此数更新为报工审核人员报工数
 
         ProTask task = proTaskService.selectProTaskByTaskId(feedback.getTaskId());
         // 判断当前生产任务的状态，如果已经完成则不能再报工
@@ -255,6 +258,8 @@ public class ProFeedbackController extends BaseController {
 
             feedback.setQuantityFeedback(BigDecimal.valueOf(fdcnt));
             feedback.setQuantityQualified(BigDecimal.valueOf(fdcnt));
+            feedback.setMaincnt(Integer.valueOf(maincnt));
+            feedback.setSeccnt(Integer.valueOf(seccnt));
             proFeedbackService.updateById(feedback);
         }
         this.proFeedbackService.executeFeedback(feedback, task);

@@ -83,7 +83,7 @@ lateinit var proRouteProcessService: IProRouteProcessService
         workOrderId.isNonPositive { MsgConstants.PARAM_ERROR }
 
         val pt = proTaskService.lambdaQuery()
-                .eq(ProTask::getWorkorderId, workOrderId).orderByAsc(ProTask::getProcessName).list()
+                .eq(ProTask::getWorkorderId, workOrderId).orderByAsc(ProTask::getTaskCode).list()
         return AjaxResult.success(pt)
     }
 
