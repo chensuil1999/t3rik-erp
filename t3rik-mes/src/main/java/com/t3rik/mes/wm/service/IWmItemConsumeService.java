@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.t3rik.mes.pro.domain.ProFeedback;
 import com.t3rik.mes.wm.domain.WmItemConsume;
+import com.t3rik.mes.wm.domain.WmRtIssue;
 import com.t3rik.mes.wm.domain.tx.ItemConsumeTxBean;
 
 /**
@@ -70,5 +71,6 @@ public interface IWmItemConsumeService
      */
     public WmItemConsume generateItemConsume(ProFeedback feedback);
 
+    public int generateItemConsumeLine(WmItemConsume wmItemConsume);
     public List<ItemConsumeTxBean> getTxBeans(Long recordId);
 }

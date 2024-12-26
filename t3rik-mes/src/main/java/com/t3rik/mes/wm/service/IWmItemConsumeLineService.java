@@ -2,6 +2,7 @@ package com.t3rik.mes.wm.service;
 
 import java.util.List;
 import com.t3rik.mes.wm.domain.WmItemConsumeLine;
+import com.t3rik.mes.wm.domain.WmOutsourceRecptLine;
 
 /**
  * 物料消耗记录行Service接口
@@ -27,6 +28,7 @@ public interface IWmItemConsumeLineService
      */
     public List<WmItemConsumeLine> selectWmItemConsumeLineList(WmItemConsumeLine wmItemConsumeLine);
 
+    public List<WmItemConsumeLine> selectWmItemConsumeLineByRecordId(Long recordId);
     /**
      * 新增物料消耗记录行
      * 
