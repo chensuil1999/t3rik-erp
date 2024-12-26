@@ -113,6 +113,8 @@ public class StorageCoreServiceImpl implements IStorageCoreService {
             transaction_out.setTransactionFlag(-1);// 库存减少
             transaction_out.setStorageCheckFlag(Boolean.TRUE);//是否校验库存量
             transaction_out.setTransactionDate(new Date());
+            transaction_out.setAttr4(0);
+            //System.out.println("oooo" + transaction_out);
             wmTransactionService.processTransaction(transaction_out);
 
             // 再构造一条目的库存增加的事务
@@ -120,6 +122,7 @@ public class StorageCoreServiceImpl implements IStorageCoreService {
             transaction_in.setTransactionType(transactionType_in);
             BeanUtils.copyBeanProp(transaction_in, line);
             transaction_in.setTransactionFlag(1);// 库存增加
+            transaction_in.setAttr4(0);
             transaction_in.setStorageCheckFlag(Boolean.TRUE);//是否校验库存量
 
             // 由于是新增的库存记录所以需要将查询出来的库存记录ID置为空
@@ -220,6 +223,8 @@ public class StorageCoreServiceImpl implements IStorageCoreService {
             transaction_out.setTransactionType(transactionType_out);
             BeanUtils.copyBeanProp(transaction_out, line);
 
+//            System.out.println("oooo: " + line.);
+            //System.out.println("oooo: " + transaction_out);
             // 这里的出库事务默认从线边库出库到实际仓库
             //查询仓库-虚拟库存
             WmWarehouse warehouse = wmWarehouseService.selectWmWarehouseByWarehouseCode(UserConstants.VIRTUAL_WH);
@@ -241,6 +246,7 @@ public class StorageCoreServiceImpl implements IStorageCoreService {
             transaction_out.setTransactionFlag(-1);// 库存减少
             //检查库存不能为负数
             //transaction_out.setStorageCheckFlag(Boolean.TRUE);//是否校验库存量
+            transaction_out.setAttr4(0);
             wmTransactionService.processTransaction(transaction_out);
 
             // 构造一条目的库存增加的事务
@@ -254,7 +260,9 @@ public class StorageCoreServiceImpl implements IStorageCoreService {
             //transaction_in.setStorageCheckFlag(Boolean.TRUE);
             // 设置入库相关联的出库事务ID
             transaction_in.setRelatedTransactionId(transaction_out.getTransactionId());
-
+            transaction_in.setAttr4(0);
+//            System.out.println();
+            //System.out.println("oooo: " + transaction_in);
             wmTransactionService.processTransaction(transaction_in);
         }
     }
@@ -277,6 +285,7 @@ public class StorageCoreServiceImpl implements IStorageCoreService {
             transaction.setTransactionFlag(-1); // 库存减少
             transaction.setStorageCheckFlag(false);// 库存可以为负
             transaction.setTransactionDate(new Date());
+            transaction.setAttr4(0);
 
             WmWarehouse warehouse = wmWarehouseService.selectWmWarehouseByWarehouseCode(UserConstants.VIRTUAL_WH);
             transaction.setWarehouseId(warehouse.getWarehouseId());
@@ -330,7 +339,6 @@ public class StorageCoreServiceImpl implements IStorageCoreService {
             transaction.setAreaId(area.getAreaId());
             transaction.setAreaCode(area.getAreaCode());
             transaction.setAreaName(area.getAreaName());
-            //System.out.println("dddd: " + transaction);
 
             wmTransactionService.processTransaction(transaction);
         }

@@ -125,7 +125,6 @@ public class ProFeedbackController extends BaseController {
         String feedbackCode = autoCodeUtil.genSerialCode(UserConstants.FEEDBACK_CODE, "");
         proFeedback.setFeedbackCode(feedbackCode);
         proFeedback.setCreateBy(getUsername());
-
         proFeedback.setQuantity(task.getQuantity());
         proFeedbackService.insertProFeedback(proFeedback);
         return AjaxResult.success(proFeedback.getRecordId());
@@ -236,11 +235,11 @@ public class ProFeedbackController extends BaseController {
         if (!StringUtils.isNotNull(recordId)) {
             return AjaxResult.error("请先保存单据");
         }
-        if (!StringUtils.isNotNull(fdcnt) || fdcnt.compareTo(Long.valueOf(0)) == 0) {
-            return AjaxResult.error("报工数异常，不能为零");
+        if (!StringUtils.isNotNull(fdcnt) || fdcnt.compareTo(Long.valueOf(1)) <= 0) {
+            return AjaxResult.error("报工总数异常，不能小于1");
         }
         if (!StringUtils.isNotNull(maincnt) || maincnt.compareTo(Integer.valueOf(0)) == 0 ) {
-            return AjaxResult.error("报工数异常，不能为零");
+            return AjaxResult.error("报工只数异常，不能为0");
         }
         ProFeedback feedback = proFeedbackService.selectProFeedbackByRecordId(recordId);
 
@@ -254,13 +253,16 @@ public class ProFeedbackController extends BaseController {
             return AjaxResult.error("当前报工单未完成检验（待检数量大于0），无法执行报工！");
         }
         feedback.setQuantity(task.getQuantity());
-        if (feedback.getQuantityFeedback().compareTo(BigDecimal.ONE) == 0) {
+
+        //System.out.println("oooo: " + feedback);
+        //System.out.println(feedback.getQuantityFeedback().compareTo(BigDecimal.valueOf(fdcnt)) != 0);
+        if (feedback.getQuantityFeedback().compareTo(BigDecimal.valueOf(fdcnt)) != 0) {
 
             feedback.setQuantityFeedback(BigDecimal.valueOf(fdcnt));
             feedback.setQuantityQualified(BigDecimal.valueOf(fdcnt));
             feedback.setMaincnt(Integer.valueOf(maincnt));
             feedback.setSeccnt(Integer.valueOf(seccnt));
-            proFeedbackService.updateById(feedback);
+            //proFeedbackService.updateById(feedback);
         }
         this.proFeedbackService.executeFeedback(feedback, task);
         return AjaxResult.success();

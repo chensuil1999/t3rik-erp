@@ -91,6 +91,25 @@ public class WmRtIssueLine extends BaseEntity
     @Excel(name = "库位名称")
     private String areaName;
 
+    /**
+     * 供应商ID
+     */
+    @Excel(name = "供应商ID")
+    private Long vendorId;
+
+    /**
+     * 供应商编码
+     */
+    @Excel(name = "供应商编码")
+    private String vendorCode;
+
+    /**
+     * 供应商名称
+     */
+    @Excel(name = "供应商名称")
+    private String vendorName;
+
+
     /** 预留字段1 */
     private String attr1;
 
@@ -343,5 +362,29 @@ public class WmRtIssueLine extends BaseEntity
             .append("updateBy", getUpdateBy())
             .append("updateTime", getUpdateTime())
             .toString();
+    }
+
+    public Long getVendorId() {
+        return vendorId;
+    }
+
+    public void setVendorId(Long vendorId) {
+        this.vendorId = vendorId;
+    }
+
+    public String getVendorCode() {
+        return vendorCode;
+    }
+
+    public void setVendorCode(String vendorCode) {
+        this.vendorCode = vendorCode;
+    }
+
+    public String getVendorName() {
+        return vendorName;
+    }
+
+    public void setVendorName(String vendorName) {
+        this.vendorName = vendorName;
     }
 }

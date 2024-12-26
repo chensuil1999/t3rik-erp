@@ -36,7 +36,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectWmRtIssueLineVo">
-        select line_id, rt_id, material_stock_id, item_id, item_code, item_name, specification, unit_of_measure, quantity_rt, batch_code, warehouse_id, warehouse_code, warehouse_name, location_id, location_code, location_name, area_id, area_code, area_name, remark, attr1, attr2, attr3, attr4, create_by, create_time, update_by, update_time from wm_rt_issue_line
+        select line_id, rt_id, material_stock_id, item_id, item_code, item_name, specification, unit_of_measure, quantity_rt, batch_code, warehouse_id, warehouse_code, warehouse_name, location_id, location_code, location_name, area_id, area_code, area_name, remark, attr1, attr2, attr3, attr4, create_by, create_time, update_by, update_time,vendor_id, vendor_code, vendor_name  from wm_rt_issue_line
     </sql>
 
     <select id="selectWmRtIssueLineList" parameterType="WmRtIssueLine" resultMap="WmRtIssueLineResult">
@@ -60,6 +60,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="areaId != null "> and area_id = #{areaId}</if>
             <if test="areaCode != null  and areaCode != ''"> and area_code = #{areaCode}</if>
             <if test="areaName != null  and areaName != ''"> and area_name like concat('%', #{areaName}, '%')</if>
+            <if test="vendorCode != null  and vendorCode != ''"> and vendor_code = #{vendorCode}</if>
+            <if test="vendorName != null  and vendorName != ''"> and vendor_name like concat('%', #{vendorName}, '%')</if>
         </where>
         order by create_time desc
     </select>
@@ -99,6 +101,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time,</if>
             <if test="updateBy != null">update_by,</if>
             <if test="updateTime != null">update_time,</if>
+            <if test="vendorId != null">vendor_id,</if>
+            <if test="vendorCode != null">vendor_code,</if>
+            <if test="vendorName != null">vendor_name,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="rtId != null">#{rtId},</if>
@@ -128,6 +133,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">#{createTime},</if>
             <if test="updateBy != null">#{updateBy},</if>
             <if test="updateTime != null">#{updateTime},</if>
+            <if test="vendorId != null">#{vendorId},</if>
+            <if test="vendorCode != null">#{vendorCode},</if>
+            <if test="vendorName != null">#{vendorName},</if>
          </trim>
     </insert>
 
@@ -161,6 +169,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="vendorId != null">vendor_id = #{vendorId},</if>
+            <if test="vendorCode != null">vendor_code = #{vendorCode},</if>
+            <if test="vendorName != null">vendor_name = #{vendorName},</if>
         </trim>
         where line_id = #{lineId}
     </update>

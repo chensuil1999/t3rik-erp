@@ -102,6 +102,10 @@ public class WmProductSalseController extends BaseController {
         if (UserConstants.NOT_UNIQUE.equals(wmProductSalseService.checkUnique(wmProductSalse))) {
             return AjaxResult.error("出库单编号已存在！");
         }
+        System.out.println("zzzzz: " + wmProductSalse);
+        if(UserConstants.ORDER_STATUS_FINISHED.equals(wmProductSalse.getStatus())) {
+                return AjaxResult.error("归档数据！无法修改");
+        }
         // 设置仓库信息
         this.warehouseUtil.setWarehouseInfo(wmProductSalse);
         return toAjax(wmProductSalseService.updateWmProductSalse(wmProductSalse));
@@ -115,6 +119,13 @@ public class WmProductSalseController extends BaseController {
     @Transactional
     @DeleteMapping("/{salseIds}")
     public AjaxResult remove(@PathVariable Long[] salseIds) {
+        for (Long salseId : salseIds) {
+            WmProductSalse wps = wmProductSalseService.selectWmProductSalseBySalseId(salseId);
+            if(UserConstants.ORDER_STATUS_FINISHED.equals(wps.getStatus()))
+            {
+                return AjaxResult.error("存在归档数据！无法删除");
+            }
+        }
         for (Long salseId : salseIds) {
             wmProductSalseLineService.deleteBySalseId(salseId);
         }

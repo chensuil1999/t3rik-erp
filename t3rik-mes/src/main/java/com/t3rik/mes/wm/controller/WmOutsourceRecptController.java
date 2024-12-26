@@ -165,17 +165,18 @@ public class WmOutsourceRecptController extends BaseController {
             // 判断入库的物资，如果是生产工单中的产品，则更新已生产数量
             if (line.getItemCode().equals(proTask.getItemCode())) {
                 //更新已生产数和符合产品质量数。
-                proTask.setQuantityProduced(produced.add(line.getQuantityRecived()));
-                proTask.setQuantityQuanlify(produced.add(line.getQuantityRecived()));
+//                proTask.setQuantityProduced(produced.add(line.getQuantityRecived()));
+//                proTask.setQuantityQuanlify(produced.add(line.getQuantityRecived()));
+                produced = produced.add(line.getQuantityRecived());
             }
         }
-            proTaskService.updateProTask(proTask);
+        proTask.setQuantityProduced(produced);
+        proTask.setQuantityQuanlify(produced);
+        proTaskService.updateProTask(proTask);
         }
-
         // 更新单据状态
         recpt.setStatus(UserConstants.ORDER_STATUS_FINISHED);
         wmOutsourceRecptService.updateWmOutsourceRecpt(recpt);
-
         return AjaxResult.success();
     }
 

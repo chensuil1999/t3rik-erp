@@ -66,8 +66,6 @@ public class RtIssueTxBean extends BaseEntity {
     /** 供应商名称 */
     private String vendorName;
 
-    /** 供应商简称 */
-    private String vendorNick;
 
     /** 单据类型 */
     private String sourceDocType;
@@ -240,14 +238,6 @@ public class RtIssueTxBean extends BaseEntity {
         this.vendorName = vendorName;
     }
 
-    public String getVendorNick() {
-        return vendorNick;
-    }
-
-    public void setVendorNick(String vendorNick) {
-        this.vendorNick = vendorNick;
-    }
-
     public String getSourceDocType() {
         return sourceDocType;
     }
@@ -318,7 +308,6 @@ public class RtIssueTxBean extends BaseEntity {
                 ", vendorId=" + vendorId +
                 ", vendorCode='" + vendorCode + '\'' +
                 ", vendorName='" + vendorName + '\'' +
-                ", vendorNick='" + vendorNick + '\'' +
                 ", sourceDocType='" + sourceDocType + '\'' +
                 ", sourceDocId=" + sourceDocId +
                 ", sourceDocCode='" + sourceDocCode + '\'' +

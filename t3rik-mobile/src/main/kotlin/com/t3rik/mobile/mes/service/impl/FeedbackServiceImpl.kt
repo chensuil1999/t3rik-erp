@@ -238,6 +238,7 @@ class FeedbackServiceImpl : IFeedbackService {
             val feedbackList = async {
 
                 val wap = LambdaQueryWrapper<ProFeedback>()
+                //116部门内将可以查看全部报工单。
                 if(dptid.compareTo(116) != 0) {
                     //println("oooooadmin not admin")
                     wap.eq(ProFeedback::getUserId, userid)
@@ -306,9 +307,9 @@ class FeedbackServiceImpl : IFeedbackService {
         proFeedback.userName = SecurityUtils.getUsername()
         proFeedback.nickName = SecurityUtils.getUserNickname()
         // 审批人
-        proFeedback.recordUserId = DefaultDataEnum.ADMIN.code.toLong()
-        proFeedback.recordUser = DefaultDataEnum.ADMIN.desc
-        proFeedback.recordNick = DefaultDataEnum.ADMIN.desc
+        //proFeedback.recordUserId = DefaultDataEnum.ADMIN.code.toLong()
+        //proFeedback.recordUser = DefaultDataEnum.ADMIN.desc
+        //proFeedback.recordNick = DefaultDataEnum.ADMIN.desc
         // 报工时间
         proFeedback.feedbackTime = DateUtils.getNowDate()
         // 状态 -> 审批中

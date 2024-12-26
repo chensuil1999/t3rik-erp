@@ -33,6 +33,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
+        <result property="vendorId"    column="vendor_id"    />
+        <result property="vendorCode"    column="vendor_code"    />
+        <result property="vendorName"    column="vendor_name"    />
     </resultMap>
 
     <sql id="selectWmRtSalseLineVo">

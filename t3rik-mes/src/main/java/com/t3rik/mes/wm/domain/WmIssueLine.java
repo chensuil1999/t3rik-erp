@@ -122,6 +122,23 @@ public class WmIssueLine extends BaseEntity {
      */
     @Excel(name = "库位编码")
     private String areaCode;
+    /**
+     * 供应商ID
+     */
+    @Excel(name = "供应商ID")
+    private Long vendorId;
+
+    /**
+     * 供应商编码
+     */
+    @Excel(name = "供应商编码")
+    private String vendorCode;
+
+    /**
+     * 供应商名称
+     */
+    @Excel(name = "供应商名称")
+    private String vendorName;
 
     /**
      * 库位名称

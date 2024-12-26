@@ -179,7 +179,9 @@ public class MdItemController extends BaseController {
             mdItem.setMaxStock(0D);
         }
 
+
         mdItem.setUpdateBy(getUsername());
+        //System.out.println("oooo: " + mdItem);
         return toAjax(mdItemService.updateMdItem(mdItem));
     }
 

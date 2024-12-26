@@ -144,6 +144,7 @@ public class WmRtIssueController extends BaseController {
         // 查询退料信息所对应的库存记录信息
         List<RtIssueTxBean> beans = wmRtIssueService.getTxBeans(rtId);
 
+        //System.out.println("oooooa: " + beans);
         // 执行生产退料
         storageCoreService.processRtIssue(beans);
 

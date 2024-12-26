@@ -30,6 +30,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import static com.t3rik.common.utils.SecurityUtils.getLoginUser;
+
 /**
  * 生产报工记录Service业务层处理
  *
@@ -192,7 +194,11 @@ public class ProFeedbackServiceImpl extends ServiceImpl<ProFeedbackMapper, ProFe
             //executeItemConsume(itemConsume);
         //}
         // 更新报工单的状态
+        feedback.setRecordUserId(getLoginUser().getUserId());
+        feedback.setRecordUser(getLoginUser().getUsername());
+        feedback.setRecordNick(getLoginUser().getUser().getNickName());
         feedback.setStatus(OrderStatusEnum.FINISHED.getCode());
+        //System.out.println("zzzz: " + feedback);
         this.updateProFeedback(feedback);
     }
 

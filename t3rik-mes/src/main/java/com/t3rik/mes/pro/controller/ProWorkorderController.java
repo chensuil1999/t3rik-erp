@@ -118,11 +118,10 @@ public class ProWorkorderController extends BaseController {
         if (proWorkorder.getParentId() == null || proWorkorder.getParentId() == 0) {
             proWorkorder.setAncestors("0");
         }
+        proWorkorder.setCreateBy(getUsername());
         proWorkorderService.insertProWorkorder(proWorkorder);
-
         Long workorderId = proWorkorder.getWorkorderId();
         generateBomLine(workorderId);
-        proWorkorder.setCreateBy(getUsername());
         return AjaxResult.success(workorderId);
     }
 
@@ -134,6 +133,7 @@ public class ProWorkorderController extends BaseController {
     @PutMapping
     public AjaxResult edit(@RequestBody ProWorkorder proWorkorder) {
         ProWorkorder workorder = proWorkorderService.selectProWorkorderByWorkorderId(proWorkorder.getWorkorderId());
+
         int ret = proWorkorderService.updateProWorkorder(proWorkorder);
         // 如果是产品和数量发生变化则需要重新生成BOM组成
         if (ret > 0) {
