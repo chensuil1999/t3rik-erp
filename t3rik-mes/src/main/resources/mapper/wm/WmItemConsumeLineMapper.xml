@@ -67,6 +67,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectWmItemConsumeLineVo"/>
         where line_id = #{lineId}
     </select>
+
+    <select id="selectWmItemConsumeLineByRecordId" parameterType="Long" resultMap="WmItemConsumeLineResult">
+        <include refid="selectWmItemConsumeLineVo"/>
+        where record_id = #{recordId}
+    </select>
         
     <insert id="insertWmItemConsumeLine" parameterType="WmItemConsumeLine" useGeneratedKeys="true" keyProperty="lineId">
         insert into wm_item_consume_line

@@ -1,18 +1,33 @@
 package com.t3rik.mes.wm.controller;
 
 import com.t3rik.common.annotation.Log;
+import com.t3rik.common.constant.UserConstants;
 import com.t3rik.common.core.controller.BaseController;
 import com.t3rik.common.core.domain.AjaxResult;
 import com.t3rik.common.core.page.TableDataInfo;
 import com.t3rik.common.enums.BusinessType;
+import com.t3rik.common.utils.StringUtils;
 import com.t3rik.common.utils.poi.ExcelUtil;
+import com.t3rik.mes.pro.domain.ProTask;
+import com.t3rik.mes.pro.domain.ProWorkorder;
 import com.t3rik.mes.wm.domain.WmItemConsume;
+import com.t3rik.mes.wm.domain.WmItemConsumeLine;
+import com.t3rik.mes.wm.domain.WmOutsourceRecpt;
+import com.t3rik.mes.wm.domain.WmOutsourceRecptLine;
+import com.t3rik.mes.wm.domain.tx.ItemConsumeTxBean;
+import com.t3rik.mes.wm.domain.tx.OutsourceRecptTxBean;
+import com.t3rik.mes.wm.service.IStorageCoreService;
+import com.t3rik.mes.wm.service.IWmItemConsumeLineService;
 import com.t3rik.mes.wm.service.IWmItemConsumeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpServletResponse;
+
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -27,6 +42,12 @@ public class WmItemConsumeController extends BaseController
 {
     @Autowired
     private IWmItemConsumeService wmItemConsumeService;
+
+    @Autowired
+    private IWmItemConsumeLineService wmItemConsumeLineService;
+
+    @Autowired
+    private IStorageCoreService storageCoreService;
 
     /**
      * 查询物料消耗记录列表
@@ -71,7 +92,11 @@ public class WmItemConsumeController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody WmItemConsume wmItemConsume)
     {
-        return toAjax(wmItemConsumeService.insertWmItemConsume(wmItemConsume));
+        if(wmItemConsumeService.insertWmItemConsume(wmItemConsume) > 0) {
+            wmItemConsumeService.generateItemConsumeLine(wmItemConsume);
+            return AjaxResult.success();
+        }
+        return AjaxResult.error();
     }
 
     /**
@@ -94,5 +119,28 @@ public class WmItemConsumeController extends BaseController
     public AjaxResult remove(@PathVariable Long[] recordIds)
     {
         return toAjax(wmItemConsumeService.deleteWmItemConsumeByRecordIds(recordIds));
+    }
+
+    /**
+     * 执行消耗
+     *
+     * @return
+     */
+    @PreAuthorize("@ss.hasPermi('mes:wm:itemconsume:edit')")
+    @Log(title = "物料消耗记录执行", businessType = BusinessType.UPDATE)
+    @Transactional
+    @PutMapping("/{recordId}")
+    public AjaxResult execute(@PathVariable Long recordId) {
+        WmItemConsume wmIc = wmItemConsumeService.selectWmItemConsumeByRecordId(recordId);
+
+        List<WmItemConsumeLine> lines = wmItemConsumeLineService.selectWmItemConsumeLineByRecordId(recordId);
+        if (CollectionUtils.isEmpty(lines)) {
+            return AjaxResult.error("请指定消耗的物资！");
+        }
+        List<ItemConsumeTxBean> beans = wmItemConsumeService.getTxBeans(recordId);
+        storageCoreService.processItemConsume(beans);
+        wmIc.setStatus(UserConstants.ORDER_STATUS_FINISHED);
+        wmItemConsumeService.updateWmItemConsume(wmIc);
+        return AjaxResult.success();
     }
 }

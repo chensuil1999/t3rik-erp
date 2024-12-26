@@ -44,6 +44,11 @@ public class WmItemConsumeLineServiceImpl implements IWmItemConsumeLineService
         return wmItemConsumeLineMapper.selectWmItemConsumeLineList(wmItemConsumeLine);
     }
 
+    @Override
+    public List<WmItemConsumeLine> selectWmItemConsumeLineByRecordId(Long recordId) {
+        return wmItemConsumeLineMapper.selectWmItemConsumeLineByRecordId(recordId);
+    }
+
     /**
      * 新增物料消耗记录行
      * 

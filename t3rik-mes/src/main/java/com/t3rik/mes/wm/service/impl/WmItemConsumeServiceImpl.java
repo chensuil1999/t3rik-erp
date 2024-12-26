@@ -13,6 +13,7 @@ import com.t3rik.mes.pro.domain.*;
 import com.t3rik.mes.pro.mapper.*;
 import com.t3rik.mes.wm.domain.WmItemConsumeLine;
 import com.t3rik.mes.wm.domain.WmMaterialStock;
+import com.t3rik.mes.wm.domain.WmRtIssue;
 import com.t3rik.mes.wm.domain.tx.ItemConsumeTxBean;
 import com.t3rik.mes.wm.mapper.WmItemConsumeLineMapper;
 import com.t3rik.mes.wm.mapper.WmMaterialStockMapper;
@@ -261,8 +262,41 @@ public class WmItemConsumeServiceImpl implements IWmItemConsumeService
         }else {
             return  null; //如果本道工序没有配置BOM物料，则直接返回空
         }
-
         return itemConsume;
+    }
+
+    @Override
+    public int generateItemConsumeLine(WmItemConsume wmItemConsume) {
+        //先获取当前生产的产品在此道工序中配置的物料BOM
+        //下面这张表为空，全部返回null
+        ProRouteProductBom param = new ProRouteProductBom();
+        param.setProductId(wmItemConsume.getAttr3());
+        param.setRouteId(wmItemConsume.getAttr4());
+        List<ProRouteProductBom> boms = proRouteProductBomMapper.selectProRouteProductBomList(param);
+        System.out.println("----------: " + boms);
+        if(CollectionUtil.isNotEmpty(boms)){
+            for (ProRouteProductBom bom: boms
+            ) {
+                //这里根据需要消耗的原材料/半成品信息 匹配出对应的线边库库存记录。
+                BigDecimal quantityToConsume = BigDecimal.ZERO; //总的消耗量
+                    //没有查到领出到线边库的物料，直接在库中新增一条为负的记录(后期可能需要手工核销)
+                    WmItemConsumeLine line = new WmItemConsumeLine();
+                    line.setRecordId(wmItemConsume.getRecordId());
+                    line.setItemId(bom.getItemId());
+                    line.setItemCode(bom.getItemCode());
+                    line.setItemName(bom.getItemName());
+                    line.setSpecification(bom.getSpecification());
+                    line.setUnitOfMeasure(bom.getUnitOfMeasure());
+                    line.setQuantityConsume(quantityToConsume);
+                    //line.setBatchCode(workorder.getBatchCode());
+                    //System.out.println("----------: " + line);
+                    wmItemConsumeLineMapper.insertWmItemConsumeLine(line);
+
+            }
+        }else {
+            return  0; //如果本道工序没有配置BOM物料，则直接返回空
+        }
+        return 1;
     }
 
     @Override

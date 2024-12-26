@@ -58,4 +58,6 @@ public interface WmItemConsumeLineMapper
      * @return 结果
      */
     public int deleteWmItemConsumeLineByLineIds(Long[] lineIds);
+
+    public List<WmItemConsumeLine> selectWmItemConsumeLineByRecordId(Long recordId);
 }
