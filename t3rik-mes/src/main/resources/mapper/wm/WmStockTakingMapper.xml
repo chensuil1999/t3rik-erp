@@ -27,6 +27,35 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
     </resultMap>
 
+    <resultMap id="TakingTxBeanResult" type="TakingTxBean">
+        <result property="materialStockId" column="material_stock_id"></result>
+        <result property="itemId" column="item_id"></result>
+        <result property="itemCode" column="item_code"></result>
+        <result property="itemName" column="item_name"></result>
+        <result property="specification" column="specification"></result>
+        <result property="unitOfMeasure" column="unit_of_measure"></result>
+        <result property="warehouseId" column="warehouse_id"></result>
+        <result property="warehouseCode" column="warehouse_code"></result>
+        <result property="warehouseName" column="warehouse_name"></result>
+        <result property="locationId" column="location_id"></result>
+        <result property="locationCode" column="location_code"></result>
+        <result property="locationName" column="location_name"></result>
+        <result property="areaId" column="area_id"></result>
+        <result property="areaCode" column="area_code"></result>
+        <result property="areaName" column="area_name"></result>
+        <result property="sourceDocType" column="source_doc_type"></result>
+        <result property="sourceDocId" column="source_doc_id"></result>
+        <result property="sourceDocCode" column="source_doc_code"></result>
+        <result property="sourceDocLineId" column="source_doc_line_id"></result>
+        <result property="takingQuantity" column="transaction_quantity"></result>
+        <result property="workorderId" column="workorder_id"></result>
+        <result property="workorderCode" column="workorder_code"></result>
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
     <sql id="selectWmStockTakingVo">
         select taking_id, taking_code, taking_name, taking_date, user_name, nick_name, taking_type, warehouse_id, warehouse_code, warehouse_name, status, remark, attr1, attr2, attr3, attr4, create_by, create_time, update_by, update_time from wm_stock_taking
     </sql>
@@ -45,6 +74,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="warehouseName != null  and warehouseName != ''"> and warehouse_name like concat('%', #{warehouseName}, '%')</if>
             <if test="status != null  and status != ''"> and status = #{status}</if>
         </where>
+        order by create_time desc
     </select>
     
     <select id="selectWmStockTakingByTakingId" parameterType="Long" resultMap="WmStockTakingResult">
@@ -55,6 +85,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="checkUnique" parameterType="WmStockTaking" resultMap="WmStockTakingResult">
         <include refid="selectWmStockTakingVo"/>
         where taking_code = #{takingCode}
+    </select>
+
+    <select id="getTxBeans" parameterType="Long" resultMap="TakingTxBeanResult">
+        SELECT irl.material_stock_id, irl.`item_id`,irl.`item_code`,irl.`item_name`,irl.`specification`,irl.`unit_of_measure`,
+               irl.`warehouse_id`,irl.`warehouse_code`,irl.`warehouse_name`,irl.`location_id`,irl.`location_code`,irl.`location_name`,
+               irl.`area_id`,irl.`area_code`,irl.`area_name`,
+               'Taking' AS source_doc_type,ir.`taking_id` AS source_doc_id,ir.`taking_code` AS source_doc_code,irl.`line_id` AS source_doc_line_id,
+               irl.`taking_quantity` AS transaction_quantity, irl.attr3, irl.attr4, ir.`create_by`,ir.`create_time`,ir.`update_by`,ir.`update_time`
+        FROM wm_stock_taking ir
+                 LEFT JOIN wm_stock_taking_line irl
+                           ON ir.taking_id = irl.`taking_id`
+        WHERE ir.`taking_id` = #{takingId}
     </select>
         
     <insert id="insertWmStockTaking" parameterType="WmStockTaking" useGeneratedKeys="true" keyProperty="takingId">

@@ -85,4 +85,10 @@ public interface IStorageCoreService {
      * @param beans
      */
     void processWmWaste(List<WmWasteTxBean> beans);
+
+    /**
+     * 执行盘点信息
+     * @param beans
+     */
+    void processTaking(List<TakingTxBean> beans);
 }

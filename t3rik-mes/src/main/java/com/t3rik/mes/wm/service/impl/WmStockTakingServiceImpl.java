@@ -5,6 +5,8 @@ import java.util.List;
 import com.t3rik.common.constant.UserConstants;
 import com.t3rik.common.utils.DateUtils;
 import com.t3rik.common.utils.StringUtils;
+import com.t3rik.mes.wm.domain.tx.ProductSalseTxBean;
+import com.t3rik.mes.wm.domain.tx.TakingTxBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.t3rik.mes.wm.mapper.WmStockTakingMapper;
@@ -110,5 +112,10 @@ public class WmStockTakingServiceImpl implements IWmStockTakingService
     public int deleteWmStockTakingByTakingId(Long takingId)
     {
         return wmStockTakingMapper.deleteWmStockTakingByTakingId(takingId);
+    }
+
+    @Override
+    public List<TakingTxBean> getTxBeans(Long takingId) {
+        return wmStockTakingMapper.getTxBeans(takingId);
     }
 }

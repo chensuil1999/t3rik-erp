@@ -2,6 +2,8 @@ package com.t3rik.mes.wm.mapper;
 
 import java.util.List;
 import com.t3rik.mes.wm.domain.WmStockTaking;
+import com.t3rik.mes.wm.domain.tx.ProductSalseTxBean;
+import com.t3rik.mes.wm.domain.tx.TakingTxBean;
 
 /**
  * 库存盘点记录Mapper接口
@@ -65,4 +67,11 @@ public interface WmStockTakingMapper
      * @return 结果
      */
     public int deleteWmStockTakingByTakingIds(Long[] takingIds);
+
+    /**
+     * 获取产品盘点事务Bean
+     * @param takingId
+     * @return
+     */
+    public List<TakingTxBean> getTxBeans(Long takingId);
 }

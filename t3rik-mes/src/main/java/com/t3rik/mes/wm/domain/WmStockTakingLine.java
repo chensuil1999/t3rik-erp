@@ -5,6 +5,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import com.t3rik.common.annotation.Excel;
 import com.t3rik.common.core.domain.BaseEntity;
 
+import java.math.BigDecimal;
+
 /**
  * 库存盘点明细对象 wm_stock_taking_line
  * 
@@ -56,7 +58,7 @@ public class WmStockTakingLine extends BaseEntity
 
     /** 盘点数量 */
     @Excel(name = "盘点数量")
-    private Long takingQuantity;
+    private BigDecimal takingQuantity;
 
     /** 仓库ID */
     @Excel(name = "仓库ID")
@@ -200,12 +202,12 @@ public class WmStockTakingLine extends BaseEntity
     {
         return quantity;
     }
-    public void setTakingQuantity(Long takingQuantity) 
+    public void setTakingQuantity(BigDecimal takingQuantity)
     {
         this.takingQuantity = takingQuantity;
     }
 
-    public Long getTakingQuantity() 
+    public BigDecimal getTakingQuantity()
     {
         return takingQuantity;
     }

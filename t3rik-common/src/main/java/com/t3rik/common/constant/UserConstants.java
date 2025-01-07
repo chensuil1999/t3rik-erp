@@ -203,6 +203,9 @@ public class UserConstants {
     public static final String TRANSACTION_TYPE_WAREHOUSE_TRANS_OUT = "TRANS_OUT"; // 移库,移出
     public static final String TRANSACTION_TYPE_WAREHOUSE_TRANS_IN = "TRANS_IN"; // 移库,移入
 
+    public static final String TRANSACTION_TYPE_WAREHOUSE_TAKING_OUT = "TAKING_OUT"; // 盘点，减少
+    public static final String TRANSACTION_TYPE_WAREHOUSE_TAKING_IN = "TAKING_IN"; // 盘点，增加
+
     public static final String TRANSACTION_TYPE_ITEM_CONSUME = "ITEM_CONSUME";// 物料生产消耗
     public static final String TRANSACTION_TYPE_PRODUCT_PRODUCE = "PRODUCT_PRODUCE";// 产品生产
 

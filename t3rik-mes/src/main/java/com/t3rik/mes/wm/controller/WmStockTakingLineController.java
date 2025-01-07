@@ -8,6 +8,7 @@ import com.t3rik.common.enums.BusinessType;
 import com.t3rik.common.utils.poi.ExcelUtil;
 import com.t3rik.mes.wm.domain.WmStockTakingLine;
 import com.t3rik.mes.wm.service.IWmStockTakingLineService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -54,6 +55,29 @@ public class WmStockTakingLineController extends BaseController {
     public AjaxResult getInfo(@PathVariable("lineId") Long lineId)
     {
         return AjaxResult.success(wmStockTakingLineService.selectWmStockTakingLineByLineId(lineId));
+    }
+    /**
+     * 新增库存盘点明细
+     */
+    @ApiOperation("新增库存盘点明细接口")
+    @PreAuthorize("@ss.hasPermi('mes:wm:stocktaking:add')")
+    @Log(title = "库存盘点明细", businessType = BusinessType.INSERT)
+    @PostMapping
+    public AjaxResult add(@RequestBody WmStockTakingLine wmStockTakingLine)
+    {
+        return toAjax(wmStockTakingLineService.insertWmStockTakingLine(wmStockTakingLine));
+    }
+
+    /**
+     * 修改库存盘点明细
+     */
+    @ApiOperation("编辑库存盘点明细接口")
+    @PreAuthorize("@ss.hasPermi('mes:wm:stocktakingline:edit')")
+    @Log(title = "库存盘点明细", businessType = BusinessType.UPDATE)
+    @PutMapping
+    public AjaxResult edit(@RequestBody WmStockTakingLine wmStockTakingLine)
+    {
+        return toAjax(wmStockTakingLineService.updateWmStockTakingLine(wmStockTakingLine));
     }
 
 }

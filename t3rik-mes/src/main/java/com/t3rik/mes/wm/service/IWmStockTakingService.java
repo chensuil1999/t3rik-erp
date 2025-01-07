@@ -2,6 +2,8 @@ package com.t3rik.mes.wm.service;
 
 import java.util.List;
 import com.t3rik.mes.wm.domain.WmStockTaking;
+import com.t3rik.mes.wm.domain.tx.ProductSalseTxBean;
+import com.t3rik.mes.wm.domain.tx.TakingTxBean;
 
 /**
  * 库存盘点记录Service接口
@@ -65,4 +67,12 @@ public interface IWmStockTakingService
      * @return 结果
      */
     public int deleteWmStockTakingByTakingId(Long takingId);
+
+    /**
+     * 获取产品盘点事务Bean
+     * @param takingId
+     * @return
+     */
+    public List<TakingTxBean> getTxBeans(Long takingId);
+
 }

@@ -10,11 +10,11 @@ import com.t3rik.common.utils.StringUtils;
 import com.t3rik.mes.wm.domain.WmStockTaking;
 import com.t3rik.mes.wm.domain.WmStockTakingLine;
 import com.t3rik.mes.wm.domain.WmWarehouse;
-import com.t3rik.mes.wm.service.IWmStockTakingLineService;
-import com.t3rik.mes.wm.service.IWmStockTakingResultService;
-import com.t3rik.mes.wm.service.IWmStockTakingService;
-import com.t3rik.mes.wm.service.IWmWarehouseService;
+import com.t3rik.mes.wm.domain.tx.ProductSalseTxBean;
+import com.t3rik.mes.wm.domain.tx.TakingTxBean;
+import com.t3rik.mes.wm.service.*;
 import com.t3rik.system.strategy.AutoCodeUtil;
+import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +41,9 @@ public class WmStockTakingController extends BaseController {
 
     @Autowired
     private IWmWarehouseService wmWarehouseService;
+
+    @Resource
+    private IStorageCoreService storageCoreService;
 
     /**
      * 查询库存盘点记录列表
@@ -143,17 +146,8 @@ public class WmStockTakingController extends BaseController {
         if(CollectionUtils.isEmpty(lines)){
             return AjaxResult.error("未检测到盘点的物资！");
         }
-
-        //先删除历史记录
-        wmStockTakingResultService.deleteWmStockTakingResultByTakingId(takingId);
-
-        if(UserConstants.WM_STOCK_TAKING_TYPE_OPEN.equals(taking.getTakingType())){
-            //如果是明盘，则直接对比明细中的库存数量和盘点数量
-            wmStockTakingResultService.calculateOpenWmStockTakingResult(takingId);
-        }else {
-            //如果是盲盘，则对比盘点明细中的盘点数量，和当前库存现有量的数量
-            wmStockTakingResultService.calculateWmStockTakingResult(takingId);
-        }
+        List<TakingTxBean> beans = wmStockTakingService.getTxBeans(takingId);
+        storageCoreService.processTaking(beans);
 
         taking.setStatus(UserConstants.ORDER_STATUS_APPROVED);
         wmStockTakingService.updateWmStockTaking(taking);

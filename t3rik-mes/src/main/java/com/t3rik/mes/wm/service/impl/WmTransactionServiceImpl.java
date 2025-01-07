@@ -52,8 +52,6 @@ public class WmTransactionServiceImpl implements IWmTransactionService
         if(wmTransaction.getTransactionFlag() < 0) {
             quantityjs = (~quantityjs) + 1;
         }
-        //System.out.println("库存方向数: " + quantityjs);
-
         if(StringUtils.isNotNull(ms)){
             //MS已存在扣减库存/添加库存
             BigDecimal resultQuantity = ms.getQuantityOnhand().add(quantity);

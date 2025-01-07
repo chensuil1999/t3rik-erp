@@ -13,6 +13,7 @@ import org.simpleframework.xml.Default;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -56,8 +57,6 @@ public class StorageCoreServiceImpl implements IStorageCoreService {
             transaction.setAttr2(line.getAttr3());
             transaction.setAttr3(0);
             transaction.setAttr1(line.getAmount());
-//            System.out.println("ooooo: " + transaction);
-//            System.out.println("ooooo: " + line);
 
             wmTransactionService.processTransaction(transaction);
         }
@@ -158,8 +157,7 @@ public class StorageCoreServiceImpl implements IStorageCoreService {
         if (CollUtil.isEmpty(lines)) {
             throw new BusinessException("没有需要处理的外协发货单行");
         }
-
-        String transactionType_out = UserConstants.TRANSACTION_TYPE_ITEM_ISSUE_OUT;
+        String transactionType_out = UserConstants.TRANSACTION_TYPE_OUTSOURCE_ISSUE_OUT;
         for (int i = 0; i < lines.size(); i++) {
             OutsourceIssueTxBean line = lines.get(i);
             // 构造一条库存减少的事务
@@ -587,5 +585,36 @@ public class StorageCoreServiceImpl implements IStorageCoreService {
         });
 
     }
-    
+
+    @Override
+    public void processTaking(List<TakingTxBean> lines) {
+        if (CollUtil.isEmpty(lines)) {
+            throw new BusinessException("没有需要处理的盘点单明细");
+        }
+        for (int i = 0; i < lines.size(); i++) {
+            TakingTxBean bean = lines.get(i);
+            WmTransaction transaction = new WmTransaction();
+            String transactionType;
+            if(bean.getTakingQuantity().compareTo(BigDecimal.ZERO) < 0 || bean.getAttr4() < 0) {
+                transactionType = UserConstants.TRANSACTION_TYPE_WAREHOUSE_TAKING_OUT;
+                transaction.setTransactionFlag(-1); // 库存减少
+                bean.setAttr4(Math.abs(bean.getAttr4()));
+            } else {
+                transactionType = UserConstants.TRANSACTION_TYPE_WAREHOUSE_TAKING_IN;
+                transaction.setTransactionFlag(1); // 库存增加
+            }
+            bean.setTakingQuantity(bean.getTakingQuantity().abs());
+            transaction.setTransactionType(transactionType);
+            BeanUtils.copyBeanProp(transaction, bean);
+            transaction.setTransactionQuantity(bean.getTakingQuantity());
+            transaction.setTransactionDate(new Date());
+            transaction.setAttr4(bean.getAttr4());
+//            transaction.setAttr1(bean.getAmount());
+            transaction.setAttr2(bean.getAttr3());
+            transaction.setAttr3(0);
+            //System.out.println("ooooo " + transaction);
+            wmTransactionService.processTransaction(transaction);
+        }
+    }
+
 }
