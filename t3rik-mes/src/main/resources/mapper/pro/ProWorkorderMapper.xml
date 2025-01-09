@@ -61,7 +61,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectProWorkorderList" parameterType="ProWorkorder" resultMap="ProWorkorderResult">
         <include refid="selectProWorkorderVo"/>
-        <where>  
+        <where>
+            t.deleted = 0
             <if test="workorderCode != null  and workorderCode != ''"> and workorder_code = #{workorderCode}</if>
             <if test="workorderName != null  and workorderName != ''"> and workorder_name like concat('%', #{workorderName}, '%')</if>
             <if test="workorderType != null and workorderType !=''"> and workorder_type = #{workorderType}</if>
@@ -230,14 +231,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where workorder_id = #{workorderId}
     </update>
 
-    <delete id="deleteProWorkorderByWorkorderId" parameterType="Long">
-        delete from pro_workorder where workorder_id = #{workorderId}
-    </delete>
+    <update id="deleteProWorkorderByWorkorderId" parameterType="Long">
+        update pro_workorder set deleted = 1 where workorder_id = #{workorderId}
+    </update>
 
-    <delete id="deleteProWorkorderByWorkorderIds" parameterType="String">
-        delete from pro_workorder where workorder_id in 
+    <update id="deleteProWorkorderByWorkorderIds" parameterType="String">
+        update pro_workorder set deleted = 1 where workorder_id in
         <foreach item="workorderId" collection="array" open="(" separator="," close=")">
             #{workorderId}
         </foreach>
-    </delete>
+    </update>
 </mapper>

@@ -43,7 +43,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectMdVendorList" parameterType="MdVendor" resultMap="MdVendorResult">
         <include refid="selectMdVendorVo"/>
-        <where>  
+        <where>
+            deleted = 0
             <if test="vendorCode != null  and vendorCode != ''"> and vendor_code = #{vendorCode}</if>
             <if test="vendorName != null  and vendorName != ''"> and vendor_name like concat('%', #{vendorName}, '%')</if>
             <if test="vendorNick != null  and vendorNick != ''"> and vendor_nick = #{vendorNick}</if>
@@ -189,14 +190,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where vendor_id = #{vendorId}
     </update>
 
-    <delete id="deleteMdVendorByVendorId" parameterType="Long">
-        delete from md_vendor where vendor_id = #{vendorId}
-    </delete>
+    <update id="deleteMdVendorByVendorId" parameterType="Long">
+        update md_vendor set deleted = 1 where vendor_id = #{vendorId}
+    </update>
 
-    <delete id="deleteMdVendorByVendorIds" parameterType="String">
-        delete from md_vendor where vendor_id in 
+    <update id="deleteMdVendorByVendorIds" parameterType="String">
+        update md_vendor set deleted = 1 where vendor_id in
         <foreach item="vendorId" collection="array" open="(" separator="," close=")">
             #{vendorId}
         </foreach>
-    </delete>
+    </update>
 </mapper>

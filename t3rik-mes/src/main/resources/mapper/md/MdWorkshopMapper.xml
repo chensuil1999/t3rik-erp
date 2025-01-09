@@ -28,7 +28,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectMdWorkshopList" parameterType="MdWorkshop" resultMap="MdWorkshopResult">
         <include refid="selectMdWorkshopVo"/>
-        <where>  
+        <where>
+            deleted = 0
             <if test="workshopCode != null  and workshopCode != ''"> and workshop_code = #{workshopCode}</if>
             <if test="workshopName != null  and workshopName != ''"> and workshop_name like concat('%', #{workshopName}, '%')</if>
             <if test="area != null "> and area = #{area}</if>
@@ -109,14 +110,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where workshop_id = #{workshopId}
     </update>
 
-    <delete id="deleteMdWorkshopByWorkshopId" parameterType="Long">
-        delete from md_workshop where workshop_id = #{workshopId}
-    </delete>
+    <update id="deleteMdWorkshopByWorkshopId" parameterType="Long">
+        update md_workshop set deleted = 1 where workshop_id = #{workshopId}
+    </update>
 
-    <delete id="deleteMdWorkshopByWorkshopIds" parameterType="String">
-        delete from md_workshop where workshop_id in 
+    <update id="deleteMdWorkshopByWorkshopIds" parameterType="String">
+        update md_workshop set deleted = 1 where workshop_id in
         <foreach item="workshopId" collection="array" open="(" separator="," close=")">
             #{workshopId}
         </foreach>
-    </delete>
+    </update>
 </mapper>

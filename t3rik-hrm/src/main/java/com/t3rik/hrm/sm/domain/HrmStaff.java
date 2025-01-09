@@ -136,7 +136,7 @@ public class HrmStaff extends BaseEntity
      * 逻辑删除字段 0:未删除 1:已删除
      */
     @TableLogic
-    private Long deleted;
+    private Integer deleted;
 
     /**
      * 逻辑删除辅助字段

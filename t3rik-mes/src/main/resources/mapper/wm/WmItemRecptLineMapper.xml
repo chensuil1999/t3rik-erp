@@ -46,7 +46,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectWmItemRecptLineList" parameterType="WmItemRecptLine" resultMap="WmItemRecptLineResult">
         <include refid="selectWmItemRecptLineVo"/>
-        <where>  
+        <where>
+            deleted = 0
             <if test="recptId != null "> and recpt_id = #{recptId}</if>
             <if test="itemId != null "> and item_id = #{itemId}</if>
             <if test="itemCode != null  and itemCode != ''"> and item_code = #{itemCode}</if>
@@ -182,9 +183,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where line_id = #{lineId}
     </update>
 
-    <delete id="deleteWmItemRecptLineByLineId" parameterType="Long">
-        delete from wm_item_recpt_line where line_id = #{lineId}
-    </delete>
+<!--    <delete id="deleteWmItemRecptLineByLineId" parameterType="Long">-->
+<!--        delete from wm_item_recpt_line where line_id = #{lineId}-->
+<!--    </delete>-->
+    <update id="deleteWmItemRecptLineByLineId" parameterType="Long">
+        update wm_item_recpt_line set deleted = 1 where line_id = #{lineId}
+    </update>
 
     <delete id="deleteWmItemRecptLineByLineIds" parameterType="String">
         delete from wm_item_recpt_line where line_id in 
@@ -193,7 +197,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </delete>
 
-    <delete id="deleteByRecptId" parameterType="Long">
-        delete from wm_item_recpt_line where recpt_id = #{recptId}
-    </delete>
+<!--    <delete id="deleteByRecptId" parameterType="Long">-->
+<!--        delete from wm_item_recpt_line where recpt_id = #{recptId}-->
+<!--    </delete>-->
+        <update id="deleteByRecptId" parameterType="Long">
+            update wm_item_recpt_line set deleted = 1 where recpt_id = #{recptId}
+        </update>
 </mapper>

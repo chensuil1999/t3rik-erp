@@ -165,6 +165,9 @@ public class WmItemRecptController extends BaseController {
         if (CollectionUtils.isNotEmpty(deleteList)) {
             return AjaxResult.error(MsgConstants.CAN_ONLY_BE_DELETED_BY_PARAM(OrderStatusEnum.PREPARE.getDesc()));
         }
+        for(Long lids : ids) {
+            this.wmItemRecptLineService.deleteByRecptId(lids);
+        }
         this.wmItemRecptService.removeByIds(ids);
         return AjaxResult.success();
     }

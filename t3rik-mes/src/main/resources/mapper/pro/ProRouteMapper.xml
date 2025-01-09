@@ -27,7 +27,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectProRouteList" parameterType="ProRoute" resultMap="ProRouteResult">
         <include refid="selectProRouteVo"/>
-        <where>  
+        <where>
+            deleted = 0
             <if test="routeCode != null  and routeCode != ''"> and route_code = #{routeCode}</if>
             <if test="routeName != null  and routeName != ''"> and route_name like concat('%', #{routeName}, '%')</if>
             <if test="routeDesc != null  and routeDesc != ''"> and route_desc = #{routeDesc}</if>
@@ -109,14 +110,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where route_id = #{routeId}
     </update>
 
-    <delete id="deleteProRouteByRouteId" parameterType="Long">
-        delete from pro_route where route_id = #{routeId}
-    </delete>
+    <update id="deleteProRouteByRouteId" parameterType="Long">
+        update pro_route set deleted = 1 where route_id = #{routeId}
+    </update>
 
-    <delete id="deleteProRouteByRouteIds" parameterType="String">
-        delete from pro_route where route_id in 
+    <update id="deleteProRouteByRouteIds" parameterType="String">
+        update pro_route set deleted = 1 where route_id in
         <foreach item="routeId" collection="array" open="(" separator="," close=")">
             #{routeId}
         </foreach>
-    </delete>
+    </update>
 </mapper>

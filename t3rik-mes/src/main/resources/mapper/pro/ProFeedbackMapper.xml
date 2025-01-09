@@ -113,6 +113,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectProFeedbackList" parameterType="ProFeedback" resultMap="ProFeedbackResult">
         <include refid="selectProFeedbackVo"/>
         <where>
+            f.deleted = 0
             <if test="workstationId != null "> and workstation_id = #{workstationId}</if>
             <if test="userId != null "> and user_id = #{userId}</if>
             <if test="recordUserId != null "> and record_user_id = #{recordUserId}</if>
@@ -308,14 +309,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where record_id = #{recordId}
     </update>
 
-    <delete id="deleteProFeedbackByRecordId" parameterType="Long">
-        delete from pro_feedback where record_id = #{recordId}
-    </delete>
+    <update id="deleteProFeedbackByRecordId" parameterType="Long">
+        update pro_feedback set deleted = 1 where record_id = #{recordId}
+    </update>
 
-    <delete id="deleteProFeedbackByRecordIds" parameterType="String">
-        delete from pro_feedback where record_id in
+    <update id="deleteProFeedbackByRecordIds" parameterType="String">
+        update pro_feedback set deleted = 1 where record_id in
         <foreach item="recordId" collection="array" open="(" separator="," close=")">
             #{recordId}
         </foreach>
-    </delete>
+    </update>
 </mapper>

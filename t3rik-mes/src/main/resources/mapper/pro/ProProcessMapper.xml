@@ -27,7 +27,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectProProcessList" parameterType="ProProcess" resultMap="ProProcessResult">
         <include refid="selectProProcessVo"/>
-        <where>  
+        <where>
+            deleted = 0
             <if test="processCode != null  and processCode != ''"> and process_code = #{processCode}</if>
             <if test="processName != null  and processName != ''"> and process_name like concat('%', #{processName}, '%')</if>
             <if test="attention != null  and attention != ''"> and attention = #{attention}</if>
@@ -105,14 +106,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where process_id = #{processId}
     </update>
 
-    <delete id="deleteProProcessByProcessId" parameterType="Long">
-        delete from pro_process where process_id = #{processId}
-    </delete>
+    <update id="deleteProProcessByProcessId" parameterType="Long">
+        update pro_process set deleted = 1 where process_id = #{processId}
+    </update>
 
-    <delete id="deleteProProcessByProcessIds" parameterType="String">
-        delete from pro_process where process_id in 
+    <update id="deleteProProcessByProcessIds" parameterType="String">
+        update pro_process set deleted = 1 where process_id in
         <foreach item="processId" collection="array" open="(" separator="," close=")">
             #{processId}
         </foreach>
-    </delete>
+    </update>
 </mapper>

@@ -80,6 +80,7 @@
     <select id="selectWmItemRecptList" parameterType="WmItemRecpt" resultMap="WmItemRecptResult">
         <include refid="selectWmItemRecptVo"/>
         <where>
+            deleted = 0
             <if test="recptCode != null  and recptCode != ''"> and recpt_code = #{recptCode}</if>
             <if test="recptName != null  and recptName != ''"> and recpt_name like concat('%', #{recptName}, '%')</if>
             <if test="iqcId != null "> and iqc_id = #{iqcId}</if>

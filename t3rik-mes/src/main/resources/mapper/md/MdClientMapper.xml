@@ -42,7 +42,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectMdClientList" parameterType="MdClient" resultMap="MdClientResult">
         <include refid="selectMdClientVo"/>
-        <where>  
+        <where>
+            deleted = 0
             <if test="clientCode != null  and clientCode != ''"> and client_code = #{clientCode}</if>
             <if test="clientName != null  and clientName != ''"> and client_name like concat('%', #{clientName}, '%')</if>
             <if test="clientNick != null  and clientNick != ''"> and client_nick = #{clientNick}</if>
@@ -185,14 +186,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where client_id = #{clientId}
     </update>
 
-    <delete id="deleteMdClientByClientId" parameterType="Long">
-        delete from md_client where client_id = #{clientId}
-    </delete>
+    <update id="deleteMdClientByClientId" parameterType="Long">
+        update md_client set deleted = 1  where client_id = #{clientId}
+    </update>
 
-    <delete id="deleteMdClientByClientIds" parameterType="String">
-        delete from md_client where client_id in 
+    <update id="deleteMdClientByClientIds" parameterType="String">
+        update md_client set deleted = 1 where client_id in
         <foreach item="clientId" collection="array" open="(" separator="," close=")">
             #{clientId}
         </foreach>
-    </delete>
+    </update>
 </mapper>

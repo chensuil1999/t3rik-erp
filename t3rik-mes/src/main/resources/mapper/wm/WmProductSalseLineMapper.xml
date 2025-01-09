@@ -56,7 +56,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectWmProductSalseLineList" parameterType="WmProductSalseLine" resultMap="WmProductSalseLineResult">
         <include refid="selectWmProductSalseLineVo"/>
-        <where>  
+        <where>
+            t.deleted = 0
             <if test="salseId != null "> and salse_id = #{salseId}</if>
             <if test="materialStockId != null "> and material_stock_id = #{materialStockId}</if>
             <if test="itemId != null "> and item_id = #{itemId}</if>
@@ -209,14 +210,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         delete from wm_product_salse_line where line_id = #{lineId}
     </delete>
 
-    <delete id="deleteWmProductSalseLineByLineIds" parameterType="String">
-        delete from wm_product_salse_line where line_id in 
+    <update id="deleteWmProductSalseLineByLineIds" parameterType="String">
+        update wm_product_salse_line set deleted = 1 where line_id in
         <foreach item="lineId" collection="array" open="(" separator="," close=")">
             #{lineId}
         </foreach>
-    </delete>
+    </update>
 
-    <delete id="deleteBySalseId" parameterType="Long">
-        delete from wm_product_salse_line where salse_id = #{salseId}
-    </delete>
+    <update id="deleteBySalseId" parameterType="Long">
+        update wm_product_salse_line set deleted = 1 where salse_id = #{salseId}
+    </update>
 </mapper>

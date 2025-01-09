@@ -41,6 +41,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="selectMdItemList" parameterType="com.t3rik.mes.md.domain.MdItem" resultMap="MdItemResult">
 	    <include refid="selectMdItemVo"/>
 		<where>
+			deleted = 0
 			<if test="itemId != null">
 				AND item_id = #{itemId}
 			</if>
@@ -161,15 +162,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		where item_id = #{itemId}
 	</update>
 
-	<delete id="deleteMdItemById" parameterType="Long">
-		delete from md_item where item_id =#{itemId}
-	</delete>
+	<update id="deleteMdItemById" parameterType="Long">
+		update md_item set deleted = 1 where item_id =#{itemId}
+	</update>
 
-	<delete id="deleteMdItemByIds" parameterType="Long">
-		delete from md_item where item_id in
+	<update id="deleteMdItemByIds" parameterType="Long">
+		update md_item set deleted = 1 where item_id in
 		<foreach collection="array" item="itemId" open="(" separator="," close=")"	>
 			#{itemId}
 		</foreach>
-	</delete>
+	</update>
 
 </mapper> 

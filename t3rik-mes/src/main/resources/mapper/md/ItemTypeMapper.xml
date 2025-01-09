@@ -31,7 +31,7 @@
 
     <select id="selectItemTypeList" parameterType="com.t3rik.common.core.domain.entity.ItemType" resultMap="ItemTypeResult">
         <include refid="selectItemTypeVo"/>
-        where 1 = 1
+        where 1 = 1 AND deleted = 0
         <if test="itemTypeId != null and itemTypeId != 0">
             AND item_type_id = #{itemTypeId}
         </if>
@@ -147,16 +147,16 @@
         </foreach>
     </update>
 
-    <delete id="deleteItemTypeById" parameterType="Long">
-		delete from  md_item_type  where item_type_id = #{itemTypeId}
-	</delete>
+    <update id="deleteItemTypeById" parameterType="Long">
+		update md_item_type set deleted = 1 where item_type_id = #{itemTypeId}
+	</update>
 
-    <delete id="deleteItemTypeByIds" parameterType="Long">
-        delete from md_item_type where item_type_id in
+    <update id="deleteItemTypeByIds" parameterType="Long">
+        update md_item_type set deleted = 1 where item_type_id in
         <foreach collection="array" item="itemTypeId" open="(" separator="," close=")">
             #{itemTypeId}
         </foreach>
-    </delete>
+    </update>
 
     <insert id="initDefaultItemType" >
         INSERT INTO

@@ -42,7 +42,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectMdWorkstationList" parameterType="MdWorkstation" resultMap="MdWorkstationResult">
         <include refid="selectMdWorkstationVo"/>
-        <where>  
+        <where>
+            deleted = 0
             <if test="workstationCode != null  and workstationCode != ''"> and workstation_code = #{workstationCode}</if>
             <if test="workstationName != null  and workstationName != ''"> and workstation_name like concat('%', #{workstationName}, '%')</if>
             <if test="workstationAddress != null  and workstationAddress != ''"> and workstation_address = #{workstationAddress}</if>
@@ -179,14 +180,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where workstation_id = #{workstationId}
     </update>
 
-    <delete id="deleteMdWorkstationByWorkstationId" parameterType="Long">
-        delete from md_workstation where workstation_id = #{workstationId}
-    </delete>
+    <update id="deleteMdWorkstationByWorkstationId" parameterType="Long">
+        update md_workstation set deleted = 1 where workstation_id = #{workstationId}
+    </update>
 
-    <delete id="deleteMdWorkstationByWorkstationIds" parameterType="String">
-        delete from md_workstation where workstation_id in 
+    <update id="deleteMdWorkstationByWorkstationIds" parameterType="String">
+        update md_workstation set deleted = 1 where workstation_id in
         <foreach item="workstationId" collection="array" open="(" separator="," close=")">
             #{workstationId}
         </foreach>
-    </delete>
+    </update>
 </mapper>

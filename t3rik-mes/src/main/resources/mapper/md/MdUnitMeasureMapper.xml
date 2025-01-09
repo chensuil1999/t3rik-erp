@@ -29,7 +29,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectMdUnitMeasureList" parameterType="MdUnitMeasure" resultMap="MdUnitMeasureResult">
         <include refid="selectMdUnitMeasureVo"/>
-        <where>  
+        <where>
+            deleted = 0
             <if test="measureCode != null  and measureCode != ''"> and measure_code = #{measureCode}</if>
             <if test="measureName != null  and measureName != ''"> and measure_name like concat('%', #{measureName}, '%')</if>
             <if test="primaryFlag != null  and primaryFlag != ''"> and primary_flag = #{primaryFlag}</if>
@@ -108,14 +109,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where measure_id = #{measureId}
     </update>
 
-    <delete id="deleteMdUnitMeasureByMeasureId" parameterType="Long">
-        delete from md_unit_measure where measure_id = #{measureId}
-    </delete>
+    <update id="deleteMdUnitMeasureByMeasureId" parameterType="Long">
+        update md_unit_measure set deleted = 1 where measure_id = #{measureId}
+    </update>
 
-    <delete id="deleteMdUnitMeasureByMeasureIds" parameterType="String">
-        delete from md_unit_measure where measure_id in 
+    <update id="deleteMdUnitMeasureByMeasureIds" parameterType="String">
+        update md_unit_measure set deleted = 1 where measure_id in
         <foreach item="measureId" collection="array" open="(" separator="," close=")">
             #{measureId}
         </foreach>
-    </delete>
+    </update>
 </mapper>

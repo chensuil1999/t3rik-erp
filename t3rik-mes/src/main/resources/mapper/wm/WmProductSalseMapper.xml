@@ -80,13 +80,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                t.warehouse_id, t.warehouse_code, t.warehouse_name, t.location_id,
                t.location_code, t.location_name, t.area_id, t.area_code, t.area_name,p.address, p.tel,
                t.salse_date, t.status, t.remark, t.attr1, t.attr2, t.attr3, t.attr4, t.create_by,
-               t.create_time, t.update_by, t.update_time from wm_product_salse  t left join md_client p
+               t.create_time, t.update_by, t.update_time, t.deleted from wm_product_salse  t left join md_client p
                                                                                               on t.client_id = p.client_id
     </sql>
 
     <select id="selectWmProductSalseList" parameterType="WmProductSalse" resultMap="WmProductSalseResult">
         <include refid="selectWmProductSalseVo"/>
-        <where>  
+        <where>
+            t.deleted = 0
             <if test="salseCode != null  and salseCode != ''"> and salse_code = #{salseCode}</if>
             <if test="salseName != null  and salseName != ''"> and salse_name like concat('%', #{salseName}, '%')</if>
             <if test="oqcId != null "> and oqc_id = #{oqcId}</if>
@@ -236,14 +237,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where salse_id = #{salseId}
     </update>
 
-    <delete id="deleteWmProductSalseBySalseId" parameterType="Long">
-        delete from wm_product_salse where salse_id = #{salseId}
-    </delete>
+    <update id="deleteWmProductSalseBySalseId" parameterType="Long">
+        update wm_product_salse set deleted = 1 where salse_id = #{salseId}
+    </update>
 
-    <delete id="deleteWmProductSalseBySalseIds" parameterType="String">
-        delete from wm_product_salse where salse_id in 
+    <update id="deleteWmProductSalseBySalseIds" parameterType="String">
+        update wm_product_salse set deleted = 1 where salse_id in
         <foreach item="salseId" collection="array" open="(" separator="," close=")">
             #{salseId}
         </foreach>
-    </delete>
+    </update>
+
+<!--    <delete id="deleteWmProductSalseBySalseIds" parameterType="String">-->
+<!--        delete from wm_product_salse where salse_id in -->
+<!--        <foreach item="salseId" collection="array" open="(" separator="," close=")">-->
+<!--            #{salseId}-->
+<!--        </foreach>-->
+<!--    </delete>-->
 </mapper>

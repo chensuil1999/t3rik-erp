@@ -73,6 +73,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectProTaskList" parameterType="com.t3rik.mes.pro.domain.ProTask" resultMap="ProTaskResult">
         <include refid="selectProTaskVo"/>
         <where>
+            t.deleted = 0
             <if test="taskCode != null  and taskCode != ''"> and t.task_code = #{taskCode}</if>
             <if test="taskName != null  and taskName != ''"> and t.task_name like concat('%', #{taskName}, '%')</if>
             <if test="workorderId != null "> and t.workorder_id = #{workorderId}</if>
@@ -299,16 +300,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where task_id = #{taskId}
     </update>
 
-    <delete id="deleteProTaskByTaskId" parameterType="Long">
-        delete from pro_task where task_id = #{taskId}
-    </delete>
+    <update id="deleteProTaskByTaskId" parameterType="Long">
+        update pro_task set deleted = 1 where task_id = #{taskId}
+    </update>
 
-    <delete id="deleteProTaskByTaskIds" parameterType="String">
-        delete from pro_task where task_id in
+    <update id="deleteProTaskByTaskIds" parameterType="String">
+        update pro_task set deleted = 1 where task_id in
         <foreach item="taskId" collection="array" open="(" separator="," close=")">
             #{taskId}
         </foreach>
-    </delete>
+    </update>
 
     <select id="getTaskListAndFeedbackCount" resultType="com.t3rik.mes.pro.dto.TaskDto">
         SELECT *
