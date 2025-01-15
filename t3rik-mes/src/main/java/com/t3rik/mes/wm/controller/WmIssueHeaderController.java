@@ -88,7 +88,7 @@ public class WmIssueHeaderController extends BaseController {
         }
         // 设置仓库相关信息
         warehouseUtil.setWarehouseInfo(wmIssueHeader);
-        wmIssueHeader.setCreateBy(getUsername());
+
         return toAjax(wmIssueHeaderService.insertWmIssueHeader(wmIssueHeader));
     }
 
@@ -112,6 +112,7 @@ public class WmIssueHeaderController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('mes:wm:issueheader:remove')")
     @Log(title = "生产领料单头", businessType = BusinessType.DELETE)
+    @Transactional
     @DeleteMapping("/{issueIds}")
     public AjaxResult remove(@PathVariable Long[] issueIds) {
         if (issueIds.length == 0) {
@@ -125,6 +126,9 @@ public class WmIssueHeaderController extends BaseController {
                 .list();
         if (CollectionUtils.isNotEmpty(deleteList)) {
             return AjaxResult.error(MsgConstants.CAN_ONLY_BE_DELETED_BY_PARAM(OrderStatusEnum.PREPARE.getDesc()));
+        }
+        for(Long lids : issueIds) {
+            this.wmIssueLineService.deleteByIssueHeaderId(lids);
         }
         // 批量删除
         this.wmIssueHeaderService.removeBatchByIds(ids);

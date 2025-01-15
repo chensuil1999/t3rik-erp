@@ -2,6 +2,7 @@ package com.t3rik.mes.wm.controller;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.t3rik.common.annotation.Log;
+import com.t3rik.common.constant.MsgConstants;
 import com.t3rik.common.constant.UserConstants;
 import com.t3rik.common.core.controller.BaseController;
 import com.t3rik.common.core.domain.AjaxResult;
@@ -88,7 +89,7 @@ public class WmProductSalseController extends BaseController {
         }
         // 设置仓库信息
         this.warehouseUtil.setWarehouseInfo(wmProductSalse);
-        wmProductSalse.setCreateBy(getUsername());
+
         return toAjax(wmProductSalseService.insertWmProductSalse(wmProductSalse));
     }
 
@@ -119,6 +120,9 @@ public class WmProductSalseController extends BaseController {
     @Transactional
     @DeleteMapping("/{salseIds}")
     public AjaxResult remove(@PathVariable Long[] salseIds) {
+        if (salseIds.length == 0) {
+            return AjaxResult.error(MsgConstants.PARAM_ERROR);
+        }
         for (Long salseId : salseIds) {
             WmProductSalse wps = wmProductSalseService.selectWmProductSalseBySalseId(salseId);
             if(UserConstants.ORDER_STATUS_FINISHED.equals(wps.getStatus()))

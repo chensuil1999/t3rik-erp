@@ -1,6 +1,7 @@
 package com.t3rik.mes.wm.controller;
 
 import com.t3rik.common.annotation.Log;
+import com.t3rik.common.constant.MsgConstants;
 import com.t3rik.common.constant.UserConstants;
 import com.t3rik.common.core.controller.BaseController;
 import com.t3rik.common.core.domain.AjaxResult;
@@ -12,6 +13,7 @@ import com.t3rik.mes.pro.domain.ProTask;
 import com.t3rik.mes.pro.domain.ProWorkorder;
 import com.t3rik.mes.pro.service.IProTaskService;
 import com.t3rik.mes.pro.service.IProWorkorderService;
+import com.t3rik.mes.wm.domain.WmOutsourceIssue;
 import com.t3rik.mes.wm.domain.WmOutsourceRecpt;
 import com.t3rik.mes.wm.domain.WmOutsourceRecptLine;
 import com.t3rik.mes.wm.domain.tx.OutsourceRecptTxBean;
@@ -96,7 +98,7 @@ public class WmOutsourceRecptController extends BaseController {
     @PostMapping
     public AjaxResult add(@RequestBody WmOutsourceRecpt wmOutsourceRecpt) {
         warehouseUtil.setWarehouseInfo(wmOutsourceRecpt);
-        wmOutsourceRecpt.setCreateBy(getUsername());
+
         return toAjax(wmOutsourceRecptService.insertWmOutsourceRecpt(wmOutsourceRecpt));
     }
 
@@ -119,8 +121,18 @@ public class WmOutsourceRecptController extends BaseController {
     @Transactional
     @DeleteMapping("/{recptIds}")
     public AjaxResult remove(@PathVariable Long[] recptIds) {
+        if (recptIds.length == 0) {
+            return AjaxResult.error(MsgConstants.PARAM_ERROR);
+        }
+        for (Long recordId : recptIds) {
+            WmOutsourceRecpt wor = wmOutsourceRecptService.selectWmOutsourceRecptByRecptId(recordId);
+            if(UserConstants.ORDER_STATUS_FINISHED.equals(wor.getStatus()))
+            {
+                return AjaxResult.error("存在归档数据！无法删除");
+            }
+        }
         for (Long recptId : recptIds) {
-            wmOutsourceRecptLineService.selectWmOutsourceRecptLineByRecptId(recptId);
+            wmOutsourceRecptLineService.deleteWmOutsourceRecptLineByRecptId(recptId);
         }
         return toAjax(wmOutsourceRecptService.deleteWmOutsourceRecptByRecptIds(recptIds));
     }
@@ -168,6 +180,7 @@ public class WmOutsourceRecptController extends BaseController {
 //                proTask.setQuantityProduced(produced.add(line.getQuantityRecived()));
 //                proTask.setQuantityQuanlify(produced.add(line.getQuantityRecived()));
                 produced = produced.add(line.getQuantityRecived());
+//                proTask.setStatus();
             }
         }
         proTask.setQuantityProduced(produced);

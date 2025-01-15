@@ -8,6 +8,8 @@ import com.t3rik.mes.wm.mapper.WmRtSalseLineMapper;
 import com.t3rik.mes.wm.domain.WmRtSalseLine;
 import com.t3rik.mes.wm.service.IWmRtSalseLineService;
 
+import static com.t3rik.common.utils.SecurityUtils.getUsername;
+
 /**
  * 产品销售退货行Service业务层处理
  * 
@@ -54,6 +56,7 @@ public class WmRtSalseLineServiceImpl implements IWmRtSalseLineService
     public int insertWmRtSalseLine(WmRtSalseLine wmRtSalseLine)
     {
         wmRtSalseLine.setCreateTime(DateUtils.getNowDate());
+        wmRtSalseLine.setCreateBy(getUsername());
         return wmRtSalseLineMapper.insertWmRtSalseLine(wmRtSalseLine);
     }
 
@@ -67,6 +70,8 @@ public class WmRtSalseLineServiceImpl implements IWmRtSalseLineService
     public int updateWmRtSalseLine(WmRtSalseLine wmRtSalseLine)
     {
         wmRtSalseLine.setUpdateTime(DateUtils.getNowDate());
+//        wmRtSalseLine.setCreateTime(DateUtils.getNowDate());
+        wmRtSalseLine.setUpdateBy(getUsername());
         return wmRtSalseLineMapper.updateWmRtSalseLine(wmRtSalseLine);
     }
 

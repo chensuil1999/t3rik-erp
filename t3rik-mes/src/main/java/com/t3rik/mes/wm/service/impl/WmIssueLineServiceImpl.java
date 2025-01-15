@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.t3rik.common.utils.SecurityUtils.getUsername;
+
 /**
  * 生产领料单行Service业务层处理
  *
@@ -52,6 +54,7 @@ public class WmIssueLineServiceImpl extends ServiceImpl<WmIssueLineMapper, WmIss
     @Override
     public int insertWmIssueLine(WmIssueLine wmIssueLine) {
         wmIssueLine.setCreateTime(DateUtils.getNowDate());
+        wmIssueLine.setCreateBy(getUsername());
         return wmIssueLineMapper.insertWmIssueLine(wmIssueLine);
     }
 
@@ -64,6 +67,7 @@ public class WmIssueLineServiceImpl extends ServiceImpl<WmIssueLineMapper, WmIss
     @Override
     public int updateWmIssueLine(WmIssueLine wmIssueLine) {
         wmIssueLine.setUpdateTime(DateUtils.getNowDate());
+        wmIssueLine.setUpdateBy(getUsername());
         return wmIssueLineMapper.updateWmIssueLine(wmIssueLine);
     }
 

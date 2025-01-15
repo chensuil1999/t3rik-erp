@@ -41,7 +41,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectWmRtIssueLineList" parameterType="WmRtIssueLine" resultMap="WmRtIssueLineResult">
         <include refid="selectWmRtIssueLineVo"/>
-        <where>  
+        <where>
+            deleted = 0
             <if test="rtId != null "> and rt_id = #{rtId}</if>
             <if test="materialStockId != null "> and material_stock_id = #{materialStockId}</if>
             <if test="itemId != null "> and item_id = #{itemId}</if>
@@ -176,19 +177,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where line_id = #{lineId}
     </update>
 
-    <delete id="deleteWmRtIssueLineByLineId" parameterType="Long">
-        delete from wm_rt_issue_line where line_id = #{lineId}
-    </delete>
+    <update id="deleteWmRtIssueLineByLineId" parameterType="Long">
+        update wm_rt_issue_line set deleted = 1 where line_id = #{lineId}
+    </update>
 
-    <delete id="deleteWmRtIssueLineByLineIds" parameterType="String">
-        delete from wm_rt_issue_line where line_id in 
+    <update id="deleteWmRtIssueLineByLineIds" parameterType="String">
+        update wm_rt_issue_line set deleted = 1 where line_id in
         <foreach item="lineId" collection="array" open="(" separator="," close=")">
             #{lineId}
         </foreach>
-    </delete>
+    </update>
 
-    <delete id="deleteByRtId" parameterType="Long">
-        delete from wm_rt_issue_line where rt_id = #{rtId}
-    </delete>
+    <update id="deleteByRtId" parameterType="Long">
+        update wm_rt_issue_line set deleted = 1 where rt_id = #{rtId}
+    </update>
 
 </mapper>

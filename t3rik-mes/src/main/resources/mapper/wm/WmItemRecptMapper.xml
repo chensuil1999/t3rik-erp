@@ -126,7 +126,7 @@
         FROM wm_item_recpt ir
            LEFT JOIN wm_item_recpt_line irl
            ON ir.recpt_id = irl.`recpt_id`
-        WHERE ir.`recpt_id` = #{recptId}
+        WHERE ir.`recpt_id` = #{recptId} and ir.deleted = 0 and irl.deleted = 0
     </select>
 
 
@@ -235,14 +235,14 @@
         where recpt_id = #{recptId}
     </update>
 
-    <delete id="deleteWmItemRecptByRecptId" parameterType="Long">
-        delete from wm_item_recpt where recpt_id = #{recptId}
-    </delete>
+    <update id="deleteWmItemRecptByRecptId" parameterType="Long">
+        update wm_item_recpt set deleted = 1 where recpt_id = #{recptId}
+    </update>
 
-    <delete id="deleteWmItemRecptByRecptIds" parameterType="String">
-        delete from wm_item_recpt where recpt_id in
+    <update id="deleteWmItemRecptByRecptIds" parameterType="String">
+        update wm_item_recpt set deleted = 1 where recpt_id in
         <foreach item="recptId" collection="array" open="(" separator="," close=")">
             #{recptId}
         </foreach>
-    </delete>
+    </update>
 </mapper>

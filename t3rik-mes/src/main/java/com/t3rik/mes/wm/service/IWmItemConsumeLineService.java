@@ -60,4 +60,6 @@ public interface IWmItemConsumeLineService
      * @return 结果
      */
     public int deleteWmItemConsumeLineByLineId(Long lineId);
+
+    public int deleteByConsumeId(Long recordId);
 }

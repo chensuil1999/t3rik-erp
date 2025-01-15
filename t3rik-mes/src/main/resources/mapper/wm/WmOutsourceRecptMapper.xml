@@ -77,7 +77,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectWmOutsourceRecptList" parameterType="WmOutsourceRecpt" resultMap="WmOutsourceRecptResult">
         <include refid="selectWmOutsourceRecptVo"/>
-        <where>  
+        <where>
+            deleted = 0
             <if test="recptCode != null  and recptCode != ''"> and recpt_code = #{recptCode}</if>
             <if test="recptName != null  and recptName != ''"> and recpt_name like concat('%', #{recptName}, '%')</if>
             <if test="iqcId != null "> and iqc_id = #{iqcId}</if>
@@ -118,7 +119,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         FROM wm_outsource_recpt ir
                  LEFT JOIN wm_outsource_recpt_line irl
                            ON ir.recpt_id = irl.`recpt_id`
-        WHERE ir.`recpt_id` = #{recptId}
+        WHERE ir.`recpt_id` = #{recptId} and ir.deleted = 0 and irl.deleted = 0
     </select>
         
     <insert id="insertWmOutsourceRecpt" parameterType="WmOutsourceRecpt" useGeneratedKeys="true" keyProperty="recptId">
@@ -226,14 +227,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where recpt_id = #{recptId}
     </update>
 
-    <delete id="deleteWmOutsourceRecptByRecptId" parameterType="Long">
-        delete from wm_outsource_recpt where recpt_id = #{recptId}
-    </delete>
+    <update id="deleteWmOutsourceRecptByRecptId" parameterType="Long">
+        update wm_outsource_recpt set deleted = 1 where recpt_id = #{recptId}
+    </update>
 
-    <delete id="deleteWmOutsourceRecptByRecptIds" parameterType="String">
-        delete from wm_outsource_recpt where recpt_id in 
+    <update id="deleteWmOutsourceRecptByRecptIds" parameterType="String">
+        update wm_outsource_recpt set deleted = 1 where recpt_id in
         <foreach item="recptId" collection="array" open="(" separator="," close=")">
             #{recptId}
         </foreach>
-    </delete>
+    </update>
 </mapper>

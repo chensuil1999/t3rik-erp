@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.t3rik.common.utils.SecurityUtils.getUsername;
+
 /**
  * 生产领料单头Service业务层处理
  *
@@ -71,6 +73,7 @@ public class WmIssueHeaderServiceImpl extends ServiceImpl<WmIssueHeaderMapper, W
     @Override
     public int insertWmIssueHeader(WmIssueHeader wmIssueHeader) {
         wmIssueHeader.setCreateTime(DateUtils.getNowDate());
+        wmIssueHeader.setCreateBy(getUsername());
         return wmIssueHeaderMapper.insertWmIssueHeader(wmIssueHeader);
     }
 
@@ -83,6 +86,7 @@ public class WmIssueHeaderServiceImpl extends ServiceImpl<WmIssueHeaderMapper, W
     @Override
     public int updateWmIssueHeader(WmIssueHeader wmIssueHeader) {
         wmIssueHeader.setUpdateTime(DateUtils.getNowDate());
+        wmIssueHeader.setUpdateBy(getUsername());
         return wmIssueHeaderMapper.updateWmIssueHeader(wmIssueHeader);
     }
 
@@ -125,6 +129,11 @@ public class WmIssueHeaderServiceImpl extends ServiceImpl<WmIssueHeaderMapper, W
         // 调用库存核心
         storageCoreService.processIssue(beans);
         // 更新单据状态
-        this.lambdaUpdate().set(WmIssueHeader::getStatus, OrderStatusEnum.FINISHED.getCode()).update(new WmIssueHeader());
+
+        this.lambdaUpdate().set(
+                WmIssueHeader::getStatus, OrderStatusEnum.FINISHED.getCode())
+                .set(WmIssueHeader::getUpdateBy,getUsername())
+                .set(WmIssueHeader::getUpdateTime,DateUtils.getNowDate())
+                .update(new WmIssueHeader());
     }
 }

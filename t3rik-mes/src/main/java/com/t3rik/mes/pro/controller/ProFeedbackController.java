@@ -124,7 +124,7 @@ public class ProFeedbackController extends BaseController {
         }
         String feedbackCode = autoCodeUtil.genSerialCode(UserConstants.FEEDBACK_CODE, "");
         proFeedback.setFeedbackCode(feedbackCode);
-        proFeedback.setCreateBy(getUsername());
+//        proFeedback.setCreateBy(getUsername());
         proFeedback.setQuantity(task.getQuantity());
         proFeedbackService.insertProFeedback(proFeedback);
         return AjaxResult.success(proFeedback.getRecordId());

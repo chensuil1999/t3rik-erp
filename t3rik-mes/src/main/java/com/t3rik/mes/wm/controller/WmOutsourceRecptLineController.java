@@ -84,7 +84,6 @@ public class WmOutsourceRecptLineController extends BaseController {
     @PostMapping
     public AjaxResult add(@RequestBody WmOutsourceRecptLine wmOutsourceRecptLine) {
         setWarehouseInfo(wmOutsourceRecptLine);
-        wmOutsourceRecptLine.setCreateBy(getUsername());
         return toAjax(wmOutsourceRecptLineService.insertWmOutsourceRecptLine(wmOutsourceRecptLine));
     }
 

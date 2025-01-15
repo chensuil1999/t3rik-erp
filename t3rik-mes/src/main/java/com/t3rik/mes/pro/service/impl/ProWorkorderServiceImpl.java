@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.t3rik.common.utils.SecurityUtils.getUsername;
+
 /**
  * 生产工单Service业务层处理
  *
@@ -71,6 +73,7 @@ public class ProWorkorderServiceImpl extends ServiceImpl<ProWorkorderMapper, Pro
             }
         }
 
+        proWorkorder.setCreateBy(getUsername());
         proWorkorder.setCreateTime(DateUtils.getNowDate());
         return proWorkorderMapper.insertProWorkorder(proWorkorder);
     }
@@ -84,6 +87,7 @@ public class ProWorkorderServiceImpl extends ServiceImpl<ProWorkorderMapper, Pro
     @Override
     public int updateProWorkorder(ProWorkorder proWorkorder) {
         proWorkorder.setUpdateTime(DateUtils.getNowDate());
+        proWorkorder.setUpdateBy(getUsername());
         return proWorkorderMapper.updateProWorkorder(proWorkorder);
     }
 

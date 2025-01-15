@@ -244,14 +244,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where transaction_id = #{transactionId}
     </update>
 
-    <delete id="deleteWmTransactionByTransactionId" parameterType="Long">
-        delete from wm_transaction where transaction_id = #{transactionId}
-    </delete>
+    <update id="deleteWmTransactionByTransactionId" parameterType="Long">
+        update wm_transaction set deleted = 1 where transaction_id = #{transactionId}
+    </update>
 
-    <delete id="deleteWmTransactionByTransactionIds" parameterType="String">
-        delete from wm_transaction where transaction_id in 
+    <update id="deleteWmTransactionByTransactionIds" parameterType="String">
+        update wm_transaction set deleted = 1 where transaction_id in
         <foreach item="transactionId" collection="array" open="(" separator="," close=")">
             #{transactionId}
         </foreach>
-    </delete>
+    </update>
 </mapper>

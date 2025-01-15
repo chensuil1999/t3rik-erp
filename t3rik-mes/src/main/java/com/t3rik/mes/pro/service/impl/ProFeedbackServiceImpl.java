@@ -31,6 +31,7 @@ import java.util.Date;
 import java.util.List;
 
 import static com.t3rik.common.utils.SecurityUtils.getLoginUser;
+import static com.t3rik.common.utils.SecurityUtils.getUsername;
 
 /**
  * 生产报工记录Service业务层处理
@@ -100,6 +101,8 @@ public class ProFeedbackServiceImpl extends ServiceImpl<ProFeedbackMapper, ProFe
         //System.out.println(DateUtils.getNowDate());
 //        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         proFeedback.setCreateTime(DateUtils.getNowDate());
+        proFeedback.setCreateBy(getUsername());
+
         return proFeedbackMapper.insertProFeedback(proFeedback);
     }
 
@@ -112,6 +115,7 @@ public class ProFeedbackServiceImpl extends ServiceImpl<ProFeedbackMapper, ProFe
     @Override
     public int updateProFeedback(ProFeedback proFeedback) {
         proFeedback.setUpdateTime(DateUtils.getNowDate());
+        proFeedback.setUpdateBy(getUsername());
         return proFeedbackMapper.updateProFeedback(proFeedback);
     }
 

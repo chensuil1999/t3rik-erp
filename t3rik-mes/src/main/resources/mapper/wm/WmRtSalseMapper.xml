@@ -83,12 +83,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         FROM wm_rt_salse ir
                  LEFT JOIN wm_rt_salse_line irl
                            ON ir.rt_id = irl.rt_id
-        WHERE ir.rt_id = #{rtId}
+        WHERE ir.rt_id = #{rtId} and ir.deleted = 0 and irl.deleted = 0
     </select>
 
     <select id="selectWmRtSalseList" parameterType="WmRtSalse" resultMap="WmRtSalseResult">
         <include refid="selectWmRtSalseVo"/>
-        <where>  
+        <where>
+            deleted = 0
             <if test="rtCode != null  and rtCode != ''"> and rt_code = #{rtCode}</if>
             <if test="rtName != null  and rtName != ''"> and rt_name like concat('%', #{rtName}, '%')</if>
             <if test="soCode != null  and soCode != ''"> and so_code = #{soCode}</if>
@@ -226,14 +227,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where rt_id = #{rtId}
     </update>
 
-    <delete id="deleteWmRtSalseByRtId" parameterType="Long">
-        delete from wm_rt_salse where rt_id = #{rtId}
-    </delete>
+    <update id="deleteWmRtSalseByRtId" parameterType="Long">
+        update wm_rt_salse set deleted = 1 where rt_id = #{rtId}
+    </update>
 
-    <delete id="deleteWmRtSalseByRtIds" parameterType="String">
-        delete from wm_rt_salse where rt_id in 
+    <update id="deleteWmRtSalseByRtIds" parameterType="String">
+        update wm_rt_salse set deleted = 1 where rt_id in
         <foreach item="rtId" collection="array" open="(" separator="," close=")">
             #{rtId}
         </foreach>
-    </delete>
+    </update>
 </mapper>

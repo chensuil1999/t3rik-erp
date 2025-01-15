@@ -102,7 +102,7 @@ public class WmRtSalseLineController extends BaseController
             wmRtSalseLine.setAreaCode(area.getAreaCode());
             wmRtSalseLine.setAreaName(area.getAreaName());
         }
-        wmRtSalseLine.setCreateBy(getUsername());
+
         return toAjax(wmRtSalseLineService.insertWmRtSalseLine(wmRtSalseLine));
     }
 

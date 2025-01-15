@@ -23,6 +23,8 @@ import com.t3rik.mes.wm.mapper.WmItemConsumeMapper;
 import com.t3rik.mes.wm.domain.WmItemConsume;
 import com.t3rik.mes.wm.service.IWmItemConsumeService;
 
+import static com.t3rik.common.utils.SecurityUtils.getUsername;
+
 /**
  * 物料消耗记录Service业务层处理
  * 
@@ -93,6 +95,7 @@ public class WmItemConsumeServiceImpl implements IWmItemConsumeService
     public int insertWmItemConsume(WmItemConsume wmItemConsume)
     {
         wmItemConsume.setCreateTime(DateUtils.getNowDate());
+        wmItemConsume.setCreateBy(getUsername());
         return wmItemConsumeMapper.insertWmItemConsume(wmItemConsume);
     }
 
@@ -106,7 +109,7 @@ public class WmItemConsumeServiceImpl implements IWmItemConsumeService
     public int updateWmItemConsume(WmItemConsume wmItemConsume)
     {
         wmItemConsume.setUpdateTime(DateUtils.getNowDate());
-        //System.out.println("ppppp:" + wmItemConsume);
+        wmItemConsume.setUpdateBy(getUsername());
         return wmItemConsumeMapper.updateWmItemConsume(wmItemConsume);
     }
 

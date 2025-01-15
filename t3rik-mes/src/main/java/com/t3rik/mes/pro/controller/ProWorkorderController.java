@@ -118,7 +118,7 @@ public class ProWorkorderController extends BaseController {
         if (proWorkorder.getParentId() == null || proWorkorder.getParentId() == 0) {
             proWorkorder.setAncestors("0");
         }
-        proWorkorder.setCreateBy(getUsername());
+        //proWorkorder.setCreateBy(getUsername());
         proWorkorderService.insertProWorkorder(proWorkorder);
         Long workorderId = proWorkorder.getWorkorderId();
         generateBomLine(workorderId);
@@ -134,6 +134,9 @@ public class ProWorkorderController extends BaseController {
     public AjaxResult edit(@RequestBody ProWorkorder proWorkorder) {
         ProWorkorder workorder = proWorkorderService.selectProWorkorderByWorkorderId(proWorkorder.getWorkorderId());
 
+        //System.out.println("ooooo: " + proWorkorder);
+        //System.out.println("zzzzz: " + proWorkorder.getUpdateBy());
+        //proWorkorder.setUpdateBy(getUsername());
         int ret = proWorkorderService.updateProWorkorder(proWorkorder);
         // 如果是产品和数量发生变化则需要重新生成BOM组成
         if (ret > 0) {
@@ -279,6 +282,7 @@ public class ProWorkorderController extends BaseController {
         if(!CollectionUtils.isEmpty(tasks)) {
             for (ProTask task : tasks) {
                 task.setStatus(UserConstants.ORDER_STATUS_FINISHED);
+                //task.setUpdateBy(getUsername());
                 proTaskService.updateProTask(task);
             }
         }

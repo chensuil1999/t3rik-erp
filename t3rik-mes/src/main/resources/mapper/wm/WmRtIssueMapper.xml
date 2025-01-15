@@ -65,6 +65,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectWmRtIssueList" parameterType="WmRtIssue" resultMap="WmRtIssueResult">
         <include refid="selectWmRtIssueVo"/>
         <where>
+            deleted = 0
             <if test="recordId != null  and recordId != ''"> and record_id = #{recordId}</if>
             <if test="rtCode != null  and rtCode != ''"> and rt_code = #{rtCode}</if>
             <if test="rtName != null  and rtName != ''"> and rt_name like concat('%', #{rtName}, '%')</if>
@@ -117,7 +118,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                            ON ir.rt_id = irl.rt_id
                  left join wm_material_stock ms
                            on irl.material_stock_id = ms.material_stock_id
-        WHERE ir.rt_id = #{rtId}
+        WHERE ir.rt_id = #{rtId} and ir.deleted = 0 and irl.deleted = 0
     </select>
 
     <insert id="insertWmRtIssue" parameterType="WmRtIssue" useGeneratedKeys="true" keyProperty="rtId">
@@ -210,12 +211,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where rt_id = #{rtId}
     </update>
 
-    <delete id="deleteWmRtIssueByRtId" parameterType="Long">
-        delete from wm_rt_issue where rt_id = #{rtId}
-    </delete>
+    <update id="deleteWmRtIssueByRtId" parameterType="Long">
+        update wm_rt_issue set deleted = 1 where rt_id = #{rtId}
+    </update>
 
     <delete id="deleteWmRtIssueByRtIds" parameterType="String">
-        delete from wm_rt_issue where rt_id in
+        update wm_rt_issue set deleted = 1 where rt_id in
         <foreach item="rtId" collection="array" open="(" separator="," close=")">
             #{rtId}
         </foreach>

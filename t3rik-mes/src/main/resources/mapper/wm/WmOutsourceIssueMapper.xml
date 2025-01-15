@@ -80,7 +80,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectWmOutsourceIssueList" parameterType="WmOutsourceIssue" resultMap="WmOutsourceIssueResult">
         <include refid="selectWmOutsourceIssueVo"/>
-        <where>  
+        <where>
+            deleted = 0
             <if test="issueCode != null  and issueCode != ''"> and issue_code = #{issueCode}</if>
             <if test="issueName != null  and issueName != ''"> and issue_name like concat('%', #{issueName}, '%')</if>
             <if test="workorderId != null "> and workorder_id = #{workorderId}</if>
@@ -118,7 +119,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         FROM wm_outsource_issue ir
                  LEFT JOIN wm_outsource_issue_line irl
                            ON ir.issue_id = irl.`issue_id`
-        WHERE ir.`issue_id` = #{issueId}
+        WHERE ir.`issue_id` = #{issueId} and ir.deleted = 0 and irl.deleted = 0
     </select>
         
     <insert id="insertWmOutsourceIssue" parameterType="WmOutsourceIssue" useGeneratedKeys="true" keyProperty="issueId">
@@ -225,14 +226,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where issue_code = #{issueCode} limit 1
     </select>
 
-    <delete id="deleteWmOutsourceIssueByIssueId" parameterType="Long">
-        delete from wm_outsource_issue where issue_id = #{issueId}
-    </delete>
+    <update id="deleteWmOutsourceIssueByIssueId" parameterType="Long">
+        update wm_outsource_issue set deleted = 1 where issue_id = #{issueId}
+    </update>
 
-    <delete id="deleteWmOutsourceIssueByIssueIds" parameterType="String">
-        delete from wm_outsource_issue where issue_id in 
+    <update id="deleteWmOutsourceIssueByIssueIds" parameterType="String">
+        update wm_outsource_issue set deleted = 1 where issue_id in
         <foreach item="issueId" collection="array" open="(" separator="," close=")">
             #{issueId}
         </foreach>
-    </delete>
+    </update>
 </mapper>

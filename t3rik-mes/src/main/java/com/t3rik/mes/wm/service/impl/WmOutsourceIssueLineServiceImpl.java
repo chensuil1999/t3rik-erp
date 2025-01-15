@@ -8,6 +8,8 @@ import com.t3rik.mes.wm.mapper.WmOutsourceIssueLineMapper;
 import com.t3rik.mes.wm.domain.WmOutsourceIssueLine;
 import com.t3rik.mes.wm.service.IWmOutsourceIssueLineService;
 
+import static com.t3rik.common.utils.SecurityUtils.getUsername;
+
 /**
  * 外协领料单行Service业务层处理
  * 
@@ -64,6 +66,7 @@ public class WmOutsourceIssueLineServiceImpl implements IWmOutsourceIssueLineSer
     public int insertWmOutsourceIssueLine(WmOutsourceIssueLine wmOutsourceIssueLine)
     {
         wmOutsourceIssueLine.setCreateTime(DateUtils.getNowDate());
+        wmOutsourceIssueLine.setCreateBy(getUsername());
         return wmOutsourceIssueLineMapper.insertWmOutsourceIssueLine(wmOutsourceIssueLine);
     }
 
@@ -77,6 +80,8 @@ public class WmOutsourceIssueLineServiceImpl implements IWmOutsourceIssueLineSer
     public int updateWmOutsourceIssueLine(WmOutsourceIssueLine wmOutsourceIssueLine)
     {
         wmOutsourceIssueLine.setUpdateTime(DateUtils.getNowDate());
+//        wmOutsourceIssueLine.setCreateTime(DateUtils.getNowDate());
+        wmOutsourceIssueLine.setUpdateBy(getUsername());
         return wmOutsourceIssueLineMapper.updateWmOutsourceIssueLine(wmOutsourceIssueLine);
     }
 

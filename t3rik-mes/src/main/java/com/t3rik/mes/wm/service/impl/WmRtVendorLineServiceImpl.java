@@ -8,6 +8,8 @@ import com.t3rik.mes.wm.mapper.WmRtVendorLineMapper;
 import com.t3rik.mes.wm.domain.WmRtVendorLine;
 import com.t3rik.mes.wm.service.IWmRtVendorLineService;
 
+import static com.t3rik.common.utils.SecurityUtils.getUsername;
+
 /**
  * 供应商退货行Service业务层处理
  * 
@@ -54,6 +56,7 @@ public class WmRtVendorLineServiceImpl implements IWmRtVendorLineService
     public int insertWmRtVendorLine(WmRtVendorLine wmRtVendorLine)
     {
         wmRtVendorLine.setCreateTime(DateUtils.getNowDate());
+        wmRtVendorLine.setCreateBy(getUsername());
         return wmRtVendorLineMapper.insertWmRtVendorLine(wmRtVendorLine);
     }
 
@@ -67,6 +70,7 @@ public class WmRtVendorLineServiceImpl implements IWmRtVendorLineService
     public int updateWmRtVendorLine(WmRtVendorLine wmRtVendorLine)
     {
         wmRtVendorLine.setUpdateTime(DateUtils.getNowDate());
+        wmRtVendorLine.setUpdateBy(getUsername());
         return wmRtVendorLineMapper.updateWmRtVendorLine(wmRtVendorLine);
     }
 

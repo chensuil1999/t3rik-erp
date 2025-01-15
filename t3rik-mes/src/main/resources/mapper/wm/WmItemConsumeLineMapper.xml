@@ -41,7 +41,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectWmItemConsumeLineList" parameterType="WmItemConsumeLine" resultMap="WmItemConsumeLineResult">
         <include refid="selectWmItemConsumeLineVo"/>
-        <where>  
+        <where>
+            deleted = 0
             <if test="recordId != null "> and record_id = #{recordId}</if>
             <if test="materialStockId != null "> and material_stock_id = #{materialStockId}</if>
             <if test="itemId != null "> and item_id = #{itemId}</if>
@@ -169,14 +170,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where line_id = #{lineId}
     </update>
 
-    <delete id="deleteWmItemConsumeLineByLineId" parameterType="Long">
-        delete from wm_item_consume_line where line_id = #{lineId}
-    </delete>
+    <update id="deleteWmItemConsumeLineByLineId" parameterType="Long">
+        update wm_item_consume_line set deleted = 1 where line_id = #{lineId}
+    </update>
 
-    <delete id="deleteWmItemConsumeLineByLineIds" parameterType="String">
-        delete from wm_item_consume_line where line_id in 
+    <update id="deleteWmItemConsumeLineByLineIds" parameterType="String">
+        update wm_item_consume_line set deleted = 1 where line_id in
         <foreach item="lineId" collection="array" open="(" separator="," close=")">
             #{lineId}
         </foreach>
-    </delete>
+    </update>
+
+    <update id="deleteByConsumeId" parameterType="Long">
+        update wm_item_consume_line set deleted = 1 where record_id = #{recordId}
+    </update>
 </mapper>

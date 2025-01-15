@@ -43,7 +43,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectWmStockTakingLineList" parameterType="WmStockTakingLine" resultMap="WmStockTakingLineResult">
         <include refid="selectWmStockTakingLineVo"/>
-        <where>  
+        <where>
+            deleted = 0
             <if test="takingId != null "> and taking_id = #{takingId}</if>
             <if test="materialStockId != null "> and material_stock_id = #{materialStockId}</if>
             <if test="itemId != null "> and item_id = #{itemId}</if>
@@ -174,19 +175,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where line_id = #{lineId}
     </update>
 
-    <delete id="deleteWmStockTakingLineByLineId" parameterType="Long">
-        delete from wm_stock_taking_line where line_id = #{lineId}
-    </delete>
+    <update id="deleteWmStockTakingLineByLineId" parameterType="Long">
+        update wm_stock_taking_line set deleted = 1 where line_id = #{lineId}
+    </update>
 
-    <delete id="deleteWmStockTakingLineByLineIds" parameterType="String">
-        delete from wm_stock_taking_line where line_id in 
+    <update id="deleteWmStockTakingLineByLineIds" parameterType="String">
+        update wm_stock_taking_line set deleted = 1 where line_id in
         <foreach item="lineId" collection="array" open="(" separator="," close=")">
             #{lineId}
         </foreach>
-    </delete>
+    </update>
 
-    <delete id="deleteByTakingId" parameterType="Long">
-        delete from wm_stock_taking_line where taking_id = #{takingId}
-    </delete>
+    <update id="deleteByTakingId" parameterType="Long">
+        update wm_stock_taking_line set deleted = 1 where taking_id = #{takingId}
+    </update>
 
 </mapper>

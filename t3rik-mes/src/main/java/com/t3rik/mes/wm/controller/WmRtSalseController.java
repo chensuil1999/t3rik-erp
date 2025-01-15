@@ -1,12 +1,14 @@
 package com.t3rik.mes.wm.controller;
 
 import com.t3rik.common.annotation.Log;
+import com.t3rik.common.constant.MsgConstants;
 import com.t3rik.common.constant.UserConstants;
 import com.t3rik.common.core.controller.BaseController;
 import com.t3rik.common.core.domain.AjaxResult;
 import com.t3rik.common.core.page.TableDataInfo;
 import com.t3rik.common.enums.BusinessType;
 import com.t3rik.common.utils.poi.ExcelUtil;
+import com.t3rik.mes.wm.domain.WmRtIssue;
 import com.t3rik.mes.wm.domain.WmRtSalse;
 import com.t3rik.mes.wm.domain.WmRtSalseLine;
 import com.t3rik.mes.wm.domain.tx.RtSalseTxBean;
@@ -86,7 +88,6 @@ public class WmRtSalseController extends BaseController {
         }
         // 设置仓库信息
         this.warehouseUtil.setWarehouseInfo(wmRtSalse);
-        wmRtSalse.setCreateBy(getUsername());
         return toAjax(wmRtSalseService.insertWmRtSalse(wmRtSalse));
     }
 
@@ -113,6 +114,16 @@ public class WmRtSalseController extends BaseController {
     @Transactional
     @DeleteMapping("/{rtIds}")
     public AjaxResult remove(@PathVariable Long[] rtIds) {
+        if (rtIds.length == 0) {
+            return AjaxResult.error(MsgConstants.PARAM_ERROR);
+        }
+        for (Long rtId : rtIds) {
+            WmRtSalse wrs = wmRtSalseService.selectWmRtSalseByRtId(rtId);
+            if(UserConstants.ORDER_STATUS_FINISHED.equals(wrs.getStatus()))
+            {
+                return AjaxResult.error("存在归档数据！无法删除");
+            }
+        }
         for (Long rtId : rtIds) {
             wmRtSalseLineService.deleteByRtId(rtId);
         }

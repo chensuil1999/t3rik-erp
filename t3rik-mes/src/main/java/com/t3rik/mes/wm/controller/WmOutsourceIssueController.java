@@ -9,6 +9,7 @@ import com.t3rik.common.core.domain.AjaxResult;
 import com.t3rik.common.core.page.TableDataInfo;
 import com.t3rik.common.enums.BusinessType;
 import com.t3rik.common.utils.poi.ExcelUtil;
+import com.t3rik.mes.wm.domain.WmItemConsume;
 import com.t3rik.mes.wm.domain.WmOutsourceIssue;
 import com.t3rik.mes.wm.domain.WmOutsourceIssueLine;
 import com.t3rik.mes.wm.domain.tx.OutsourceIssueTxBean;
@@ -88,7 +89,7 @@ public class WmOutsourceIssueController extends BaseController {
         }
 //        // 设置仓库相关信息
         warehouseUtil.setWarehouseInfo(wmOutsourceIssue);
-        wmOutsourceIssue.setCreateBy(getUsername());
+
         return toAjax(wmOutsourceIssueService.insertWmOutsourceIssue(wmOutsourceIssue));
     }
 
@@ -114,6 +115,16 @@ public class WmOutsourceIssueController extends BaseController {
     @Transactional
     @DeleteMapping("/{issueIds}")
     public AjaxResult remove(@PathVariable Long[] issueIds) {
+        if (issueIds.length == 0) {
+            return AjaxResult.error(MsgConstants.PARAM_ERROR);
+        }
+        for (Long issueId : issueIds) {
+            WmOutsourceIssue wosi = wmOutsourceIssueService.selectWmOutsourceIssueByIssueId(issueId);
+            if(UserConstants.ORDER_STATUS_FINISHED.equals(wosi.getStatus()))
+            {
+                return AjaxResult.error("存在归档数据！无法删除");
+            }
+        }
         for (Long issueId : issueIds) {
             wmOutsourceIssueLineService.deleteWmOutsourceIssueLineByIssueId(issueId);
         }

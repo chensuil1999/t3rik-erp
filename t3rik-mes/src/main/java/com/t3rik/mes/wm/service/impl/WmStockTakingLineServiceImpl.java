@@ -8,6 +8,8 @@ import com.t3rik.mes.wm.mapper.WmStockTakingLineMapper;
 import com.t3rik.mes.wm.domain.WmStockTakingLine;
 import com.t3rik.mes.wm.service.IWmStockTakingLineService;
 
+import static com.t3rik.common.utils.SecurityUtils.getUsername;
+
 /**
  * 库存盘点明细Service业务层处理
  * 
@@ -54,6 +56,8 @@ public class WmStockTakingLineServiceImpl implements IWmStockTakingLineService
     public int insertWmStockTakingLine(WmStockTakingLine wmStockTakingLine)
     {
         wmStockTakingLine.setCreateTime(DateUtils.getNowDate());
+//        wmStockTaking.setCreateTime(DateUtils.getNowDate());
+        wmStockTakingLine.setCreateBy(getUsername());
         return wmStockTakingLineMapper.insertWmStockTakingLine(wmStockTakingLine);
     }
 
@@ -67,6 +71,7 @@ public class WmStockTakingLineServiceImpl implements IWmStockTakingLineService
     public int updateWmStockTakingLine(WmStockTakingLine wmStockTakingLine)
     {
         wmStockTakingLine.setUpdateTime(DateUtils.getNowDate());
+        wmStockTakingLine.setUpdateBy(getUsername());
         return wmStockTakingLineMapper.updateWmStockTakingLine(wmStockTakingLine);
     }
 

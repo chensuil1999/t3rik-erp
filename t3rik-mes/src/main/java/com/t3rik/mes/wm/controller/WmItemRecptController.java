@@ -89,7 +89,7 @@ public class WmItemRecptController extends BaseController {
         }
         // 设置仓库相关信息
         warehouseUtil.setWarehouseInfo(wmItemRecpt);
-        wmItemRecpt.setCreateBy(getUsername());
+//        wmItemRecpt.setCreateBy(getUsername());
         return toAjax(wmItemRecptService.insertWmItemRecpt(wmItemRecpt));
     }
 

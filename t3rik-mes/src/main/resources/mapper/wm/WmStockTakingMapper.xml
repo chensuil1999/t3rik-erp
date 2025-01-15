@@ -62,7 +62,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectWmStockTakingList" parameterType="WmStockTaking" resultMap="WmStockTakingResult">
         <include refid="selectWmStockTakingVo"/>
-        <where>  
+        <where>
+            deleted = 0
             <if test="takingCode != null  and takingCode != ''"> and taking_code = #{takingCode}</if>
             <if test="takingName != null  and takingName != ''"> and taking_name like concat('%', #{takingName}, '%')</if>
             <if test="takingDate != null "> and taking_date = #{takingDate}</if>
@@ -96,7 +97,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         FROM wm_stock_taking ir
                  LEFT JOIN wm_stock_taking_line irl
                            ON ir.taking_id = irl.`taking_id`
-        WHERE ir.`taking_id` = #{takingId}
+        WHERE ir.`taking_id` = #{takingId} and ir.deleted = 0 and irl.deleted = 0
     </select>
         
     <insert id="insertWmStockTaking" parameterType="WmStockTaking" useGeneratedKeys="true" keyProperty="takingId">
@@ -171,14 +172,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where taking_id = #{takingId}
     </update>
 
-    <delete id="deleteWmStockTakingByTakingId" parameterType="Long">
-        delete from wm_stock_taking where taking_id = #{takingId}
-    </delete>
+    <update id="deleteWmStockTakingByTakingId" parameterType="Long">
+        update wm_stock_taking set deleted = 1 where taking_id = #{takingId}
+    </update>
 
-    <delete id="deleteWmStockTakingByTakingIds" parameterType="String">
-        delete from wm_stock_taking where taking_id in 
+    <update id="deleteWmStockTakingByTakingIds" parameterType="String">
+        update wm_stock_taking set deleted = 1 where taking_id in
         <foreach item="takingId" collection="array" open="(" separator="," close=")">
             #{takingId}
         </foreach>
-    </delete>
+    </update>
 </mapper>

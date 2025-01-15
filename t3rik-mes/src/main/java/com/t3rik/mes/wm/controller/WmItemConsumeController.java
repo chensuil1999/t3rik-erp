@@ -1,6 +1,7 @@
 package com.t3rik.mes.wm.controller;
 
 import com.t3rik.common.annotation.Log;
+import com.t3rik.common.constant.MsgConstants;
 import com.t3rik.common.constant.UserConstants;
 import com.t3rik.common.core.controller.BaseController;
 import com.t3rik.common.core.domain.AjaxResult;
@@ -10,10 +11,7 @@ import com.t3rik.common.utils.StringUtils;
 import com.t3rik.common.utils.poi.ExcelUtil;
 import com.t3rik.mes.pro.domain.ProTask;
 import com.t3rik.mes.pro.domain.ProWorkorder;
-import com.t3rik.mes.wm.domain.WmItemConsume;
-import com.t3rik.mes.wm.domain.WmItemConsumeLine;
-import com.t3rik.mes.wm.domain.WmOutsourceRecpt;
-import com.t3rik.mes.wm.domain.WmOutsourceRecptLine;
+import com.t3rik.mes.wm.domain.*;
 import com.t3rik.mes.wm.domain.tx.ItemConsumeTxBean;
 import com.t3rik.mes.wm.domain.tx.OutsourceRecptTxBean;
 import com.t3rik.mes.wm.service.IStorageCoreService;
@@ -29,6 +27,8 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.math.BigDecimal;
 import java.util.List;
+
+import static com.t3rik.common.utils.SecurityUtils.getUsername;
 
 /**
  * 物料消耗记录Controller
@@ -115,9 +115,23 @@ public class WmItemConsumeController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('mes:wm:itemconsume:remove')")
     @Log(title = "物料消耗记录", businessType = BusinessType.DELETE)
+    @Transactional
 	@DeleteMapping("/{recordIds}")
     public AjaxResult remove(@PathVariable Long[] recordIds)
     {
+        if (recordIds.length == 0) {
+            return AjaxResult.error(MsgConstants.PARAM_ERROR);
+        }
+        for (Long recordId : recordIds) {
+            WmItemConsume wic = wmItemConsumeService.selectWmItemConsumeByRecordId(recordId);
+            if(UserConstants.ORDER_STATUS_FINISHED.equals(wic.getStatus()))
+            {
+                return AjaxResult.error("存在归档数据！无法删除");
+            }
+        }
+        for (Long recordId : recordIds) {
+            wmItemConsumeLineService.deleteByConsumeId(recordId);
+        }
         return toAjax(wmItemConsumeService.deleteWmItemConsumeByRecordIds(recordIds));
     }
 

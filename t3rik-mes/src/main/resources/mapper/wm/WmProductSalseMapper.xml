@@ -132,7 +132,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         FROM wm_product_salse ir
                  LEFT JOIN wm_product_salse_line irl
                            ON ir.salse_id = irl.`salse_id`
-        WHERE ir.`salse_id` = #{salseId}
+        WHERE ir.`salse_id` = #{salseId} and ir.deleted = 0 and irl.deleted = 0
     </select>
 
     <insert id="insertWmProductSalse" parameterType="WmProductSalse" useGeneratedKeys="true" keyProperty="salseId">

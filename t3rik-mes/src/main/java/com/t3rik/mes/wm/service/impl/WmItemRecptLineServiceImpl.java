@@ -14,6 +14,8 @@ import jakarta.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static com.t3rik.common.utils.SecurityUtils.getUsername;
+
 /**
  * 物料入库单行Service业务层处理
  *
@@ -59,6 +61,8 @@ public class WmItemRecptLineServiceImpl extends ServiceImpl<WmItemRecptLineMappe
     @Override
     public int insertWmItemRecptLine(WmItemRecptLine wmItemRecptLine) {
         wmItemRecptLine.setCreateTime(DateUtils.getNowDate());
+//        wmItemRecptLine.setUpdateTime(DateUtils.getNowDate());
+        wmItemRecptLine.setCreateBy(getUsername());
         int count = wmItemRecptLineMapper.insertWmItemRecptLine(wmItemRecptLine);
         // 更新主表金额
         updateItemRecptTotalAmount(wmItemRecptLine);
@@ -91,6 +95,7 @@ public class WmItemRecptLineServiceImpl extends ServiceImpl<WmItemRecptLineMappe
     @Override
     public int updateWmItemRecptLine(WmItemRecptLine wmItemRecptLine) {
         wmItemRecptLine.setUpdateTime(DateUtils.getNowDate());
+        wmItemRecptLine.setUpdateBy(getUsername());
         int count = wmItemRecptLineMapper.updateWmItemRecptLine(wmItemRecptLine);
         // 更新主表金额
         updateItemRecptTotalAmount(wmItemRecptLine);

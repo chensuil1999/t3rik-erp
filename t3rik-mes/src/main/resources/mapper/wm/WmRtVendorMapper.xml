@@ -65,7 +65,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectWmRtVendorList" parameterType="WmRtVendor" resultMap="WmRtVendorResult">
         <include refid="selectWmRtVendorVo"/>
-        <where>  
+        <where>
+            deleted = 0
             <if test="rtCode != null  and rtCode != ''"> and rt_code = #{rtCode}</if>
             <if test="rtName != null  and rtName != ''"> and rt_name like concat('%', #{rtName}, '%')</if>
             <if test="poCode != null  and poCode != ''"> and po_code = #{poCode}</if>
@@ -100,7 +101,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         FROM wm_rt_vendor ir
            LEFT JOIN wm_rt_vendor_line irl
            ON ir.rt_id = irl.`rt_id`
-        WHERE ir.`rt_id` = #{rtId}
+        WHERE ir.`rt_id` = #{rtId} and ir.deleted = 0 and irl.deleted = 0
     </select>
 
     <insert id="insertWmRtVendor" parameterType="WmRtVendor" useGeneratedKeys="true" keyProperty="rtId">
@@ -175,14 +176,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where rt_id = #{rtId}
     </update>
 
-    <delete id="deleteWmRtVendorByRtId" parameterType="Long">
-        delete from wm_rt_vendor where rt_id = #{rtId}
-    </delete>
+    <update id="deleteWmRtVendorByRtId" parameterType="Long">
+        update wm_rt_vendor set deleted = 1 where rt_id = #{rtId}
+    </update>
 
-    <delete id="deleteWmRtVendorByRtIds" parameterType="String">
-        delete from wm_rt_vendor where rt_id in 
+    <update id="deleteWmRtVendorByRtIds" parameterType="String">
+        update wm_rt_vendor set deleted = 1 where rt_id in
         <foreach item="rtId" collection="array" open="(" separator="," close=")">
             #{rtId}
         </foreach>
-    </delete>
+    </update>
 </mapper>

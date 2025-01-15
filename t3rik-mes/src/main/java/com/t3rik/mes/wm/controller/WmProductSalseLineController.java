@@ -71,7 +71,6 @@ public class WmProductSalseLineController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody WmProductSalseLine wmProductSalseLine)
     {
-        wmProductSalseLine.setCreateBy(getUsername());
         return toAjax(wmProductSalseLineService.insertWmProductSalseLine(wmProductSalseLine));
     }
 

@@ -12,6 +12,8 @@ import com.t3rik.mes.wm.mapper.WmProductSalseMapper;
 import com.t3rik.mes.wm.domain.WmProductSalse;
 import com.t3rik.mes.wm.service.IWmProductSalseService;
 
+import static com.t3rik.common.utils.SecurityUtils.getUsername;
+
 /**
  * 销售出库单Service业务层处理
  * 
@@ -73,6 +75,7 @@ public class WmProductSalseServiceImpl implements IWmProductSalseService
     public int insertWmProductSalse(WmProductSalse wmProductSalse)
     {
         wmProductSalse.setCreateTime(DateUtils.getNowDate());
+        wmProductSalse.setCreateBy(getUsername());
         return wmProductSalseMapper.insertWmProductSalse(wmProductSalse);
     }
 
@@ -86,6 +89,8 @@ public class WmProductSalseServiceImpl implements IWmProductSalseService
     public int updateWmProductSalse(WmProductSalse wmProductSalse)
     {
         wmProductSalse.setUpdateTime(DateUtils.getNowDate());
+//        wmProductSalse.setCreateTime(DateUtils.getNowDate());
+        wmProductSalse.setUpdateBy(getUsername());
         return wmProductSalseMapper.updateWmProductSalse(wmProductSalse);
     }
 

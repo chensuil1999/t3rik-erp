@@ -12,6 +12,8 @@ import com.t3rik.mes.wm.mapper.WmRtSalseMapper;
 import com.t3rik.mes.wm.domain.WmRtSalse;
 import com.t3rik.mes.wm.service.IWmRtSalseService;
 
+import static com.t3rik.common.utils.SecurityUtils.getUsername;
+
 /**
  * 产品销售退货单Service业务层处理
  * 
@@ -73,6 +75,7 @@ public class WmRtSalseServiceImpl implements IWmRtSalseService
     public int insertWmRtSalse(WmRtSalse wmRtSalse)
     {
         wmRtSalse.setCreateTime(DateUtils.getNowDate());
+        wmRtSalse.setCreateBy(getUsername());
         return wmRtSalseMapper.insertWmRtSalse(wmRtSalse);
     }
 
@@ -86,6 +89,8 @@ public class WmRtSalseServiceImpl implements IWmRtSalseService
     public int updateWmRtSalse(WmRtSalse wmRtSalse)
     {
         wmRtSalse.setUpdateTime(DateUtils.getNowDate());
+//        wmRtSalse.setCreateTime(DateUtils.getNowDate());
+        wmRtSalse.setUpdateBy(getUsername());
         return wmRtSalseMapper.updateWmRtSalse(wmRtSalse);
     }
 

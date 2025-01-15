@@ -1,6 +1,7 @@
 package com.t3rik.mes.wm.controller;
 
 import com.t3rik.common.annotation.Log;
+import com.t3rik.common.constant.MsgConstants;
 import com.t3rik.common.constant.UserConstants;
 import com.t3rik.common.core.controller.BaseController;
 import com.t3rik.common.core.domain.AjaxResult;
@@ -13,6 +14,7 @@ import com.t3rik.mes.wm.domain.WmWarehouse;
 import com.t3rik.mes.wm.domain.tx.ProductSalseTxBean;
 import com.t3rik.mes.wm.domain.tx.TakingTxBean;
 import com.t3rik.mes.wm.service.*;
+import com.t3rik.mes.wm.utils.WmWarehouseUtil;
 import com.t3rik.system.strategy.AutoCodeUtil;
 import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +46,9 @@ public class WmStockTakingController extends BaseController {
 
     @Resource
     private IStorageCoreService storageCoreService;
+
+    @Resource
+    private WmWarehouseUtil warehouseUtil;
 
     /**
      * 查询库存盘点记录列表
@@ -88,9 +93,8 @@ public class WmStockTakingController extends BaseController {
             wmStockTaking.setWarehouseCode(warehouse.getWarehouseCode());
             wmStockTaking.setWarehouseName(warehouse.getWarehouseName());
         }
-
+        warehouseUtil.setWarehouseInfo(wmStockTaking);
         wmStockTakingService.insertWmStockTaking(wmStockTaking);
-        wmStockTaking.setCreateBy(getUsername());
         return AjaxResult.success(wmStockTaking);
     }
 
@@ -118,6 +122,9 @@ public class WmStockTakingController extends BaseController {
     @DeleteMapping("/{takingIds}")
     public AjaxResult remove(@PathVariable Long[] takingIds)
     {
+        if (takingIds.length == 0) {
+            return AjaxResult.error(MsgConstants.PARAM_ERROR);
+        }
         for(Long takingId:takingIds){
             WmStockTaking taking = wmStockTakingService.selectWmStockTakingByTakingId(takingId);
             if(!UserConstants.ORDER_STATUS_PREPARE.equals(taking.getStatus())){

@@ -12,6 +12,8 @@ import com.t3rik.mes.wm.mapper.WmRtVendorMapper;
 import com.t3rik.mes.wm.domain.WmRtVendor;
 import com.t3rik.mes.wm.service.IWmRtVendorService;
 
+import static com.t3rik.common.utils.SecurityUtils.getUsername;
+
 /**
  * 供应商退货Service业务层处理
  * 
@@ -68,6 +70,7 @@ public class WmRtVendorServiceImpl implements IWmRtVendorService
     public int insertWmRtVendor(WmRtVendor wmRtVendor)
     {
         wmRtVendor.setCreateTime(DateUtils.getNowDate());
+        wmRtVendor.setCreateBy(getUsername());
         return wmRtVendorMapper.insertWmRtVendor(wmRtVendor);
     }
 
@@ -81,6 +84,8 @@ public class WmRtVendorServiceImpl implements IWmRtVendorService
     public int updateWmRtVendor(WmRtVendor wmRtVendor)
     {
         wmRtVendor.setUpdateTime(DateUtils.getNowDate());
+//        wmRtVendor.setCreateTime(DateUtils.getNowDate());
+        wmRtVendor.setUpdateBy(getUsername());
         return wmRtVendorMapper.updateWmRtVendor(wmRtVendor);
     }
 

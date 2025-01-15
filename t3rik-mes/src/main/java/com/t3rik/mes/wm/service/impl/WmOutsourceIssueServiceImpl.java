@@ -13,6 +13,8 @@ import com.t3rik.mes.wm.mapper.WmOutsourceIssueMapper;
 import com.t3rik.mes.wm.domain.WmOutsourceIssue;
 import com.t3rik.mes.wm.service.IWmOutsourceIssueService;
 
+import static com.t3rik.common.utils.SecurityUtils.getUsername;
+
 /**
  * 外协领料单头Service业务层处理
  *WmOutsourceIssueMapper
@@ -56,6 +58,7 @@ public class WmOutsourceIssueServiceImpl implements IWmOutsourceIssueService {
     @Override
     public int insertWmOutsourceIssue(WmOutsourceIssue wmOutsourceIssue) {
         wmOutsourceIssue.setCreateTime(DateUtils.getNowDate());
+        wmOutsourceIssue.setCreateBy(getUsername());
         return wmOutsourceIssueMapper.insertWmOutsourceIssue(wmOutsourceIssue);
     }
 
@@ -68,6 +71,7 @@ public class WmOutsourceIssueServiceImpl implements IWmOutsourceIssueService {
     @Override
     public int updateWmOutsourceIssue(WmOutsourceIssue wmOutsourceIssue) {
         wmOutsourceIssue.setUpdateTime(DateUtils.getNowDate());
+        wmOutsourceIssue.setUpdateBy(getUsername());
         return wmOutsourceIssueMapper.updateWmOutsourceIssue(wmOutsourceIssue);
     }
 

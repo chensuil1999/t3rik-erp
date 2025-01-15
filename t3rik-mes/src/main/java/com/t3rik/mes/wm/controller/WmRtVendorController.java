@@ -1,6 +1,7 @@
 package com.t3rik.mes.wm.controller;
 
 import com.t3rik.common.annotation.Log;
+import com.t3rik.common.constant.MsgConstants;
 import com.t3rik.common.constant.UserConstants;
 import com.t3rik.common.core.controller.BaseController;
 import com.t3rik.common.core.domain.AjaxResult;
@@ -87,7 +88,6 @@ public class WmRtVendorController extends BaseController
         if(UserConstants.NOT_UNIQUE.equals(wmRtVendorService.checkCodeUnique(wmRtVendor))){
             return AjaxResult.error("退货单编号已经存在！");
         }
-        wmRtVendor.setCreateBy(getUsername());
         return toAjax(wmRtVendorService.insertWmRtVendor(wmRtVendor));
     }
 
@@ -114,13 +114,14 @@ public class WmRtVendorController extends BaseController
     @DeleteMapping("/{rtIds}")
     public AjaxResult remove(@PathVariable Long[] rtIds)
     {
-        for (Long rtId:rtIds
-             ) {
+        if (rtIds.length == 0) {
+            return AjaxResult.error(MsgConstants.PARAM_ERROR);
+        }
+        for (Long rtId:rtIds) {
             WmRtVendor rtVendor = wmRtVendorService.selectWmRtVendorByRtId(rtId);
             if(!UserConstants.ORDER_STATUS_PREPARE.equals(rtVendor.getStatus())){
                 return AjaxResult.error("只能删除草稿状态的单据!");
             }
-
             wmRtVendorLineService.deleteByRtId(rtId);
         }
         return toAjax(wmRtVendorService.deleteWmRtVendorByRtIds(rtIds));

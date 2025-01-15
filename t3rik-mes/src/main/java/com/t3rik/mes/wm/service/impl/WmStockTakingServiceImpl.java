@@ -13,6 +13,8 @@ import com.t3rik.mes.wm.mapper.WmStockTakingMapper;
 import com.t3rik.mes.wm.domain.WmStockTaking;
 import com.t3rik.mes.wm.service.IWmStockTakingService;
 
+import static com.t3rik.common.utils.SecurityUtils.getUsername;
+
 /**
  * 库存盘点记录Service业务层处理
  * 
@@ -74,6 +76,7 @@ public class WmStockTakingServiceImpl implements IWmStockTakingService
     public int insertWmStockTaking(WmStockTaking wmStockTaking)
     {
         wmStockTaking.setCreateTime(DateUtils.getNowDate());
+        wmStockTaking.setCreateBy(getUsername());
         return wmStockTakingMapper.insertWmStockTaking(wmStockTaking);
     }
 
@@ -87,6 +90,8 @@ public class WmStockTakingServiceImpl implements IWmStockTakingService
     public int updateWmStockTaking(WmStockTaking wmStockTaking)
     {
         wmStockTaking.setUpdateTime(DateUtils.getNowDate());
+//        wmStockTaking.setCreateTime(DateUtils.getNowDate());
+        wmStockTaking.setUpdateBy(getUsername());
         return wmStockTakingMapper.updateWmStockTaking(wmStockTaking);
     }
 

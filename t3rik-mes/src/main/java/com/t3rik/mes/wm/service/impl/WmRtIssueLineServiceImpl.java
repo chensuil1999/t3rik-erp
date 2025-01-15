@@ -8,6 +8,8 @@ import com.t3rik.mes.wm.mapper.WmRtIssueLineMapper;
 import com.t3rik.mes.wm.domain.WmRtIssueLine;
 import com.t3rik.mes.wm.service.IWmRtIssueLineService;
 
+import static com.t3rik.common.utils.SecurityUtils.getUsername;
+
 /**
  * 生产退料单行Service业务层处理
  * 
@@ -54,6 +56,7 @@ public class WmRtIssueLineServiceImpl implements IWmRtIssueLineService
     public int insertWmRtIssueLine(WmRtIssueLine wmRtIssueLine)
     {
         wmRtIssueLine.setCreateTime(DateUtils.getNowDate());
+        wmRtIssueLine.setCreateBy(getUsername());
         return wmRtIssueLineMapper.insertWmRtIssueLine(wmRtIssueLine);
     }
 
@@ -67,6 +70,7 @@ public class WmRtIssueLineServiceImpl implements IWmRtIssueLineService
     public int updateWmRtIssueLine(WmRtIssueLine wmRtIssueLine)
     {
         wmRtIssueLine.setUpdateTime(DateUtils.getNowDate());
+        wmRtIssueLine.setUpdateBy(getUsername());
         return wmRtIssueLineMapper.updateWmRtIssueLine(wmRtIssueLine);
     }
 

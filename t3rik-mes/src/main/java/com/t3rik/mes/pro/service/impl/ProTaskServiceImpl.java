@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.t3rik.common.utils.SecurityUtils.getUsername;
 import static java.util.stream.Collectors.groupingBy;
 
 /**
@@ -77,6 +78,7 @@ public class ProTaskServiceImpl extends ServiceImpl<ProTaskMapper, ProTask> impl
     @Override
     public int insertProTask(ProTask proTask) {
         proTask.setCreateTime(DateUtils.getNowDate());
+        proTask.setCreateBy(getUsername());
         return proTaskMapper.insertProTask(proTask);
     }
 
@@ -89,6 +91,7 @@ public class ProTaskServiceImpl extends ServiceImpl<ProTaskMapper, ProTask> impl
     @Override
     public int updateProTask(ProTask proTask) {
         proTask.setUpdateTime(DateUtils.getNowDate());
+        proTask.setUpdateBy(getUsername());
         return proTaskMapper.updateProTask(proTask);
     }
 

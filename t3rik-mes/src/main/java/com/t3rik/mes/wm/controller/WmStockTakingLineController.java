@@ -8,7 +8,9 @@ import com.t3rik.common.enums.BusinessType;
 import com.t3rik.common.utils.poi.ExcelUtil;
 import com.t3rik.mes.wm.domain.WmStockTakingLine;
 import com.t3rik.mes.wm.service.IWmStockTakingLineService;
+import com.t3rik.mes.wm.utils.WmWarehouseUtil;
 import io.swagger.annotations.ApiOperation;
+import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +23,10 @@ import java.util.List;
 public class WmStockTakingLineController extends BaseController {
     @Autowired
     private IWmStockTakingLineService wmStockTakingLineService;
+
+    @Resource
+    private WmWarehouseUtil warehouseUtil;
+
 
     /**
      * 查询库存盘点明细列表
@@ -65,6 +71,7 @@ public class WmStockTakingLineController extends BaseController {
     @PostMapping
     public AjaxResult add(@RequestBody WmStockTakingLine wmStockTakingLine)
     {
+        warehouseUtil.setWarehouseInfo(wmStockTakingLine);
         return toAjax(wmStockTakingLineService.insertWmStockTakingLine(wmStockTakingLine));
     }
 
@@ -78,6 +85,18 @@ public class WmStockTakingLineController extends BaseController {
     public AjaxResult edit(@RequestBody WmStockTakingLine wmStockTakingLine)
     {
         return toAjax(wmStockTakingLineService.updateWmStockTakingLine(wmStockTakingLine));
+    }
+
+    /**
+     * 删除库存盘点明细
+     */
+    @ApiOperation("删除库存盘点明细接口")
+    @PreAuthorize("@ss.hasPermi('mes:wm:stocktakingline:remove')")
+    @Log(title = "库存盘点明细", businessType = BusinessType.DELETE)
+    @DeleteMapping("/{lineIds}")
+    public AjaxResult remove(@PathVariable Long[] lineIds)
+    {
+        return toAjax(wmStockTakingLineService.deleteWmStockTakingLineByLineIds(lineIds));
     }
 
 }

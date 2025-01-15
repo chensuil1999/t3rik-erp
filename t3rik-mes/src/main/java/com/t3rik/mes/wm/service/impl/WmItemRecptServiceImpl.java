@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.t3rik.common.utils.SecurityUtils.getUsername;
+
 /**
  * 物料入库单Service业务层处理
  *
@@ -71,6 +73,7 @@ public class WmItemRecptServiceImpl extends ServiceImpl<WmItemRecptMapper, WmIte
     @Override
     public int insertWmItemRecpt(WmItemRecpt wmItemRecpt) {
         wmItemRecpt.setCreateTime(DateUtils.getNowDate());
+        wmItemRecpt.setCreateBy(getUsername());
         return wmItemRecptMapper.insertWmItemRecpt(wmItemRecpt);
     }
 
@@ -82,7 +85,9 @@ public class WmItemRecptServiceImpl extends ServiceImpl<WmItemRecptMapper, WmIte
      */
     @Override
     public int updateWmItemRecpt(WmItemRecpt wmItemRecpt) {
+//        wmItemRecpt.setUpdateTime(DateUtils.getNowDate());
         wmItemRecpt.setUpdateTime(DateUtils.getNowDate());
+        wmItemRecpt.setUpdateBy(getUsername());
         return wmItemRecptMapper.updateWmItemRecpt(wmItemRecpt);
     }
 
@@ -129,6 +134,8 @@ public class WmItemRecptServiceImpl extends ServiceImpl<WmItemRecptMapper, WmIte
         // 更新单据状态
         this.lambdaUpdate()
                 .set(WmItemRecpt::getStatus, OrderStatusEnum.FINISHED.getCode())
+                .set(WmItemRecpt::getUpdateBy,getUsername())
+                .set(WmItemRecpt::getUpdateTime,DateUtils.getNowDate())
                 .eq(WmItemRecpt::getRecptId, recptId)
                 .update(new WmItemRecpt());
     }

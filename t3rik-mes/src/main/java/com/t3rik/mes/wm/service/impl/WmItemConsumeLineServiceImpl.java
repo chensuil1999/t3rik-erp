@@ -8,6 +8,8 @@ import com.t3rik.mes.wm.mapper.WmItemConsumeLineMapper;
 import com.t3rik.mes.wm.domain.WmItemConsumeLine;
 import com.t3rik.mes.wm.service.IWmItemConsumeLineService;
 
+import static com.t3rik.common.utils.SecurityUtils.getUsername;
+
 /**
  * 物料消耗记录行Service业务层处理
  * 
@@ -59,6 +61,7 @@ public class WmItemConsumeLineServiceImpl implements IWmItemConsumeLineService
     public int insertWmItemConsumeLine(WmItemConsumeLine wmItemConsumeLine)
     {
         wmItemConsumeLine.setCreateTime(DateUtils.getNowDate());
+        wmItemConsumeLine.setCreateBy(getUsername());
         return wmItemConsumeLineMapper.insertWmItemConsumeLine(wmItemConsumeLine);
     }
 
@@ -72,6 +75,7 @@ public class WmItemConsumeLineServiceImpl implements IWmItemConsumeLineService
     public int updateWmItemConsumeLine(WmItemConsumeLine wmItemConsumeLine)
     {
         wmItemConsumeLine.setUpdateTime(DateUtils.getNowDate());
+        wmItemConsumeLine.setUpdateBy(getUsername());
         return wmItemConsumeLineMapper.updateWmItemConsumeLine(wmItemConsumeLine);
     }
 
@@ -97,5 +101,10 @@ public class WmItemConsumeLineServiceImpl implements IWmItemConsumeLineService
     public int deleteWmItemConsumeLineByLineId(Long lineId)
     {
         return wmItemConsumeLineMapper.deleteWmItemConsumeLineByLineId(lineId);
+    }
+
+    @Override
+    public int deleteByConsumeId(Long recordId) {
+        return wmItemConsumeLineMapper.deleteByConsumeId(recordId);
     }
 }

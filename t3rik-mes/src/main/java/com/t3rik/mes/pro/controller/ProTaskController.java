@@ -366,6 +366,6 @@ public class ProTaskController extends BaseController {
     private String composeTaskName(ProTask proTask) {
         Object cacheUnitMeasure = this.redisCache.getCacheObject(proTask.getUnitOfMeasure());
         String unitMeasureName = cacheUnitMeasure == null ? proTask.getUnitOfMeasure() : (String) cacheUnitMeasure;
-        return proTask.getItemName() + "-" + "【" + proTask.getQuantity().toString() + "】" + "-" + unitMeasureName;
+        return proTask.getItemName() + "-" + proTask.getProcessName() + "-" + "【" + proTask.getQuantity().toString() + "】" + "-" + unitMeasureName;
     }
 }

@@ -41,7 +41,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectWmOutsourceIssueLineList" parameterType="WmOutsourceIssueLine" resultMap="WmOutsourceIssueLineResult">
         <include refid="selectWmOutsourceIssueLineVo"/>
-        <where>  
+        <where>
+            deleted = 0
             <if test="issueId != null "> and issue_id = #{issueId}</if>
             <if test="materialStockId != null "> and material_stock_id = #{materialStockId}</if>
             <if test="itemId != null "> and item_id = #{itemId}</if>
@@ -169,18 +170,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where line_id = #{lineId}
     </update>
 
-    <delete id="deleteWmOutsourceIssueLineByLineId" parameterType="Long">
-        delete from wm_outsource_issue_line where line_id = #{lineId}
-    </delete>
+    <update id="deleteWmOutsourceIssueLineByLineId" parameterType="Long">
+        update wm_outsource_issue_line set deleted = 1 where line_id = #{lineId}
+    </update>
 
-    <delete id="deleteWmOutsourceIssueLineByIssueId" parameterType="Long">
-        delete from wm_outsource_issue_line where issue_id = #{issueId}
-    </delete>
+    <update id="deleteWmOutsourceIssueLineByIssueId" parameterType="Long">
+        update wm_outsource_issue_line set deleted = 1 where issue_id = #{issueId}
+    </update>
 
-    <delete id="deleteWmOutsourceIssueLineByLineIds" parameterType="String">
-        delete from wm_outsource_issue_line where line_id in 
+    <update id="deleteWmOutsourceIssueLineByLineIds" parameterType="String">
+        update wm_outsource_issue_line set deleted = 1 where line_id in
         <foreach item="lineId" collection="array" open="(" separator="," close=")">
             #{lineId}
         </foreach>
-    </delete>
+    </update>
 </mapper>

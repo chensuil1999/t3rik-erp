@@ -8,6 +8,8 @@ import com.t3rik.mes.wm.mapper.WmOutsourceRecptLineMapper;
 import com.t3rik.mes.wm.domain.WmOutsourceRecptLine;
 import com.t3rik.mes.wm.service.IWmOutsourceRecptLineService;
 
+import static com.t3rik.common.utils.SecurityUtils.getUsername;
+
 /**
  * 外协入库单行Service业务层处理
  * 
@@ -59,6 +61,8 @@ public class WmOutsourceRecptLineServiceImpl implements IWmOutsourceRecptLineSer
     public int insertWmOutsourceRecptLine(WmOutsourceRecptLine wmOutsourceRecptLine)
     {
         wmOutsourceRecptLine.setCreateTime(DateUtils.getNowDate());
+        wmOutsourceRecptLine.setCreateBy(getUsername());
+
         return wmOutsourceRecptLineMapper.insertWmOutsourceRecptLine(wmOutsourceRecptLine);
     }
 
@@ -72,6 +76,8 @@ public class WmOutsourceRecptLineServiceImpl implements IWmOutsourceRecptLineSer
     public int updateWmOutsourceRecptLine(WmOutsourceRecptLine wmOutsourceRecptLine)
     {
         wmOutsourceRecptLine.setUpdateTime(DateUtils.getNowDate());
+//        wmOutsourceRecptLine.setCreateTime(DateUtils.getNowDate());
+        wmOutsourceRecptLine.setUpdateBy(getUsername());
         return wmOutsourceRecptLineMapper.updateWmOutsourceRecptLine(wmOutsourceRecptLine);
     }
 

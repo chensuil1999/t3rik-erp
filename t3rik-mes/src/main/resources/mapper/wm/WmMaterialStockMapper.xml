@@ -85,6 +85,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="queryWmMaterialStockList" parameterType="WmMaterialStock" resultMap="WmMaterialStockResult">
         <include refid="selectWmMaterialStockVo"/>
         <where>
+            deleted = 0
             <if test="itemTypeId != null "> AND (item_type_id = #{itemTypeId} OR item_type_id in (select item_type_id from md_item_type where find_in_set(#{itemTypeId},ancestors)))</if>
             <if test="itemId != null "> and item_id = #{itemId}</if>
             <if test="itemCode != null  and itemCode != ''"> and item_code like concat('%',#{itemCode},'%')</if>
@@ -255,16 +256,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where material_stock_id = #{materialStockId}
     </update>
 
-    <delete id="deleteWmMaterialStockByMaterialStockId" parameterType="Long">
-        delete from wm_material_stock where material_stock_id = #{materialStockId}
-    </delete>
+    <update id="deleteWmMaterialStockByMaterialStockId" parameterType="Long">
+        update wm_material_stock set deleted = 1 where material_stock_id = #{materialStockId}
+    </update>
 
-    <delete id="deleteWmMaterialStockByMaterialStockIds" parameterType="String">
-        delete from wm_material_stock where material_stock_id in
+    <update id="deleteWmMaterialStockByMaterialStockIds" parameterType="String">
+        update wm_material_stock set deleted = 1 where material_stock_id in
         <foreach item="materialStockId" collection="array" open="(" separator="," close=")">
             #{materialStockId}
         </foreach>
-    </delete>
+    </update>
 
     <!--统计库存数量 根据物料id和年月-->
     <select id="selectMaterielCount" resultType="java.util.Map">

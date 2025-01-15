@@ -44,7 +44,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectWmOutsourceRecptLineList" parameterType="WmOutsourceRecptLine" resultMap="WmOutsourceRecptLineResult">
         <include refid="selectWmOutsourceRecptLineVo"/>
-        <where>  
+        <where>
+            deleted = 0
             <if test="recptId != null "> and recpt_id = #{recptId}</if>
             <if test="itemId != null "> and item_id = #{itemId}</if>
             <if test="itemCode != null  and itemCode != ''"> and item_code = #{itemCode}</if>
@@ -184,18 +185,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where line_id = #{lineId}
     </update>
 
-    <delete id="deleteWmOutsourceRecptLineByLineId" parameterType="Long">
-        delete from wm_outsource_recpt_line where line_id = #{lineId}
-    </delete>
+    <update id="deleteWmOutsourceRecptLineByLineId" parameterType="Long">
+        update wm_outsource_recpt_line set deleted = 1 where line_id = #{lineId}
+    </update>
 
-    <delete id="deleteWmOutsourceRecptLineByRecptId" parameterType="Long">
-        delete from wm_outsource_recpt_line where recpt_id = #{recptId}
-    </delete>
+    <update id="deleteWmOutsourceRecptLineByRecptId" parameterType="Long">
+        update wm_outsource_recpt_line set deleted = 1 where recpt_id = #{recptId}
+    </update>
 
-    <delete id="deleteWmOutsourceRecptLineByLineIds" parameterType="String">
-        delete from wm_outsource_recpt_line where line_id in 
+    <update id="deleteWmOutsourceRecptLineByLineIds" parameterType="String">
+        update wm_outsource_recpt_line set deleted = 1 where line_id in
         <foreach item="lineId" collection="array" open="(" separator="," close=")">
             #{lineId}
         </foreach>
-    </delete>
+    </update>
 </mapper>
