@@ -30,7 +30,7 @@ class ProWorkOrderServiceImpl : IProWorkOrderService{
             // 未处理查询草稿和未排产
             CurrentIndexEnum.UNPROCESSED.code -> {
                 return statusList.apply {
-                    add(OrderStatusEnum.PREPARE.code)
+//                    add(OrderStatusEnum.PREPARE.code)
                     add(OrderStatusEnum.CONFIRMED.code)
                 }
             }
@@ -45,6 +45,13 @@ class ProWorkOrderServiceImpl : IProWorkOrderService{
             CurrentIndexEnum.FINISHED.code -> {
                 return statusList.apply {
                     add(OrderStatusEnum.FINISHED.code)
+                }
+            }
+            //草稿
+            CurrentIndexEnum.PREPARE.code -> {
+                return statusList.apply {
+                    add(OrderStatusEnum.PREPARE.code)
+//                    add(OrderStatusEnum.CONFIRMED.code)
                 }
             }
             // 查询全部
@@ -88,9 +95,11 @@ class ProWorkOrderServiceImpl : IProWorkOrderService{
                         ,ProWorkorder::getAttr3
                         ,ProWorkorder::getAttr4
                         ,ProWorkorder::getCreateTime
+                        ,ProWorkorder::getRemark
                         )
                 .like(StringUtils.isNotBlank(proWorkOrder.workorderName), ProWorkorder::getWorkorderName, proWorkOrder.workorderName)
                 .`in`(CollectionUtils.isNotEmpty(paramByCurrentIndex), ProWorkorder::getStatus, paramByCurrentIndex)
+                .eq(ProWorkorder::getDeleted, 0)
                 .orderByDesc(ProWorkorder::getCreateTime)
                 .orderByAsc(ProWorkorder::getStatus)
                 .page(page)
@@ -128,7 +137,13 @@ class ProWorkOrderServiceImpl : IProWorkOrderService{
                         ,ProWorkorder::getAttr3
                         ,ProWorkorder::getAttr4
                         ,ProWorkorder::getCreateTime
+                        ,ProWorkorder::getRemark
                 )
                 .eq(ProWorkorder::getWorkorderId, workOrderId).one()
+    }
+
+    override fun addWorkorder(proWorkOrder: ProWorkorder): Int {
+//        TODO("Not yet implemented")
+        return proWorkOrderService.insertProWorkorder(proWorkOrder)
     }
 }

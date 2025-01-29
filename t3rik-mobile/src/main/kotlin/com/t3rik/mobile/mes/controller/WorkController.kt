@@ -1,29 +1,27 @@
 package com.t3rik.mobile.mes.controller
 
-import com.baomidou.mybatisplus.core.toolkit.Wrappers.lambdaQuery
+import cn.hutool.core.date.DateUtil
+import com.t3rik.common.annotation.RepeatSubmit
 import com.t3rik.common.constant.MsgConstants
 import com.t3rik.common.constant.UserConstants
 import com.t3rik.common.core.controller.BaseController
 import com.t3rik.common.core.domain.AjaxResult
 import com.t3rik.common.core.page.TableDataInfo
-import com.t3rik.common.exception.BusinessException
-import com.t3rik.common.utils.SecurityUtils
-import com.t3rik.mes.md.domain.MdProductBom
-import com.t3rik.mes.md.service.IMdProductBomService
+import com.t3rik.common.enums.mes.OrderStatusEnum
+import com.t3rik.common.utils.DateUtils
 import com.t3rik.mes.pro.domain.ProTask
 import com.t3rik.mes.pro.domain.ProWorkorder
-import com.t3rik.mes.pro.domain.ProWorkorderBom
 import com.t3rik.mes.pro.service.IProRouteProcessService
 import com.t3rik.mes.pro.service.IProTaskService
 import com.t3rik.mes.pro.service.IProWorkorderBomService
 import com.t3rik.mobile.common.ktextend.isNonPositive
 import com.t3rik.mobile.mes.service.IProWorkOrderService
+import com.t3rik.system.strategy.AutoCodeUtil
 import io.swagger.annotations.ApiOperation
 import jakarta.annotation.Resource
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.web.bind.annotation.*
+import java.math.BigDecimal
 
 
 @RestController
@@ -36,6 +34,10 @@ class WorkController : BaseController() {
     lateinit var proWorkorderBomService: IProWorkorderBomService
     @Resource
     lateinit var proTaskService: IProTaskService
+
+    @Resource
+    lateinit var  autoCodeUtil: AutoCodeUtil;
+
 //    @Resource
 //    lateinit var mdProductBomService: IMdProductBomService
 @Resource
@@ -47,9 +49,8 @@ lateinit var proRouteProcessService: IProRouteProcessService
     @ApiOperation("查询生产工单列表")
     @GetMapping("/list")
     fun getProWorkOrderList(proWorkOrder: ProWorkorder): TableDataInfo {
-        //println("qq: " + proWorkOrder.workorderName)
-
-        return getDataTableWithPage(proWorkOrderService.getPageByCurrentIndex(proWorkOrder, getMPPage(proWorkOrder))) }
+        return getDataTableWithPage(proWorkOrderService.getPageByCurrentIndex(proWorkOrder, getMPPage(proWorkOrder)))
+    }
 
     @ApiOperation("查询生产工单详细信息")
     @GetMapping("/{workOrderId}")
@@ -60,19 +61,37 @@ lateinit var proRouteProcessService: IProRouteProcessService
         return AjaxResult.success(proWorkOrderDetail)
     }
 
+    @ApiOperation("新增工单（草稿）")
+    @RepeatSubmit
+    @PostMapping
+    fun addWorkorder(@RequestBody proWorkOrder: ProWorkorder): AjaxResult {
+        if(proWorkOrder.remark == "") {
+            AjaxResult.error(MsgConstants.PARAM_ERROR)
+        }
+        if (proWorkOrder.getParentId() == null || proWorkOrder.getParentId().compareTo(0) == 0) {
+            proWorkOrder.setAncestors("0");
+        }
+        proWorkOrder.workorderCode = autoCodeUtil.genSerialCode(UserConstants.WORKORDER_CODE, "")
+        proWorkOrder.workorderName = username + "-建于-" + DateUtils.getDate();
+        proWorkOrder.orderSource = "ORDER"
+        proWorkOrder.productId = 9
+        proWorkOrder.productCode = "CP00045"
+        proWorkOrder.productName = "测试品"
+        proWorkOrder.unitOfMeasure = "ZHI"
+        proWorkOrder.quantity = BigDecimal(10)
+        proWorkOrder.requestDate = DateUtils.getNowDate()
+        proWorkOrder.productSpc = "测试"
+        proWorkOrder.status = OrderStatusEnum.PREPARE.code
+        proWorkOrder.workorderType ="SELF"
+        return AjaxResult.success(proWorkOrderService.addWorkorder(proWorkOrder))
+    }
+
     @ApiOperation("查询生产工单对应BOM物料信息")
     @GetMapping("/bom/{workOrderId}")
     fun getBom(@PathVariable workOrderId: Long): AjaxResult {
         // 小于等于0 抛异常
         workOrderId.isNonPositive { MsgConstants.PARAM_ERROR }
-//        val pwb = proWorkorderBomService.lambdaQuery()
-//                .eq(ProWorkorderBom::getWorkorderId, workOrderId)
-//                .list()
-//        //println("oooo" + pwb)
-//        //val bomitem = mdProductBomService.lambdaQuery()
-//        return AjaxResult.success(pwb)
         val pwb = proWorkorderBomService.selectProWorkorderBomBywId(workOrderId)
-        //println("oooo:" + pwb)
         return AjaxResult.success(pwb)
     }
 

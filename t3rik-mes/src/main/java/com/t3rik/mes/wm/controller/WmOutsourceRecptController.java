@@ -185,6 +185,9 @@ public class WmOutsourceRecptController extends BaseController {
         }
         proTask.setQuantityProduced(produced);
         proTask.setQuantityQuanlify(produced);
+        if(proTask.getStatus().equals(UserConstants.ORDER_STATUS_PREPARE)) {
+            proTask.setStatus(UserConstants.ORDER_STATUS_CONFIRMED);
+        }
         proTaskService.updateProTask(proTask);
         }
         // 更新单据状态

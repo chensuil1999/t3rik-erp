@@ -29,20 +29,19 @@ class WmsStockMobServiceImpl : IWmsStockMobService {
         // 类似switch
         when (currentIndex) {
             // 主仓
-            CurrentIndexEnum.UNPROCESSED.code -> {
+            CurrentIndexEnum.PREPARE.code -> {
                 return statusList.apply {
                     add("4")
-                    //add(OrderStatusEnum.FINISHED.code)
                 }
             }
             // 线边虚拟仓
-            CurrentIndexEnum.PROCESSED.code -> {
+            CurrentIndexEnum.UNPROCESSED.code -> {
                 return statusList.apply {
                     add("1")
                 }
             }
             // 废料仓
-            CurrentIndexEnum.FINISHED.code -> {
+            CurrentIndexEnum.PROCESSED.code -> {
                 return statusList.apply {
                     add("2")
                 }

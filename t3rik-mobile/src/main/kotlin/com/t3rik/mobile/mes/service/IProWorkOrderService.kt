@@ -19,4 +19,6 @@ public interface IProWorkOrderService{
     fun getPageByCurrentIndex(proWorkOrder: ProWorkorder, page: Page<ProWorkorder>): Page<ProWorkorder>
 
     fun getWorkOrderDetailById(workOrderId: Long): ProWorkorder
+
+    fun addWorkorder(proWorkOrder: ProWorkorder): Int
 }

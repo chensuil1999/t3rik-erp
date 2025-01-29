@@ -170,12 +170,10 @@ public class ProFeedbackServiceImpl extends ServiceImpl<ProFeedbackMapper, ProFe
         task.setQuantityProduced(quantityProduced.add(feedback.getQuantityFeedback()));
         task.setQuantityQuanlify(quantityQuanlify.add(feedback.getQuantityQualified()));
         task.setQuantityUnquanlify(quantityUnquanlify.add(feedback.getQuantityUnquanlified()));
-
+        if(task.getStatus().equals(UserConstants.ORDER_STATUS_PREPARE)) {
+            task.setStatus(UserConstants.ORDER_STATUS_CONFIRMED);
+        }
         proTaskService.updateProTask(task);
-//        System.out.println(task.getQuantityProduced().intValue());
-//        if(task.getQuantityProduced().intValue() > 360){
-//            throw new BusinessException("未知错误，请联系管理员");
-//        
         // 如果是关键工序，则更新当前工单的已生产数量，进行产品产出动作
         if (proRouteProcessService.checkKeyProcess(feedback)) {
             // 更新生产工单的生产数量

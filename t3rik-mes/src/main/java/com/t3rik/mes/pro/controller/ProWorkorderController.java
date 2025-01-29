@@ -12,6 +12,7 @@ import com.t3rik.common.enums.BusinessType;
 import com.t3rik.common.enums.mes.ClientOrderStatusEnum;
 import com.t3rik.common.enums.mes.OrderStatusEnum;
 import com.t3rik.common.exception.BusinessException;
+import com.t3rik.common.utils.DateUtils;
 import com.t3rik.common.utils.poi.ExcelUtil;
 import com.t3rik.mes.md.domain.MdProductBom;
 import com.t3rik.mes.md.service.IMdProductBomService;
@@ -288,6 +289,7 @@ public class ProWorkorderController extends BaseController {
         }
         // 更新工单的状态
         workorder.setStatus(UserConstants.ORDER_STATUS_FINISHED);
+        workorder.setFinishDate(DateUtils.getNowDate());
         proWorkorderService.updateProWorkorder(workorder);
         return AjaxResult.success();
     }
