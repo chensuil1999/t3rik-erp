@@ -46,6 +46,8 @@ public class WmTransactionServiceImpl implements IWmTransactionService
         initStock(wmTransaction,stock);
         //查询库存记录通过构建好的库存记录,供应商，工单号都是不同的库存记录
         WmMaterialStock ms = wmMaterialStockMapper.loadMaterialStock(stock);
+        //System.out.println("在不在: " + ms);
+//        System.out.println("ooo: " + stock);
         //扣减或者新增数量 = 事务数量/事务方向
         BigDecimal quantity = wmTransaction.getTransactionQuantity().multiply(new BigDecimal(wmTransaction.getTransactionFlag()));
         Integer quantityjs = wmTransaction.getAttr4();

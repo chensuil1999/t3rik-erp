@@ -49,9 +49,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                t.specification, t.workorder_id, t.workorder_code, t.unit_of_measure, t.quantity_salse,
                t.batch_code, t.warehouse_id, t.warehouse_code, t.warehouse_name, t.location_id, t.location_code,
                t.location_name, t.area_id, t.area_code, t.area_name, t.oqc_check,t.oqc_id,t.oqc_code, t.remark, t.attr1,
-               t.attr2, t.attr3, t.attr4, t.create_by, t.create_time, t.update_by, t.update_time, t.count_package, p.thof_weight,
-               t.package_weight, t.amount from wm_product_salse_line t left join md_item p
-                                                                                   on t.item_id = p.item_id
+               t.attr2, t.attr3, t.attr4, t.create_by, t.create_time, t.update_by, t.update_time, t.count_package, t.thof_weight,
+               t.package_weight, t.amount from wm_product_salse_line t
     </sql>
 
     <select id="selectWmProductSalseLineList" parameterType="WmProductSalseLine" resultMap="WmProductSalseLineResult">
@@ -124,6 +123,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="amount != null">amount,</if>
             <if test="workorderId != null">workorder_id,</if>
             <if test="workorderCode != null">workorder_code,</if>
+            <if test="itemThOfWeight != null">thof_weight,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="salseId != null">#{salseId},</if>
@@ -161,6 +161,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="amount != null">#{amount},</if>
             <if test="workorderId != null">#{workorderId},</if>
             <if test="workorderCode != null">#{workorderCode},</if>
+            <if test="itemThOfWeight != null">#{itemThOfWeight},</if>
          </trim>
     </insert>
 
@@ -202,6 +203,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="amount != null">amount = #{amount},</if>
             <if test="workorderId != null">workorder_id = #{workorderId},</if>
             <if test="workorderCode != null">workorder_code = #{workorderCode},</if>
+            <if test="itemThOfWeight != null">thof_weight = #{itemThOfWeight},</if>
         </trim>
         where line_id = #{lineId}
     </update>

@@ -232,11 +232,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <update id="deleteProWorkorderByWorkorderId" parameterType="Long">
-        update pro_workorder set deleted = 1 where workorder_id = #{workorderId}
+        update pro_workorder set deleted = 1, deleteAt = NOW() where workorder_id = #{workorderId}
     </update>
 
     <update id="deleteProWorkorderByWorkorderIds" parameterType="String">
-        update pro_workorder set deleted = 1 where workorder_id in
+        update pro_workorder set deleted = 1, deleteAt = NOW() where workorder_id in
         <foreach item="workorderId" collection="array" open="(" separator="," close=")">
             #{workorderId}
         </foreach>

@@ -95,7 +95,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="soCode != null  and soCode != ''"> and so_code = #{soCode}</if>
             <if test="clientId != null "> and client_id = #{clientId}</if>
             <if test="clientCode != null  and clientCode != ''"> and client_code = #{clientCode}</if>
-            <if test="clientName != null  and clientName != ''"> and client_name like concat('%', #{clientName}, '%')</if>
+            <if test="clientName != null  and clientName != ''"> and t.client_name like concat('%', #{clientName}, '%')</if>
             <if test="clientNick != null  and clientNick != ''"> and client_nick = #{clientNick}</if>
             <if test="warehouseId != null "> and warehouse_id = #{warehouseId}</if>
             <if test="warehouseCode != null  and warehouseCode != ''"> and warehouse_code = #{warehouseCode}</if>

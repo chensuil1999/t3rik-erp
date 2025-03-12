@@ -125,6 +125,7 @@ public class ProFeedbackController extends BaseController {
         String feedbackCode = autoCodeUtil.genSerialCode(UserConstants.FEEDBACK_CODE, "");
         proFeedback.setFeedbackCode(feedbackCode);
 //        proFeedback.setCreateBy(getUsername());
+        System.out.println("我的新增" + proFeedback);
         proFeedback.setQuantity(task.getQuantity());
         proFeedbackService.insertProFeedback(proFeedback);
         return AjaxResult.success(proFeedback.getRecordId());
@@ -228,9 +229,10 @@ public class ProFeedbackController extends BaseController {
     @PreAuthorize("@ss.hasPermi('mes:pro:feedback:edit')")
     @Log(title = "生产报工执行", businessType = BusinessType.UPDATE)
     @Transactional
-    @PutMapping("/{recordId}/{fdcnt}/{maincnt}/{seccnt}")
+    @PutMapping("/{recordId}/{fdcnt}/{maincnt}/{seccnt}/{js}")
     public AjaxResult execute(@PathVariable("recordId") Long recordId, @PathVariable("fdcnt") Long fdcnt,
-                              @PathVariable("maincnt") Integer maincnt, @PathVariable("seccnt") Integer seccnt) {
+                              @PathVariable("maincnt") Integer maincnt, @PathVariable("seccnt") Integer seccnt,
+                              @PathVariable("js") Integer js) {
 
         if (!StringUtils.isNotNull(recordId)) {
             return AjaxResult.error("请先保存单据");
@@ -240,6 +242,9 @@ public class ProFeedbackController extends BaseController {
         }
         if (!StringUtils.isNotNull(maincnt) || maincnt.compareTo(Integer.valueOf(0)) == 0 ) {
             return AjaxResult.error("报工只数异常，不能为0");
+        }
+        if (!StringUtils.isNotNull(js) || js.compareTo(Integer.valueOf(0)) == 0 ) {
+            return AjaxResult.error("报工件数异常，不能为0");
         }
         ProFeedback feedback = proFeedbackService.selectProFeedbackByRecordId(recordId);
 
@@ -253,16 +258,22 @@ public class ProFeedbackController extends BaseController {
             return AjaxResult.error("当前报工单未完成检验（待检数量大于0），无法执行报工！");
         }
         feedback.setQuantity(task.getQuantity());
-
-        //System.out.println("oooo: " + feedback);
+//        System.out.println("oooo: " + feedback);
         //System.out.println(feedback.getQuantityFeedback().compareTo(BigDecimal.valueOf(fdcnt)) != 0);
-        if (feedback.getQuantityFeedback().compareTo(BigDecimal.valueOf(fdcnt)) != 0) {
-
-            feedback.setQuantityFeedback(BigDecimal.valueOf(fdcnt));
-            feedback.setQuantityQualified(BigDecimal.valueOf(fdcnt));
-            feedback.setMaincnt(Integer.valueOf(maincnt));
-            feedback.setSeccnt(Integer.valueOf(seccnt));
-            //proFeedbackService.updateById(feedback);
+        if (feedback.getQuantityFeedback().compareTo(BigDecimal.valueOf(fdcnt)) != 0
+        || feedback.getMaincnt().compareTo(maincnt) != 0
+        || feedback.getSeccnt().compareTo(seccnt) != 0
+                || feedback.getAttr3().compareTo(js) != 0) {
+            //注释的代码是赞成修改
+//            feedback.setQuantityFeedback(BigDecimal.valueOf(fdcnt));
+//            feedback.setQuantityQualified(BigDecimal.valueOf(fdcnt));
+//            feedback.setMaincnt(Integer.valueOf(maincnt));
+//            feedback.setSeccnt(Integer.valueOf(seccnt));
+//            feedback.setAttr3(Integer.valueOf(js));
+////            System.out.println("我改变了: " + feedback);
+//            proFeedbackService.updateById(feedback);
+            //若数据有出入则直接返回
+            return AjaxResult.error("当前报工单据与原始单据有出入，无法报工入库！");
         }
         this.proFeedbackService.executeFeedback(feedback, task);
         return AjaxResult.success();

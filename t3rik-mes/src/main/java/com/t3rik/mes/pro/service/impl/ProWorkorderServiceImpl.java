@@ -72,10 +72,8 @@ public class ProWorkorderServiceImpl extends ServiceImpl<ProWorkorderMapper, Pro
                 proWorkorder.setAncestors(parent.getAncestors() + "," + parent.getParentId());
             }
         }
-
         proWorkorder.setCreateBy(getUsername());
         proWorkorder.setCreateTime(DateUtils.getNowDate());
-        //System.out.println("ooooo: " + proWorkorder);
         return proWorkorderMapper.insertProWorkorder(proWorkorder);
     }
 

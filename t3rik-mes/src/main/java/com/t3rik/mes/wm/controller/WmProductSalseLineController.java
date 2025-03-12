@@ -8,6 +8,8 @@ import com.t3rik.common.enums.BusinessType;
 import com.t3rik.common.utils.poi.ExcelUtil;
 import com.t3rik.mes.wm.domain.WmProductSalseLine;
 import com.t3rik.mes.wm.service.IWmProductSalseLineService;
+import com.t3rik.mes.wm.utils.WmWarehouseUtil;
+import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +29,8 @@ public class WmProductSalseLineController extends BaseController
 {
     @Autowired
     private IWmProductSalseLineService wmProductSalseLineService;
+    @Resource
+    private WmWarehouseUtil warehouseUtil;
 
     /**
      * 查询产品销售出库行列表
@@ -71,6 +75,8 @@ public class WmProductSalseLineController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody WmProductSalseLine wmProductSalseLine)
     {
+        // 设置仓库信息
+        this.warehouseUtil.setWarehouseInfo(wmProductSalseLine);
         return toAjax(wmProductSalseLineService.insertWmProductSalseLine(wmProductSalseLine));
     }
 

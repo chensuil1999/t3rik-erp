@@ -39,35 +39,42 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
+        <result property="itemThOfWeight"    column="thof_weight"    />
     </resultMap>
 
     <sql id="selectWmMaterialStockVo">
-        select material_stock_id, item_type_id, item_id, item_code, item_name, specification, unit_of_measure, batch_code, warehouse_id, warehouse_code, warehouse_name, location_id, location_code, location_name, area_id, area_code, area_name, vendor_id, vendor_code, vendor_name, vendor_nick, quantity_onhand,recpt_date,workorder_id,workorder_code, expire_date, attr1, attr2, attr3, attr4, create_by, create_time, update_by, update_time from wm_material_stock
+        select t.material_stock_id, t.item_type_id, t.item_id, t.item_code, t.item_name,
+               t.specification, t.unit_of_measure, t.batch_code, t.warehouse_id, t.warehouse_code,
+               t.warehouse_name, t.location_id, t.location_code, t.location_name, t.area_id, t.area_code,
+               t.area_name, t.vendor_id, t.vendor_code, t.vendor_name, t.vendor_nick, t.quantity_onhand,
+               t.recpt_date, t.workorder_id, t.workorder_code, t.expire_date, t.attr1, t.attr2, t.attr3, t.attr4,
+               t.create_by, t.create_time, t.update_by, t.update_time, p.thof_weight from wm_material_stock t left join md_item p
+                                                                                                       on t.item_id = p.item_id
     </sql>
 
     <select id="selectWmMaterialStockList" parameterType="WmMaterialStock" resultMap="WmMaterialStockResult">
         <include refid="selectWmMaterialStockVo"/>
         <where>
-            <if test="itemTypeId != null "> AND (item_type_id = #{itemTypeId} OR item_type_id in (select item_type_id from md_item_type where find_in_set(#{itemTypeId},ancestors)))</if>
-            <if test="itemId != null "> and item_id = #{itemId}</if>
-            <if test="itemCode != null  and itemCode != ''"> and item_code = #{itemCode}</if>
-            <if test="itemName != null  and itemName != ''"> and item_name like concat('%', #{itemName}, '%')</if>
-            <if test="specification != null  and specification != ''"> and specification = #{specification}</if>
-            <if test="unitOfMeasure != null  and unitOfMeasure != ''"> and unit_of_measure = #{unitOfMeasure}</if>
-            <if test="batchCode != null  and batchCode != ''"> and batch_code = #{batchCode}</if>
-            <if test="warehouseId != null "> and warehouse_id = #{warehouseId}</if>
-            <if test="warehouseCode != null  and warehouseCode != ''"> and warehouse_code = #{warehouseCode}</if>
-            <if test="warehouseName != null  and warehouseName != ''"> and warehouse_name like concat('%', #{warehouseName}, '%')</if>
-            <if test="locationId != null "> and location_id = #{locationId}</if>
-            <if test="locationCode != null  and locationCode != ''"> and location_code = #{locationCode}</if>
-            <if test="locationName != null  and locationName != ''"> and location_name like concat('%', #{locationName}, '%')</if>
-            <if test="areaId != null "> and area_id = #{areaId}</if>
-            <if test="areaCode != null  and areaCode != ''"> and area_code = #{areaCode}</if>
-            <if test="areaName != null  and areaName != ''"> and area_name like concat('%', #{areaName}, '%')</if>
-            <if test="vendorId != null "> and vendor_id = #{vendorId}</if>
-            <if test="vendorCode != null  and vendorCode != ''"> and vendor_code = #{vendorCode}</if>
-            <if test="vendorName != null  and vendorName != ''"> and vendor_name like concat('%', #{vendorName}, '%')</if>
-            <if test="vendorNick != null  and vendorNick != ''"> and vendor_nick = #{vendorNick}</if>
+            <if test="itemTypeId != null "> AND (t.item_type_id = #{itemTypeId} OR t.item_type_id in (select mit.item_type_id from md_item_type mit where find_in_set(#{itemTypeId},ancestors)))</if>
+            <if test="itemId != null "> and t.item_id = #{itemId}</if>
+            <if test="itemCode != null  and itemCode != ''"> and t.item_code = #{itemCode}</if>
+            <if test="itemName != null  and itemName != ''"> and t.item_name like concat('%', #{itemName}, '%')</if>
+            <if test="specification != null  and specification != ''"> and t.specification = #{specification}</if>
+            <if test="unitOfMeasure != null  and unitOfMeasure != ''"> and t.unit_of_measure = #{unitOfMeasure}</if>
+            <if test="batchCode != null  and batchCode != ''"> and t.batch_code = #{batchCode}</if>
+            <if test="warehouseId != null "> and t.warehouse_id = #{warehouseId}</if>
+            <if test="warehouseCode != null  and warehouseCode != ''"> and t.warehouse_code = #{warehouseCode}</if>
+            <if test="warehouseName != null  and warehouseName != ''"> and t.warehouse_name like concat('%', #{warehouseName}, '%')</if>
+            <if test="locationId != null "> and t.location_id = #{locationId}</if>
+            <if test="locationCode != null  and locationCode != ''"> and t.location_code = #{locationCode}</if>
+            <if test="locationName != null  and locationName != ''"> and t.location_name like concat('%', #{locationName}, '%')</if>
+            <if test="areaId != null "> and t.area_id = #{areaId}</if>
+            <if test="areaCode != null  and areaCode != ''"> and t.area_code = #{areaCode}</if>
+            <if test="areaName != null  and areaName != ''"> and t.area_name like concat('%', #{areaName}, '%')</if>
+            <if test="vendorId != null "> and t.vendor_id = #{vendorId}</if>
+            <if test="vendorCode != null  and vendorCode != ''"> and t.vendor_code = #{vendorCode}</if>
+            <if test="vendorName != null  and vendorName != ''"> and t.vendor_name like concat('%', #{vendorName}, '%')</if>
+            <if test="vendorNick != null  and vendorNick != ''"> and t.vendor_nick = #{vendorNick}</if>
             <if test="quantityOnhand != null "> and quantity_onhand = #{quantityOnhand}</if>
             <if test="recptDate !=null"> and recpt_date = #{recptDate}</if>
             <if test="workorderId !=null">and workorder_id = #{workorderId}</if>
@@ -87,9 +94,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>
             deleted = 0
             <if test="itemTypeId != null "> AND (item_type_id = #{itemTypeId} OR item_type_id in (select item_type_id from md_item_type where find_in_set(#{itemTypeId},ancestors)))</if>
-            <if test="itemId != null "> and item_id = #{itemId}</if>
-            <if test="itemCode != null  and itemCode != ''"> and item_code like concat('%',#{itemCode},'%')</if>
-            <if test="itemName != null  and itemName != ''"> and item_name like concat('%', #{itemName}, '%')</if>
+            <if test="itemId != null "> and t.item_id = #{itemId}</if>
+            <if test="itemCode != null  and itemCode != ''"> and t.item_code like concat('%',#{itemCode},'%')</if>
+            <if test="itemName != null  and itemName != ''"> and t.item_name like concat('%', #{itemName}, '%')</if>
             <if test="specification != null  and specification != ''"> and specification like concat('%',#{specification},'%')</if>
             <if test="unitOfMeasure != null  and unitOfMeasure != ''"> and unit_of_measure = #{unitOfMeasure}</if>
             <if test="batchCode != null  and batchCode != ''"> and batch_code like concat('%',#{batchCode},'%') </if>
@@ -129,15 +136,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="loadMaterialStock" parameterType="WmMaterialStock" resultMap="WmMaterialStockResult">
         <include refid="selectWmMaterialStockVo"/>
         <where>
-            <if test="itemId != null "> and item_id = #{itemId}</if>
-            <if test="unitOfMeasure != null  and unitOfMeasure != ''"> and unit_of_measure = #{unitOfMeasure}</if>
-            <if test="batchCode != null  and batchCode != ''"> and batch_code = #{batchCode}</if>
-            <if test="warehouseId != null "> and warehouse_id = #{warehouseId}</if>
-            <if test="locationId != null "> and location_id = #{locationId}</if>
-            <if test="areaId != null "> and area_id = #{areaId}</if>
-            <if test="vendorId != null "> and vendor_id = #{vendorId}</if>
-            <if test="workorderId !=null">and workorder_id = #{workorderId}</if>
-            <if test="workorderCode !=null">and workorder_code = #{workorderCode}</if>
+            <if test="itemId != null "> and t.item_id = #{itemId}</if>
+<!--            <if test="unitOfMeasure != null  and unitOfMeasure != ''"> and t.unit_of_measure = #{unitOfMeasure}</if>-->
+<!--            <if test="batchCode != null  and batchCode != ''"> and t.batch_code = #{batchCode}</if>-->
+            <if test="warehouseId != null "> and t.warehouse_id = #{warehouseId}</if>
+<!--            <if test="locationId != null "> and t.location_id = #{locationId}</if>-->
+<!--            <if test="areaId != null "> and t.area_id = #{areaId}</if>-->
+<!--            <if test="vendorId != null "> and t.vendor_id = #{vendorId}</if>-->
+<!--            <if test="workorderId !=null">and t.workorder_id = #{workorderId}</if>-->
+<!--            <if test="workorderCode !=null">and t.workorder_code = #{workorderCode}</if>-->
         </where>
         and 1=1 limit 1
     </select>

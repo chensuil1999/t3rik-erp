@@ -1,5 +1,6 @@
 package com.t3rik.mes.wm.domain;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.t3rik.common.annotation.Excel;
@@ -198,6 +199,19 @@ public class WmMaterialStock extends BaseEntity {
     @Excel(name = "预留字段4")
     private Integer attr4;
 
+
+
+
+    @Excel(name = "千斤重系数")
+    @TableField(exist = false)
+    private Double itemThOfWeight;
+    public Double getItemThOfWeight() {
+        return itemThOfWeight;
+    }
+
+    public void setItemThOfWeight(Double itemThOfWeight) {
+        this.itemThOfWeight = itemThOfWeight;
+    }
     public void setMaterialStockId(Long materialStockId) {
         this.materialStockId = materialStockId;
     }

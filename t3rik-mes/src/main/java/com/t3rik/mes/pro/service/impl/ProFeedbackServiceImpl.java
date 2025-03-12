@@ -200,7 +200,6 @@ public class ProFeedbackServiceImpl extends ServiceImpl<ProFeedbackMapper, ProFe
         feedback.setRecordUser(getLoginUser().getUsername());
         feedback.setRecordNick(getLoginUser().getUser().getNickName());
         feedback.setStatus(OrderStatusEnum.FINISHED.getCode());
-        //System.out.println("zzzz: " + feedback);
         this.updateProFeedback(feedback);
     }
 
@@ -225,7 +224,6 @@ public class ProFeedbackServiceImpl extends ServiceImpl<ProFeedbackMapper, ProFe
      */
     private void executeProductProduce(WmProductProduce record) {
         List<ProductProductTxBean> beans = wmProductProduceService.getTxBeans(record.getRecordId());
-        //System.out.println("ooooo: " + beans);
         storageCoreService.processProductProduce(beans);
         record.setStatus(UserConstants.ORDER_STATUS_FINISHED);
         wmProductProduceService.updateWmProductProduce(record);
