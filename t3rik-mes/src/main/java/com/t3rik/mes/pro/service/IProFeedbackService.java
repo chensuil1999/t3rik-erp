@@ -66,4 +66,11 @@ public interface IProFeedbackService extends IService<ProFeedback> {
      * 完成报工
      */
     void executeFeedback(ProFeedback feedback, ProTask task);
+
+    /**
+     * 报工冲销
+     * @param feedback
+     * @param task
+     */
+    void reverseFeedback(ProFeedback feedback, ProTask task);
 }

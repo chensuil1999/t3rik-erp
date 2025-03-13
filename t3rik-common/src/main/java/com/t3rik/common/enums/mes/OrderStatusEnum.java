@@ -22,7 +22,10 @@ public enum OrderStatusEnum {
     APPROVING("APPROVING", "审批中", 30),
     APPROVED("APPROVED", "审批通过", 40),
     REFUSE("REFUSE", "审批拒绝", 50),
-    FINISHED("FINISHED", "已完成", 60);
+    FINISHED("FINISHED", "已完成", 60),
+    REVERSAL("REVERSAL", "已冲销", 61);
+//    REVERSAL("REVERSAL", "已完成", 60);
+
 
     private final String code;
     private final String desc;

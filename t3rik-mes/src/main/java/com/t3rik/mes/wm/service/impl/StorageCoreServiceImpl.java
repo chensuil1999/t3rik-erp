@@ -317,7 +317,16 @@ public class StorageCoreServiceImpl implements IStorageCoreService {
             WmTransaction transaction = new WmTransaction();
             transaction.setTransactionType(transactionType);
             BeanUtils.copyBeanProp(transaction, line);
-            transaction.setTransactionFlag(1); // 库存增加
+            if(line.getJs() < 0 || line.getLtjs() < 0) {
+                transaction.setTransactionFlag(-1);
+                line.setJs(~line.getJs() + 1);
+                line.setLtjs(~line.getLtjs() + 1);
+                transaction.setTransactionQuantity(line.getTransactionQuantity().multiply(new BigDecimal(-1)));
+                line.setTransactionQuantity(line.getTransactionQuantity().multiply(new BigDecimal(-1)));
+                //System.out.println("三个冲销数是：" + line.getJs() + "-" + line.getLtjs() + "=" + line.getTransactionQuantity());
+            } else {
+                transaction.setTransactionFlag(1); // 库存增加
+            }
             //入库件数。
             int ltcnt = (line.getLtjs() == 0 || line.getLtjs() == null) ? 0 : 1;
             transaction.setAttr4(line.getJs()+ ltcnt);
@@ -325,6 +334,7 @@ public class StorageCoreServiceImpl implements IStorageCoreService {
             transaction.setAttr2(line.getCntjs());
             transaction.setTransactionDate(new Date());
 
+            //System.out.println("ooo: " + transaction);
             WmWarehouse warehouse = wmWarehouseService.selectWmWarehouseByWarehouseCode(UserConstants.WH001);
             transaction.setWarehouseId(warehouse.getWarehouseId());
             transaction.setWarehouseCode(warehouse.getWarehouseCode());
@@ -358,7 +368,6 @@ public class StorageCoreServiceImpl implements IStorageCoreService {
 
         for (int i = 0; i < lines.size(); i++) {
             ProductRecptTxBean line = lines.get(i);
-
             // 构造一条目的库存减少的事务
             WmTransaction transaction_out = new WmTransaction();
             transaction_out.setTransactionType(transactionType_out);

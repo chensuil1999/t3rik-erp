@@ -23,6 +23,8 @@ import com.t3rik.mes.wm.mapper.WmProductProduceMapper;
 import com.t3rik.mes.wm.domain.WmProductProduce;
 import com.t3rik.mes.wm.service.IWmProductProduceService;
 
+import static com.t3rik.common.utils.SecurityUtils.getUsername;
+
 /**
  * 产品产出记录Service业务层处理
  * 
@@ -154,7 +156,11 @@ public class WmProductProduceServiceImpl implements IWmProductProduceService
         productProduce.setProcessName(process.getProcessName());
 
         productProduce.setProduceDate(new Date());
+        productProduce.setRemark(feedback.getFeedbackCode());
+        productProduce.setCreateTime(DateUtils.getNowDate());
+        productProduce.setCreateBy(getUsername());
         productProduce.setStatus(UserConstants.ORDER_STATUS_PREPARE);
+//        productProduce.setCreateBy();
         wmProductProduceMapper.insertWmProductProduce(productProduce);
 
         //生成单据行信息; 以后如果是在生产过程中产生多种副产品可以在这里添加更多的行信息进行支持

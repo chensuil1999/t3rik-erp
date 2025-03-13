@@ -66,7 +66,6 @@ public class WmTransactionServiceImpl implements IWmTransactionService
             stock.setQuantityOnhand(resultQuantity);
             stock.setAttr4(resultQuantityjs);
             stock.setMaterialStockId(ms.getMaterialStockId());
-            //System.out.println("stock: " + stock);
             wmMaterialStockMapper.updateWmMaterialStock(stock);
         }else {
             //MS不存在

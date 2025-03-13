@@ -203,6 +203,58 @@ public class ProFeedbackServiceImpl extends ServiceImpl<ProFeedbackMapper, ProFe
         this.updateProFeedback(feedback);
     }
 
+    /**
+     * 报工冲销
+     *
+     * @param feedback
+     * @param task
+     */
+    @Transactional
+    @Override
+    public void reverseFeedback(ProFeedback feedback, ProTask task) {
+        ProWorkorder workorder = proWorkorderService.selectProWorkorderByWorkorderId(feedback.getWorkorderId());
+
+        // 更新生产任务的生产数量
+        BigDecimal quantityProduced, quantityQuanlify, quantityUnquanlify;
+        quantityQuanlify = task.getQuantityQuanlify() == null ? new BigDecimal(0) : task.getQuantityQuanlify();
+        quantityUnquanlify = task.getQuantityUnquanlify() == null ? new BigDecimal(0) : task.getQuantityUnquanlify();
+        quantityProduced = task.getQuantityProduced() == null ? new BigDecimal(0) : task.getQuantityProduced();
+        task.setQuantityProduced(quantityProduced.subtract(feedback.getQuantityFeedback()));
+        task.setQuantityQuanlify(quantityQuanlify.subtract(feedback.getQuantityQualified()));
+        task.setQuantityUnquanlify(quantityUnquanlify.subtract(feedback.getQuantityUnquanlified()));
+//        if(task.getStatus().equals(UserConstants.ORDER_STATUS_PREPARE)) {
+//            task.setStatus(UserConstants.ORDER_STATUS_CONFIRMED);
+//        }
+        proTaskService.updateProTask(task);
+        // 如果是关键工序，则更新当前工单的已生产数量，进行产品产出动作
+        if (proRouteProcessService.checkKeyProcess(feedback)) {
+            // 更新生产工单的生产数量
+            BigDecimal produced = workorder.getQuantityProduced() == null ? new BigDecimal(0) : workorder.getQuantityProduced();
+            BigDecimal feedBackQuantity = feedback.getQuantityFeedback() == null ? new BigDecimal(0) : feedback.getQuantityFeedback();
+            workorder.setQuantityProduced(produced.subtract(feedBackQuantity));
+            proWorkorderService.updateProWorkorder(workorder);
+
+            // 生成产品产出记录单
+            //System.out.println("负件数多少: " + (~feedback.getAttr3() + 1));
+            //System.out.println("负件零头多少: " + (~feedback.getSeccnt() + 1));
+            Integer rawAttr3 = feedback.getAttr3();
+            Integer rawSeccnt = feedback.getSeccnt();
+            BigDecimal rawQuantity = feedback.getQuantityFeedback();
+            feedback.setAttr3(~rawAttr3 + 1);
+            feedback.setSeccnt(~rawSeccnt + 1);
+            feedback.setQuantityFeedback(rawQuantity.multiply(BigDecimal.valueOf(-1)));
+            WmProductProduce productRecord = wmProductProduceService.generateProductProduce(feedback);
+            // 执行产品产出入主库（原来是出入线边库，我直接到主仓。因为旭虹并不需要线边库，多一道操作没必要）
+            feedback.setAttr3(rawAttr3);
+            feedback.setSeccnt(rawSeccnt);
+            feedback.setQuantityFeedback(rawQuantity);
+            executeProductProduce(productRecord);
+        }
+        feedback.setRemark("此单据已经冲销");
+        feedback.setStatus(OrderStatusEnum.REVERSAL.getCode());
+        this.updateProFeedback(feedback);
+    }
+
 
     /**
      * 执行物料消耗库存动作

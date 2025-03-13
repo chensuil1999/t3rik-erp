@@ -125,7 +125,7 @@ public class ProFeedbackController extends BaseController {
         String feedbackCode = autoCodeUtil.genSerialCode(UserConstants.FEEDBACK_CODE, "");
         proFeedback.setFeedbackCode(feedbackCode);
 //        proFeedback.setCreateBy(getUsername());
-        System.out.println("我的新增" + proFeedback);
+//        System.out.println("我的新增" + proFeedback);
         proFeedback.setQuantity(task.getQuantity());
         proFeedbackService.insertProFeedback(proFeedback);
         return AjaxResult.success(proFeedback.getRecordId());
@@ -184,7 +184,8 @@ public class ProFeedbackController extends BaseController {
                 .in(ProFeedback::getRecordId, recordIds).count();
         // 退料数量
         if(feedbackCount> 0) {
-            throw new BusinessException("该记录已完成存档，不能删除!");
+            return AjaxResult.error("该记录已完成存档，无法删除!");
+            //throw new BusinessException("该记录已完成存档，不能删除!");
         }
         return toAjax(proFeedbackService.deleteProFeedbackByRecordIds(recordIds));
     }
@@ -278,4 +279,42 @@ public class ProFeedbackController extends BaseController {
         this.proFeedbackService.executeFeedback(feedback, task);
         return AjaxResult.success();
     }
+
+    /**
+     * 报工冲销
+     * 1.冲销生产任务和生产工单的进度
+     * 2.物料消耗（旭虹不使用物料消耗,因为无法确定消耗系数）
+     * 3.产品产出冲销
+     *
+     * @param recordId
+     * @return
+     */
+    @PreAuthorize("@ss.hasPermi('mes:pro:feedback:edit')")
+    @Log(title = "生产报工冲销", businessType = BusinessType.UPDATE)
+    @Transactional
+    @PutMapping("/reverse/{recordId}")
+    public AjaxResult delFeedbackReverse(@PathVariable("recordId") Long recordId) {
+
+        if (!StringUtils.isNotNull(recordId)) {
+            return AjaxResult.error("冲销单据不存在");
+        }
+        ProFeedback feedback = proFeedbackService.selectProFeedbackByRecordId(recordId);
+        if(!OrderStatusEnum.FINISHED.getCode().equals(feedback.getStatus())) {
+            return AjaxResult.error("只能冲销完成单据");
+        }
+
+        ProTask task = proTaskService.selectProTaskByTaskId(feedback.getTaskId());
+        // 判断当前生产任务的状态，如果已经完成则不能再冲销
+        if (UserConstants.ORDER_STATUS_FINISHED.equals(task.getStatus())) {
+            return AjaxResult.error("当前生产工单的状态为已完成，不能冲销，请刷新生产任务列表！");
+        }
+        // 仍旧有待检数量时不能执行
+        if (StringUtils.isNotNull(feedback.getQuantityUncheck()) && feedback.getQuantityUncheck().compareTo(BigDecimal.ZERO) > 0) {
+            return AjaxResult.error("当前报工单未完成检验（待检数量大于0），无法执行冲销！");
+        }
+        feedback.setQuantity(task.getQuantity());
+        this.proFeedbackService.reverseFeedback(feedback, task);
+        return AjaxResult.success();
+    }
+
 }
