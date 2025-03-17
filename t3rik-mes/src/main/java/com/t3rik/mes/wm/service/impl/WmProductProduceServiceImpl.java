@@ -76,6 +76,11 @@ public class WmProductProduceServiceImpl implements IWmProductProduceService
         return wmProductProduceMapper.selectWmProductProduceList(wmProductProduce);
     }
 
+    @Override
+    public List<WmProductProduce> selectWmProductProduceByFeedbackCode(String feedbackCode) {
+        return wmProductProduceMapper.selectWmProductProduceByFeedbackCode(feedbackCode);
+    }
+
     /**
      * 新增产品产出记录
      * 
@@ -126,6 +131,11 @@ public class WmProductProduceServiceImpl implements IWmProductProduceService
         return wmProductProduceMapper.deleteWmProductProduceByRecordId(recordId);
     }
 
+    @Override
+    public int deleteWmProductProduceByFeedbackCode(Long recordId) {
+        return 0;
+    }
+
     /**
      * 根据报工单生成
      * @param feedback
@@ -154,13 +164,11 @@ public class WmProductProduceServiceImpl implements IWmProductProduceService
         productProduce.setProcessId(process.getProcessId());
         productProduce.setProcessCode(process.getProcessCode());
         productProduce.setProcessName(process.getProcessName());
-
         productProduce.setProduceDate(new Date());
-        productProduce.setRemark(feedback.getFeedbackCode());
+        productProduce.setAttr1(feedback.getFeedbackCode());
         productProduce.setCreateTime(DateUtils.getNowDate());
         productProduce.setCreateBy(getUsername());
         productProduce.setStatus(UserConstants.ORDER_STATUS_PREPARE);
-//        productProduce.setCreateBy();
         wmProductProduceMapper.insertWmProductProduce(productProduce);
 
         //生成单据行信息; 以后如果是在生产过程中产生多种副产品可以在这里添加更多的行信息进行支持
@@ -172,12 +180,16 @@ public class WmProductProduceServiceImpl implements IWmProductProduceService
         line.setSpecification(feedback.getSpecification());
         line.setUnitOfMeasure(feedback.getUnitOfMeasure());
         line.setQuantityProduce(feedback.getQuantityFeedback());
+        line.setCreateTime(DateUtils.getNowDate());
+        line.setCreateBy(getUsername());
+        line.setAttr1(feedback.getFeedbackCode());
         line.setAttr2(feedback.getAttr2());
         line.setAttr3(feedback.getAttr3());
         line.setAttr4(feedback.getAttr4());
         line.setMaincnt(feedback.getMaincnt());
         line.setSeccnt(feedback.getSeccnt());
         line.setBatchCode(workorder.getBatchCode());
+
         wmProductProduceLineMapper.insertWmProductProduceLine(line);
         return productProduce;
     }

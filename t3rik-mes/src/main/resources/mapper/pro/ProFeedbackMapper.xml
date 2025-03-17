@@ -310,11 +310,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <update id="deleteProFeedbackByRecordId" parameterType="Long">
-        update pro_feedback set deleted = 1 where record_id = #{recordId}
+        update pro_feedback set deleted = 1,deleteAt = NOW() where record_id = #{recordId}
     </update>
 
     <update id="deleteProFeedbackByRecordIds" parameterType="String">
-        update pro_feedback set deleted = 1 where record_id in
+        update pro_feedback set deleted = 1,deleteAt = NOW() where record_id in
         <foreach item="recordId" collection="array" open="(" separator="," close=")">
             #{recordId}
         </foreach>

@@ -91,6 +91,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where record_id = #{recordId}
     </select>
 
+    <select id="selectWmProductProduceByFeedbackCode" parameterType="String" resultMap="WmProductProduceResult">
+        <include refid="selectWmProductProduceVo"/>
+        where attr1 = #{feedBackCode}
+    </select>
+
     <select id="getTxBeans" parameterType="Long" resultMap="ProductProductTxBeanResult">
         SELECT  irl.`item_id`,irl.`item_code`,irl.`item_name`,irl.`specification`,irl.`unit_of_measure`,irl.`batch_code`,
                 irl.`warehouse_id`,irl.`warehouse_code`,irl.`warehouse_name`,irl.`location_id`,irl.`location_code`,irl.`location_name`,irl.`area_id`,irl.`area_code`,irl.`area_name`,
@@ -188,14 +193,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where record_id = #{recordId}
     </update>
 
-    <delete id="deleteWmProductProduceByRecordId" parameterType="Long">
-        delete from wm_product_produce where record_id = #{recordId}
-    </delete>
+    <update id="deleteWmProductProduceByRecordId" parameterType="Long">
+        update wm_product_produce set deleted = 1,deleteAt = NOW(),status='REVERSAL' where record_id = #{recordId}
+    </update>
 
-    <delete id="deleteWmProductProduceByRecordIds" parameterType="String">
-        delete from wm_product_produce where record_id in 
+    <update id="deleteWmProductProduceByRecordIds" parameterType="String">
+        update wm_product_produce set deleted = 1,deleteAt = NOW(), status='REVERSAL' where record_id in
         <foreach item="recordId" collection="array" open="(" separator="," close=")">
             #{recordId}
         </foreach>
-    </delete>
+    </update>
 </mapper>

@@ -1,16 +1,25 @@
 package com.t3rik.mes.wm.service.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.t3rik.common.constant.UserConstants;
+import com.t3rik.common.enums.mes.OrderStatusEnum;
+import com.t3rik.common.exception.BusinessException;
 import com.t3rik.common.utils.DateUtils;
 import com.t3rik.common.utils.StringUtils;
+import com.t3rik.mes.wm.domain.WmProductSalse;
+import com.t3rik.mes.wm.domain.tx.ProductSalseTxBean;
 import com.t3rik.mes.wm.domain.tx.RtSalseTxBean;
+import com.t3rik.mes.wm.service.IStorageCoreService;
+import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.t3rik.mes.wm.mapper.WmRtSalseMapper;
 import com.t3rik.mes.wm.domain.WmRtSalse;
 import com.t3rik.mes.wm.service.IWmRtSalseService;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import static com.t3rik.common.utils.SecurityUtils.getUsername;
 
@@ -25,6 +34,10 @@ public class WmRtSalseServiceImpl implements IWmRtSalseService
 {
     @Autowired
     private WmRtSalseMapper wmRtSalseMapper;
+
+    @Resource
+    private IStorageCoreService storageCoreService;
+
 
     /**
      * 查询产品销售退货单
@@ -116,5 +129,38 @@ public class WmRtSalseServiceImpl implements IWmRtSalseService
     public int deleteWmRtSalseByRtId(Long rtId)
     {
         return wmRtSalseMapper.deleteWmRtSalseByRtId(rtId);
+    }
+
+    @Transactional
+    @Override
+    public void reverseexecute(Long rtId) {
+        // 构造Transaction事务，并执行库存更新逻辑bean.
+        List<RtSalseTxBean> beans = this.getTxBeans(rtId);
+        if (CollectionUtils.isEmpty(beans)) {
+            throw new BusinessException("没有需要处理的单行");
+        }
+        for(RtSalseTxBean irbs : beans) {
+            irbs.setAttr4(-irbs.getAttr4());
+            irbs.setTransactionQuantity(irbs.getTransactionQuantity().multiply(BigDecimal.valueOf(-1)));
+        }
+        // 调用库存核心
+        storageCoreService.processRtSalse(beans);
+        WmRtSalse wmRtSalse = this.selectWmRtSalseByRtId(rtId);
+        wmRtSalse.setStatus(OrderStatusEnum.REVERSAL.getCode());
+        this.updateWmRtSalse(wmRtSalse);
+    }
+
+    @Transactional
+    @Override
+    public void execute(Long rtId) {
+        List<RtSalseTxBean> beans = this.getTxBeans(rtId);
+        if (CollectionUtils.isEmpty(beans)) {
+            throw new BusinessException("没有需要处理的单行");
+        }
+        storageCoreService.processRtSalse(beans);
+        WmRtSalse wmRtSalse = this.selectWmRtSalseByRtId(rtId);
+        wmRtSalse.setStatus(OrderStatusEnum.FINISHED.getCode());
+        this.updateWmRtSalse(wmRtSalse);
+
     }
 }

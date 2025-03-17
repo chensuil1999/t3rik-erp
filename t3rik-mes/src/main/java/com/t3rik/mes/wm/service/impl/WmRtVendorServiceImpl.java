@@ -1,16 +1,27 @@
 package com.t3rik.mes.wm.service.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.t3rik.common.constant.UserConstants;
+import com.t3rik.common.core.domain.AjaxResult;
+import com.t3rik.common.enums.mes.OrderStatusEnum;
+import com.t3rik.common.exception.BusinessException;
 import com.t3rik.common.utils.DateUtils;
 import com.t3rik.common.utils.StringUtils;
+import com.t3rik.mes.wm.domain.WmItemRecpt;
+import com.t3rik.mes.wm.domain.tx.ItemRecptTxBean;
 import com.t3rik.mes.wm.domain.tx.RtVendorTxBean;
+import com.t3rik.mes.wm.mapper.WmItemRecptMapper;
+import com.t3rik.mes.wm.service.IStorageCoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.t3rik.mes.wm.mapper.WmRtVendorMapper;
 import com.t3rik.mes.wm.domain.WmRtVendor;
 import com.t3rik.mes.wm.service.IWmRtVendorService;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import static com.t3rik.common.utils.SecurityUtils.getUsername;
 
@@ -21,11 +32,13 @@ import static com.t3rik.common.utils.SecurityUtils.getUsername;
  * @date 2022-06-13
  */
 @Service
-public class WmRtVendorServiceImpl implements IWmRtVendorService 
+public class WmRtVendorServiceImpl extends ServiceImpl<WmRtVendorMapper, WmRtVendor> implements IWmRtVendorService
 {
     @Autowired
     private WmRtVendorMapper wmRtVendorMapper;
 
+    @Autowired
+    private IStorageCoreService storageCoreService;
     /**
      * 查询供应商退货
      * 
@@ -84,7 +97,6 @@ public class WmRtVendorServiceImpl implements IWmRtVendorService
     public int updateWmRtVendor(WmRtVendor wmRtVendor)
     {
         wmRtVendor.setUpdateTime(DateUtils.getNowDate());
-//        wmRtVendor.setCreateTime(DateUtils.getNowDate());
         wmRtVendor.setUpdateBy(getUsername());
         return wmRtVendorMapper.updateWmRtVendor(wmRtVendor);
     }
@@ -116,5 +128,41 @@ public class WmRtVendorServiceImpl implements IWmRtVendorService
     @Override
     public List<RtVendorTxBean> getTxBeans(Long rtId) {
         return wmRtVendorMapper.getTxBeans(rtId);
+    }
+
+    @Transactional
+    @Override
+    public void execute(Long rtId) {
+        //构造事务Bean
+        List<RtVendorTxBean> beans = this.getTxBeans(rtId);
+        if (CollectionUtils.isEmpty(beans)) {
+            throw new BusinessException("没有需要处理的单行");
+        }
+        //调用库存核心
+        storageCoreService.processRtVendor(beans);
+        //更新单据状态
+        WmRtVendor rtVendor = this.selectWmRtVendorByRtId(rtId);
+        rtVendor.setStatus(OrderStatusEnum.FINISHED.getCode());
+        this.updateWmRtVendor(rtVendor);
+    }
+
+    @Transactional
+    @Override
+    public void reverseexecute(Long rtId) {
+        // 构造Transaction事务，并执行库存更新逻辑
+        List<RtVendorTxBean> beans = this.getTxBeans(rtId);
+        if (CollectionUtils.isEmpty(beans)) {
+            throw new BusinessException("没有需要处理的单行");
+        }
+        for(RtVendorTxBean irbs : beans) {
+            irbs.setAttr4(-irbs.getAttr4());
+            irbs.setTransactionQuantity(irbs.getTransactionQuantity().multiply(BigDecimal.valueOf(-1)));
+        }
+        // 调用库存核心
+        storageCoreService.processRtVendor(beans);
+        //更新单据状态
+        WmRtVendor rtVendor = this.selectWmRtVendorByRtId(rtId);
+        rtVendor.setStatus(OrderStatusEnum.REVERSAL.getCode());
+        this.updateWmRtVendor(rtVendor);
     }
 }

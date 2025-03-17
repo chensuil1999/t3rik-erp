@@ -73,4 +73,9 @@ public interface IWmRtSalseService
      * @return 结果
      */
     public int deleteWmRtSalseByRtId(Long rtId);
+
+    void reverseexecute(Long rtId);
+
+    void execute(Long rtId);
+
 }

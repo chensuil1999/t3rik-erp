@@ -238,20 +238,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <update id="deleteWmProductSalseBySalseId" parameterType="Long">
-        update wm_product_salse set deleted = 1 where salse_id = #{salseId}
+        update wm_product_salse set deleted = 1, deleteAt = NOW()  where salse_id = #{salseId}
     </update>
 
     <update id="deleteWmProductSalseBySalseIds" parameterType="String">
-        update wm_product_salse set deleted = 1 where salse_id in
+        update wm_product_salse set deleted = 1, deleteAt = NOW()  where salse_id in
         <foreach item="salseId" collection="array" open="(" separator="," close=")">
             #{salseId}
         </foreach>
     </update>
 
-<!--    <delete id="deleteWmProductSalseBySalseIds" parameterType="String">-->
-<!--        delete from wm_product_salse where salse_id in -->
-<!--        <foreach item="salseId" collection="array" open="(" separator="," close=")">-->
-<!--            #{salseId}-->
-<!--        </foreach>-->
-<!--    </delete>-->
 </mapper>

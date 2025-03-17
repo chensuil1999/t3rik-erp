@@ -2,6 +2,7 @@ package com.t3rik.mes.wm.domain;
 
 import java.math.BigDecimal;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.t3rik.common.annotation.Excel;
 import com.t3rik.common.core.domain.BaseEntity;
 
@@ -16,6 +17,7 @@ public class WmRtVendorLine extends BaseEntity
     private static final long serialVersionUID = 1L;
 
     /** 行ID */
+    @TableId
     private Long lineId;
 
     private Long materialStockId;

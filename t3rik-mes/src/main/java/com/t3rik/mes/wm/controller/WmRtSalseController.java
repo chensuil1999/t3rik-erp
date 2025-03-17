@@ -7,13 +7,18 @@ import com.t3rik.common.core.controller.BaseController;
 import com.t3rik.common.core.domain.AjaxResult;
 import com.t3rik.common.core.page.TableDataInfo;
 import com.t3rik.common.enums.BusinessType;
+import com.t3rik.common.enums.mes.OrderStatusEnum;
+import com.t3rik.common.utils.StringUtils;
 import com.t3rik.common.utils.poi.ExcelUtil;
+import com.t3rik.mes.wm.domain.WmProductSalse;
 import com.t3rik.mes.wm.domain.WmRtIssue;
 import com.t3rik.mes.wm.domain.WmRtSalse;
 import com.t3rik.mes.wm.domain.WmRtSalseLine;
 import com.t3rik.mes.wm.domain.tx.RtSalseTxBean;
+import com.t3rik.mes.wm.mapper.WmTransactionMapper;
 import com.t3rik.mes.wm.service.*;
 import com.t3rik.mes.wm.utils.WmWarehouseUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -39,10 +44,10 @@ public class WmRtSalseController extends BaseController {
     private IWmRtSalseLineService wmRtSalseLineService;
 
     @Resource
-    private IStorageCoreService storageCoreService;
-
-    @Resource
     private WmWarehouseUtil warehouseUtil;
+
+    @Autowired
+    private WmTransactionMapper wmTransactionMapper;
 
     /**
      * 查询产品销售退货单列表
@@ -123,9 +128,8 @@ public class WmRtSalseController extends BaseController {
             {
                 return AjaxResult.error("存在归档数据！无法删除");
             }
-        }
-        for (Long rtId : rtIds) {
             wmRtSalseLineService.deleteByRtId(rtId);
+            wmTransactionMapper.deleteWmTransactionByTypeAndSourceId(rtId,"PSALSE");
         }
         return toAjax(wmRtSalseService.deleteWmRtSalseByRtIds(rtIds));
     }
@@ -141,20 +145,37 @@ public class WmRtSalseController extends BaseController {
     @Transactional
     @PutMapping("/{rtId}")
     public AjaxResult execute(@PathVariable Long rtId) {
+        //判断单据状态
         WmRtSalse rtSalse = wmRtSalseService.selectWmRtSalseByRtId(rtId);
-        WmRtSalseLine param = new WmRtSalseLine();
-        param.setRtId(rtId);
-        List<WmRtSalseLine> lines = wmRtSalseLineService.selectWmRtSalseLineList(param);
-        if (CollectionUtils.isEmpty(lines)) {
-            return AjaxResult.error("请添加退货单行信息！");
+        if(StringUtils.isNull(rtId)) {
+            return AjaxResult.error("不存在该单据");
         }
+        if(!OrderStatusEnum.PREPARE.getCode().equals(rtSalse.getStatus())) {
+            return AjaxResult.error("此单据无法执行出库");
+        }
+        wmRtSalseService.execute(rtId);
+        return AjaxResult.success();
+    }
 
-        List<RtSalseTxBean> beans = wmRtSalseService.getTxBeans(rtId);
-
-        storageCoreService.processRtSalse(beans);
-
-        rtSalse.setStatus(UserConstants.ORDER_STATUS_FINISHED);
-        wmRtSalseService.updateWmRtSalse(rtSalse);
+    /**
+     * 冲销
+     *
+     * @param rtId
+     * @return
+     */
+    @PreAuthorize("@ss.hasPermi('mes:wm:rtsalse:edit')")
+    @Log(title = "产品销售退货单", businessType = BusinessType.UPDATE)
+    @Transactional
+    @PutMapping("/reverse/{rtId}")
+    public AjaxResult reversexecute(@PathVariable Long rtId) {
+        if (!StringUtils.isNotNull(rtId)) {
+            return AjaxResult.error("销售出库单不存在");
+        }
+        WmRtSalse rtSalse = wmRtSalseService.selectWmRtSalseByRtId(rtId);
+        if(!OrderStatusEnum.FINISHED.getCode().equals(rtSalse.getStatus())) {
+            return AjaxResult.error("只能冲销完成单据");
+        }
+        wmRtSalseService.reverseexecute(rtId);
         return AjaxResult.success();
     }
 

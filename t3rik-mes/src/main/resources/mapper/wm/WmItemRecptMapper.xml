@@ -236,11 +236,11 @@
     </update>
 
     <update id="deleteWmItemRecptByRecptId" parameterType="Long">
-        update wm_item_recpt set deleted = 1 where recpt_id = #{recptId}
+        update wm_item_recpt set deleted = 1,deleteAt = NOW() where recpt_id = #{recptId}
     </update>
 
     <update id="deleteWmItemRecptByRecptIds" parameterType="String">
-        update wm_item_recpt set deleted = 1 where recpt_id in
+        update wm_item_recpt set deleted = 1,deleteAt = NOW() where recpt_id in
         <foreach item="recptId" collection="array" open="(" separator="," close=")">
             #{recptId}
         </foreach>

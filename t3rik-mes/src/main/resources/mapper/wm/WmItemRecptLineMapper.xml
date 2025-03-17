@@ -187,20 +187,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <!--        delete from wm_item_recpt_line where line_id = #{lineId}-->
 <!--    </delete>-->
     <update id="deleteWmItemRecptLineByLineId" parameterType="Long">
-        update wm_item_recpt_line set deleted = 1 where line_id = #{lineId}
+        update wm_item_recpt_line set deleted = 1,deleteAt = NOW() where line_id = #{lineId}
     </update>
 
     <update id="deleteWmItemRecptLineByLineIds" parameterType="String">
-        update wm_item_recpt_line set deleted = 1 where line_id in
+        update wm_item_recpt_line set deleted = 1,deleteAt = NOW() where line_id in
         <foreach item="lineId" collection="array" open="(" separator="," close=")">
             #{lineId}
         </foreach>
     </update>
 
-<!--    <delete id="deleteByRecptId" parameterType="Long">-->
-<!--        delete from wm_item_recpt_line where recpt_id = #{recptId}-->
-<!--    </delete>-->
-        <update id="deleteByRecptId" parameterType="Long">
-            update wm_item_recpt_line set deleted = 1 where recpt_id = #{recptId}
-        </update>
+    <update id="deleteByRecptId" parameterType="Long">
+        update wm_item_recpt_line set deleted = 1,deleteAt = NOW() where recpt_id = #{recptId}
+    </update>
 </mapper>

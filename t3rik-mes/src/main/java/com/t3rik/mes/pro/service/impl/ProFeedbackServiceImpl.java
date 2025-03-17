@@ -20,6 +20,7 @@ import com.t3rik.mes.wm.domain.WmRtIssue;
 import com.t3rik.mes.wm.domain.WmWasteHeader;
 import com.t3rik.mes.wm.domain.tx.ItemConsumeTxBean;
 import com.t3rik.mes.wm.domain.tx.ProductProductTxBean;
+import com.t3rik.mes.wm.mapper.WmTransactionMapper;
 import com.t3rik.mes.wm.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,6 +46,9 @@ public class ProFeedbackServiceImpl extends ServiceImpl<ProFeedbackMapper, ProFe
     private ProFeedbackMapper proFeedbackMapper;
 
     @Autowired
+    private WmTransactionMapper wmTransactionMapper;
+
+    @Autowired
     private IWmRtIssueService wmRtIssueService;
 
     @Autowired
@@ -64,6 +68,9 @@ public class ProFeedbackServiceImpl extends ServiceImpl<ProFeedbackMapper, ProFe
 
     @Autowired
     private IWmProductProduceService wmProductProduceService;
+
+    @Autowired
+    private IWmProductProduceLineService wmProductProduceLineService;
 
     @Autowired
     private IStorageCoreService storageCoreService;
@@ -125,6 +132,7 @@ public class ProFeedbackServiceImpl extends ServiceImpl<ProFeedbackMapper, ProFe
      * @param recordIds 需要删除的生产报工记录主键
      * @return 结果
      */
+    @Transactional
     @Override
     public int deleteProFeedbackByRecordIds(Long[] recordIds) {
         // 废料数量
@@ -137,6 +145,16 @@ public class ProFeedbackServiceImpl extends ServiceImpl<ProFeedbackMapper, ProFe
         // 删除退料、废料记录
         wmRtIssueService.deleteWmRtIssueByRtIds(recordIds);
         wmWasteHeaderService.delWmWasteHeaderIds(List.of(recordIds));
+        ProFeedback pfb = this.selectProFeedbackByRecordId(recordIds[0]);
+        if (pfb.getStatus().equals(OrderStatusEnum.REVERSAL.getCode())) {
+            List<WmProductProduce> wppList = wmProductProduceService.selectWmProductProduceByFeedbackCode(pfb.getFeedbackCode());
+            for(WmProductProduce wpp : wppList) {
+                wmProductProduceService.deleteWmProductProduceByRecordId(wpp.getRecordId());
+                wmProductProduceLineService.deleteByRecordId(wpp.getRecordId());
+                wmTransactionMapper.deleteWmTransactionByTypeAndSourceId(wpp.getRecordId(),"PRODUCT_PRODUCT");
+            }
+        }
+
         return proFeedbackMapper.deleteProFeedbackByRecordIds(recordIds);
     }
 
@@ -222,9 +240,7 @@ public class ProFeedbackServiceImpl extends ServiceImpl<ProFeedbackMapper, ProFe
         task.setQuantityProduced(quantityProduced.subtract(feedback.getQuantityFeedback()));
         task.setQuantityQuanlify(quantityQuanlify.subtract(feedback.getQuantityQualified()));
         task.setQuantityUnquanlify(quantityUnquanlify.subtract(feedback.getQuantityUnquanlified()));
-//        if(task.getStatus().equals(UserConstants.ORDER_STATUS_PREPARE)) {
-//            task.setStatus(UserConstants.ORDER_STATUS_CONFIRMED);
-//        }
+
         proTaskService.updateProTask(task);
         // 如果是关键工序，则更新当前工单的已生产数量，进行产品产出动作
         if (proRouteProcessService.checkKeyProcess(feedback)) {
@@ -235,8 +251,6 @@ public class ProFeedbackServiceImpl extends ServiceImpl<ProFeedbackMapper, ProFe
             proWorkorderService.updateProWorkorder(workorder);
 
             // 生成产品产出记录单
-            //System.out.println("负件数多少: " + (~feedback.getAttr3() + 1));
-            //System.out.println("负件零头多少: " + (~feedback.getSeccnt() + 1));
             Integer rawAttr3 = feedback.getAttr3();
             Integer rawSeccnt = feedback.getSeccnt();
             BigDecimal rawQuantity = feedback.getQuantityFeedback();
@@ -250,7 +264,7 @@ public class ProFeedbackServiceImpl extends ServiceImpl<ProFeedbackMapper, ProFe
             feedback.setQuantityFeedback(rawQuantity);
             executeProductProduce(productRecord);
         }
-        feedback.setRemark("此单据已经冲销");
+        feedback.setRemark("此单据已冲销");
         feedback.setStatus(OrderStatusEnum.REVERSAL.getCode());
         this.updateProFeedback(feedback);
     }

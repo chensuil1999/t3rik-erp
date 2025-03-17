@@ -245,11 +245,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <update id="deleteWmTransactionByTransactionId" parameterType="Long">
-        update wm_transaction set deleted = 1 where transaction_id = #{transactionId}
+        update wm_transaction set deleted = 1 ,deleteAt = NOW() where transaction_id = #{transactionId}
+    </update>
+
+    <update id="deleteWmTransactionByTypeAndSourceId">
+        update wm_transaction set deleted = 1 ,deleteAt = NOW() where source_doc_id = #{sourceDocId} AND source_doc_type = #{sourceDocType}
     </update>
 
     <update id="deleteWmTransactionByTransactionIds" parameterType="String">
-        update wm_transaction set deleted = 1 where transaction_id in
+        update wm_transaction set deleted = 1 ,deleteAt = NOW() where transaction_id in
         <foreach item="transactionId" collection="array" open="(" separator="," close=")">
             #{transactionId}
         </foreach>

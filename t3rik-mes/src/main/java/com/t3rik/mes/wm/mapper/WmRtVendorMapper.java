@@ -1,6 +1,9 @@
 package com.t3rik.mes.wm.mapper;
 
 import java.util.List;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.t3rik.mes.wm.domain.WmItemRecpt;
 import com.t3rik.mes.wm.domain.WmRtVendor;
 import com.t3rik.mes.wm.domain.tx.RtVendorTxBean;
 
@@ -10,7 +13,7 @@ import com.t3rik.mes.wm.domain.tx.RtVendorTxBean;
  * @author yinjinlu
  * @date 2022-06-13
  */
-public interface WmRtVendorMapper 
+public interface WmRtVendorMapper extends BaseMapper<WmRtVendor>
 {
     /**
      * 查询供应商退货

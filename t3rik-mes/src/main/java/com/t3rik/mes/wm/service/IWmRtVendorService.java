@@ -1,6 +1,9 @@
 package com.t3rik.mes.wm.service;
 
 import java.util.List;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.t3rik.mes.wm.domain.WmItemRecpt;
 import com.t3rik.mes.wm.domain.WmRtVendor;
 import com.t3rik.mes.wm.domain.tx.RtVendorTxBean;
 
@@ -10,7 +13,7 @@ import com.t3rik.mes.wm.domain.tx.RtVendorTxBean;
  * @author yinjinlu
  * @date 2022-06-13
  */
-public interface IWmRtVendorService 
+public interface IWmRtVendorService extends IService<WmRtVendor>
 {
     /**
      * 查询供应商退货
@@ -73,5 +76,17 @@ public interface IWmRtVendorService
      * @return
      */
     public List<RtVendorTxBean> getTxBeans(Long rtId);
+
+    /**
+     * 执行
+     * @param rtId
+     */
+    void execute(Long rtId);
+
+    /**
+     * 冲销
+     * @param rtId
+     */
+    void reverseexecute(Long rtId);
 
 }

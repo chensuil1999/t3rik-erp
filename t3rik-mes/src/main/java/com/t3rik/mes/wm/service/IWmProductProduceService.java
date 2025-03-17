@@ -31,6 +31,15 @@ public interface IWmProductProduceService
     public List<WmProductProduce> selectWmProductProduceList(WmProductProduce wmProductProduce);
 
     /**
+     * 根据生产报工单编号查询产品产出记录列表
+     *
+     * @param feedbackCode 生产报工单编号
+     * @return 产品产出记录集合
+     */
+    public List<WmProductProduce> selectWmProductProduceByFeedbackCode(String feedbackCode);
+
+
+    /**
      * 新增产品产出记录
      * 
      * @param wmProductProduce 产品产出记录
@@ -61,6 +70,16 @@ public interface IWmProductProduceService
      * @return 结果
      */
     public int deleteWmProductProduceByRecordId(Long recordId);
+
+    /**
+     * 删除产品产出记录信息
+     *
+     * @param recordId 产品产出记录主键
+     * @return 结果
+     */
+    public int deleteWmProductProduceByFeedbackCode(Long recordId);
+
+
 
     /**
      * 根据报工记录生成对应的产品产出记录

@@ -84,4 +84,10 @@ public interface IWmItemRecptService extends IService<WmItemRecpt> {
      * @param recptId
      */
     void execute(Long recptId);
+
+    /**
+     * 冲销
+     * @param recptId
+     */
+    void reverseexecute(Long recptId);
 }

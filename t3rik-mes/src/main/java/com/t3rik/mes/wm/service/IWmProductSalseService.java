@@ -68,10 +68,18 @@ public interface IWmProductSalseService
     public int deleteWmProductSalseBySalseIds(Long[] salseIds);
 
     /**
-     * 删除销售出库单信息
+     * 删除销售出库单信息reverseexecute
      * 
      * @param salseId 销售出库单主键
      * @return 结果
      */
     public int deleteWmProductSalseBySalseId(Long salseId);
+
+    /**
+     * 冲销
+     * @param salseId
+     */
+    void reverseexecute(Long salseId);
+
+    void execute(Long salseId);
 }

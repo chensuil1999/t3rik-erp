@@ -3,9 +3,11 @@ package com.t3rik.mes.wm.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.t3rik.common.constant.UserConstants;
 import com.t3rik.common.enums.mes.OrderStatusEnum;
+import com.t3rik.common.exception.BusinessException;
 import com.t3rik.common.utils.DateUtils;
 import com.t3rik.common.utils.StringUtils;
 import com.t3rik.mes.wm.domain.WmItemRecpt;
+import com.t3rik.mes.wm.domain.WmProductSalse;
 import com.t3rik.mes.wm.domain.tx.ItemRecptTxBean;
 import com.t3rik.mes.wm.mapper.WmItemRecptMapper;
 import com.t3rik.mes.wm.service.IStorageCoreService;
@@ -13,7 +15,9 @@ import com.t3rik.mes.wm.service.IWmItemRecptService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static com.t3rik.common.utils.SecurityUtils.getUsername;
@@ -85,7 +89,6 @@ public class WmItemRecptServiceImpl extends ServiceImpl<WmItemRecptMapper, WmIte
      */
     @Override
     public int updateWmItemRecpt(WmItemRecpt wmItemRecpt) {
-//        wmItemRecpt.setUpdateTime(DateUtils.getNowDate());
         wmItemRecpt.setUpdateTime(DateUtils.getNowDate());
         wmItemRecpt.setUpdateBy(getUsername());
         return wmItemRecptMapper.updateWmItemRecpt(wmItemRecpt);
@@ -129,14 +132,34 @@ public class WmItemRecptServiceImpl extends ServiceImpl<WmItemRecptMapper, WmIte
 
         // 构造Transaction事务，并执行库存更新逻辑
         List<ItemRecptTxBean> beans = this.getTxBeans(recptId);
+        if (CollectionUtils.isEmpty(beans)) {
+            throw new BusinessException("没有需要处理的单行");
+        }
         // 调用库存核心
         storageCoreService.processItemRecpt(beans);
         // 更新单据状态
-        this.lambdaUpdate()
-                .set(WmItemRecpt::getStatus, OrderStatusEnum.FINISHED.getCode())
-                .set(WmItemRecpt::getUpdateBy,getUsername())
-                .set(WmItemRecpt::getUpdateTime,DateUtils.getNowDate())
-                .eq(WmItemRecpt::getRecptId, recptId)
-                .update(new WmItemRecpt());
+        WmItemRecpt wmItemRecpt = this.selectWmItemRecptByRecptId(recptId);
+        wmItemRecpt.setStatus(OrderStatusEnum.FINISHED.getCode());
+        this.updateWmItemRecpt(wmItemRecpt);
+    }
+
+    @Transactional
+    @Override
+    public void reverseexecute(Long recptId) {
+        // 构造Transaction事务，并执行库存更新逻辑
+        List<ItemRecptTxBean> beans = this.getTxBeans(recptId);
+        if (CollectionUtils.isEmpty(beans)) {
+            throw new BusinessException("没有需要处理的单行");
+        }
+        for(ItemRecptTxBean irbs : beans) {
+            irbs.setAttr4(-irbs.getAttr4());
+            irbs.setTransactionQuantity(irbs.getTransactionQuantity().multiply(BigDecimal.valueOf(-1)));
+        }
+        // 调用库存核心
+        storageCoreService.processItemRecpt(beans);
+        // 更新单据状态
+        WmItemRecpt wmItemRecpt = this.selectWmItemRecptByRecptId(recptId);
+        wmItemRecpt.setStatus(OrderStatusEnum.REVERSAL.getCode());
+        this.updateWmItemRecpt(wmItemRecpt);
     }
 }

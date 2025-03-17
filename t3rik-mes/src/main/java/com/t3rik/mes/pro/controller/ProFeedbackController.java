@@ -248,7 +248,9 @@ public class ProFeedbackController extends BaseController {
             return AjaxResult.error("报工件数异常，不能为0");
         }
         ProFeedback feedback = proFeedbackService.selectProFeedbackByRecordId(recordId);
-
+        if(!OrderStatusEnum.APPROVING.getCode().equals(feedback.getStatus())) {
+            return AjaxResult.error("只能执行报工审核单据");
+        }
         ProTask task = proTaskService.selectProTaskByTaskId(feedback.getTaskId());
         // 判断当前生产任务的状态，如果已经完成则不能再报工
         if (UserConstants.ORDER_STATUS_FINISHED.equals(task.getStatus())) {
@@ -259,8 +261,6 @@ public class ProFeedbackController extends BaseController {
             return AjaxResult.error("当前报工单未完成检验（待检数量大于0），无法执行报工！");
         }
         feedback.setQuantity(task.getQuantity());
-//        System.out.println("oooo: " + feedback);
-        //System.out.println(feedback.getQuantityFeedback().compareTo(BigDecimal.valueOf(fdcnt)) != 0);
         if (feedback.getQuantityFeedback().compareTo(BigDecimal.valueOf(fdcnt)) != 0
         || feedback.getMaincnt().compareTo(maincnt) != 0
         || feedback.getSeccnt().compareTo(seccnt) != 0
@@ -273,7 +273,7 @@ public class ProFeedbackController extends BaseController {
 //            feedback.setAttr3(Integer.valueOf(js));
 ////            System.out.println("我改变了: " + feedback);
 //            proFeedbackService.updateById(feedback);
-            //若数据有出入则直接返回
+            //不使用上述代码了，直接若数据有出入则直接返回
             return AjaxResult.error("当前报工单据与原始单据有出入，无法报工入库！");
         }
         this.proFeedbackService.executeFeedback(feedback, task);
@@ -302,7 +302,6 @@ public class ProFeedbackController extends BaseController {
         if(!OrderStatusEnum.FINISHED.getCode().equals(feedback.getStatus())) {
             return AjaxResult.error("只能冲销完成单据");
         }
-
         ProTask task = proTaskService.selectProTaskByTaskId(feedback.getTaskId());
         // 判断当前生产任务的状态，如果已经完成则不能再冲销
         if (UserConstants.ORDER_STATUS_FINISHED.equals(task.getStatus())) {

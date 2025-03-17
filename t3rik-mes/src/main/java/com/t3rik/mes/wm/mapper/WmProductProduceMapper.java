@@ -29,6 +29,15 @@ public interface WmProductProduceMapper
     public List<WmProductProduce> selectWmProductProduceList(WmProductProduce wmProductProduce);
 
     /**
+     * 根据报工单编号查询产品产出记录列表
+     *
+     * @param feedBackCode 报工单编号
+     * @return 产品产出记录集合
+     */
+    public List<WmProductProduce> selectWmProductProduceByFeedbackCode(String feedBackCode);
+
+
+    /**
      * 新增产品产出记录
      * 
      * @param wmProductProduce 产品产出记录

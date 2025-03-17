@@ -8,14 +8,19 @@ import com.t3rik.common.core.controller.BaseController;
 import com.t3rik.common.core.domain.AjaxResult;
 import com.t3rik.common.core.page.TableDataInfo;
 import com.t3rik.common.enums.BusinessType;
+import com.t3rik.common.enums.mes.OrderStatusEnum;
+import com.t3rik.common.utils.StringUtils;
 import com.t3rik.common.utils.poi.ExcelUtil;
 import com.t3rik.mes.wm.domain.WmProductSalse;
 import com.t3rik.mes.wm.domain.WmProductSalseLine;
+import com.t3rik.mes.wm.domain.WmRtVendor;
 import com.t3rik.mes.wm.domain.tx.ProductSalseTxBean;
+import com.t3rik.mes.wm.mapper.WmTransactionMapper;
 import com.t3rik.mes.wm.service.IStorageCoreService;
 import com.t3rik.mes.wm.service.IWmProductSalseLineService;
 import com.t3rik.mes.wm.service.IWmProductSalseService;
 import com.t3rik.mes.wm.utils.WmWarehouseUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -39,8 +44,8 @@ public class WmProductSalseController extends BaseController {
     @Resource
     private IWmProductSalseLineService wmProductSalseLineService;
 
-    @Resource
-    private IStorageCoreService storageCoreService;
+    @Autowired
+    private WmTransactionMapper wmTransactionMapper;
 
     @Resource
     private WmWarehouseUtil warehouseUtil;
@@ -103,7 +108,6 @@ public class WmProductSalseController extends BaseController {
         if (UserConstants.NOT_UNIQUE.equals(wmProductSalseService.checkUnique(wmProductSalse))) {
             return AjaxResult.error("出库单编号已存在！");
         }
-        System.out.println("zzzzz: " + wmProductSalse);
         if(UserConstants.ORDER_STATUS_FINISHED.equals(wmProductSalse.getStatus())) {
                 return AjaxResult.error("归档数据！无法修改");
         }
@@ -129,9 +133,8 @@ public class WmProductSalseController extends BaseController {
             {
                 return AjaxResult.error("存在归档数据！无法删除");
             }
-        }
-        for (Long salseId : salseIds) {
             wmProductSalseLineService.deleteBySalseId(salseId);
+            wmTransactionMapper.deleteWmTransactionByTypeAndSourceId(salseId,"PSALSE");
         }
         return toAjax(wmProductSalseService.deleteWmProductSalseBySalseIds(salseIds));
     }
@@ -143,23 +146,37 @@ public class WmProductSalseController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('mes:wm:productsalse:edit')")
     @Log(title = "销售出库单", businessType = BusinessType.UPDATE)
-    @Transactional
     @PutMapping("/{salseId}")
     public AjaxResult execute(@PathVariable Long salseId) {
+        //判断单据状态
         WmProductSalse salse = wmProductSalseService.selectWmProductSalseBySalseId(salseId);
-
-        WmProductSalseLine param = new WmProductSalseLine();
-        param.setSalseId(salseId);
-        List<WmProductSalseLine> lines = wmProductSalseLineService.selectWmProductSalseLineList(param);
-        if (CollectionUtil.isEmpty(lines)) {
-            return AjaxResult.error("出库物资不能为空");
+        if(StringUtils.isNull(salseId)) {
+            return AjaxResult.error("不存在该单据");
         }
+        if(!OrderStatusEnum.PREPARE.getCode().equals(salse.getStatus())) {
+            return AjaxResult.error("此单据无法执行出库");
+        }
+        wmProductSalseService.execute(salseId);
+        return AjaxResult.success();
+    }
 
-        List<ProductSalseTxBean> beans = wmProductSalseService.getTxBeans(salseId);
-        storageCoreService.processProductSalse(beans);
-
-        salse.setStatus(UserConstants.ORDER_STATUS_FINISHED);
-        wmProductSalseService.updateWmProductSalse(salse);
+    /**
+     * 执行出库
+     *
+     * @return
+     */
+    @PreAuthorize("@ss.hasPermi('mes:wm:productsalse:edit')")
+    @Log(title = "销售出库单", businessType = BusinessType.UPDATE)
+    @PutMapping("/reverse/{salseId}")
+    public AjaxResult reversexecute(@PathVariable Long salseId) {
+        if (!StringUtils.isNotNull(salseId)) {
+            return AjaxResult.error("销售出库单不存在");
+        }
+        WmProductSalse salse = wmProductSalseService.selectWmProductSalseBySalseId(salseId);
+        if(!OrderStatusEnum.FINISHED.getCode().equals(salse.getStatus())) {
+            return AjaxResult.error("只能冲销完成单据");
+        }
+        wmProductSalseService.reverseexecute(salseId);
         return AjaxResult.success();
     }
 }

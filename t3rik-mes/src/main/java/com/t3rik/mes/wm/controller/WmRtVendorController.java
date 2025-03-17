@@ -7,11 +7,15 @@ import com.t3rik.common.core.controller.BaseController;
 import com.t3rik.common.core.domain.AjaxResult;
 import com.t3rik.common.core.page.TableDataInfo;
 import com.t3rik.common.enums.BusinessType;
+import com.t3rik.common.enums.mes.OrderStatusEnum;
+import com.t3rik.common.utils.StringUtils;
 import com.t3rik.common.utils.poi.ExcelUtil;
+import com.t3rik.mes.wm.domain.WmItemRecpt;
 import com.t3rik.mes.wm.domain.WmRtSalse;
 import com.t3rik.mes.wm.domain.WmRtSalseLine;
 import com.t3rik.mes.wm.domain.WmRtVendor;
 import com.t3rik.mes.wm.domain.tx.RtVendorTxBean;
+import com.t3rik.mes.wm.mapper.WmTransactionMapper;
 import com.t3rik.mes.wm.service.IStorageCoreService;
 import com.t3rik.mes.wm.service.IWmRtVendorLineService;
 import com.t3rik.mes.wm.service.IWmRtVendorService;
@@ -22,6 +26,8 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpServletResponse;
+
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -41,7 +47,8 @@ public class WmRtVendorController extends BaseController
     private IWmRtVendorLineService wmRtVendorLineService;
 
     @Autowired
-    private IStorageCoreService storageCoreService;
+    private WmTransactionMapper wmTransactionMapper;
+
     /**
      * 查询供应商退货列表
      */
@@ -119,10 +126,11 @@ public class WmRtVendorController extends BaseController
         }
         for (Long rtId:rtIds) {
             WmRtVendor rtVendor = wmRtVendorService.selectWmRtVendorByRtId(rtId);
-            if(!UserConstants.ORDER_STATUS_PREPARE.equals(rtVendor.getStatus())){
-                return AjaxResult.error("只能删除草稿状态的单据!");
+            if(UserConstants.ORDER_STATUS_FINISHED.equals(rtVendor.getStatus())){
+                return AjaxResult.error("无法删除完成单据!");
             }
             wmRtVendorLineService.deleteByRtId(rtId);
+            wmTransactionMapper.deleteWmTransactionByTypeAndSourceId(rtId,"RTV");
         }
         return toAjax(wmRtVendorService.deleteWmRtVendorByRtIds(rtIds));
     }
@@ -132,26 +140,39 @@ public class WmRtVendorController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('mes:wm:rtvendor:edit')")
     @Log(title = "供应商退货单", businessType = BusinessType.UPDATE)
-    @Transactional
     @PutMapping("/{rtId}")
     public AjaxResult execute(@PathVariable Long rtId){
         //判断单据状态
-        //WmRtVendor wmRtVendor = wmRtVendorService.selectWmRtVendorByRtId(rtId);
-        //构造事务Bean
-        List<RtVendorTxBean> beans = wmRtVendorService.getTxBeans(rtId);
-        if (CollectionUtils.isEmpty(beans)) {
-            return AjaxResult.error("请添加退货单行信息！");
+        WmRtVendor wmRtVendor = wmRtVendorService.selectWmRtVendorByRtId(rtId);
+        if(StringUtils.isNull(wmRtVendor)) {
+            return AjaxResult.error("不存在该单据");
         }
-
-        //调用库存核心
-        storageCoreService.processRtVendor(beans);
-
-        //更新单据状态
-        WmRtVendor rtVendor = wmRtVendorService.selectWmRtVendorByRtId(rtId);
-        rtVendor.setStatus(UserConstants.ORDER_STATUS_FINISHED);
-        wmRtVendorService.updateWmRtVendor(rtVendor);
-
+        if(!OrderStatusEnum.PREPARE.getCode().equals(wmRtVendor.getStatus())) {
+            return AjaxResult.error("此单据无法执行退货");
+        }
+        wmRtVendorService.execute(rtId);
         return AjaxResult.success();
+    }
+
+    /**
+     * 执行冲销
+     */
+    @PreAuthorize("@ss.hasPermi('mes:wm:rtvendor:edit')")
+    @Log(title = "供应商退货单", businessType = BusinessType.UPDATE)
+    @Transactional
+    @PutMapping("/reverse/{rtId}")
+    public AjaxResult reversexecute(@PathVariable Long rtId){
+
+        if (!StringUtils.isNotNull(rtId)) {
+            return AjaxResult.error("供应商退货单不存在");
+        }
+        WmRtVendor rtVendor = wmRtVendorService.selectWmRtVendorByRtId(rtId);
+        if(!OrderStatusEnum.FINISHED.getCode().equals(rtVendor.getStatus())) {
+            return AjaxResult.error("只能冲销完成单据");
+        }
+        wmRtVendorService.reverseexecute(rtId);
+        return AjaxResult.success();
+
     }
 
 

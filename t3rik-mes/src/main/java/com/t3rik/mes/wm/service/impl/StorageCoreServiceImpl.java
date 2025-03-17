@@ -50,10 +50,18 @@ public class StorageCoreServiceImpl implements IStorageCoreService {
             WmTransaction transaction = new WmTransaction();
             transaction.setTransactionType(transactionType);
             BeanUtils.copyBeanProp(transaction, line);
-            transaction.setTransactionFlag(1); // 库存增加
+            if(line.getAttr4() < 0 || line.getTransactionQuantity().compareTo(BigDecimal.ZERO) < 0) {
+                //System.out.println("ooo1: " + (line.getTransactionQuantity().compareTo(BigDecimal.ZERO) < 0));
+                transaction.setTransactionFlag(-1); // 冲销
+                line.setAttr4(-line.getAttr4());
+                line.setTransactionQuantity(line.getTransactionQuantity().multiply(BigDecimal.valueOf(-1)));
+                transaction.setTransactionQuantity(line.getTransactionQuantity());
+                //System.out.println("wode: " + line);
+            } else {
+                transaction.setTransactionFlag(1); // 库存增加
+            }
             transaction.setTransactionDate(new Date());
             transaction.setAttr4(line.getAttr4());
-//            transaction.setAttr1(bean.getAmount());
             transaction.setAttr2(line.getAttr3());
             transaction.setAttr3(0);
             transaction.setAttr1(line.getAmount());
@@ -80,7 +88,14 @@ public class StorageCoreServiceImpl implements IStorageCoreService {
             WmTransaction transaction = new WmTransaction();
             transaction.setTransactionType(transactionType);
             BeanUtils.copyBeanProp(transaction, line);
-            transaction.setTransactionFlag(-1); // 库存增加
+            if(line.getAttr4() < 0 || line.getTransactionQuantity().compareTo(BigDecimal.ZERO) < 0) {
+                transaction.setTransactionFlag(1); // 冲销
+                line.setAttr4(-line.getAttr4());
+                line.setTransactionQuantity(line.getTransactionQuantity().multiply(BigDecimal.valueOf(-1)));
+                transaction.setTransactionQuantity(line.getTransactionQuantity());
+            } else {
+                transaction.setTransactionFlag(-1); // 库存增加
+            }
             transaction.setTransactionDate(new Date());
             transaction.setAttr4(line.getAttr4());
             transaction.setAttr2(line.getAttr3());
@@ -323,7 +338,6 @@ public class StorageCoreServiceImpl implements IStorageCoreService {
                 line.setLtjs(~line.getLtjs() + 1);
                 transaction.setTransactionQuantity(line.getTransactionQuantity().multiply(new BigDecimal(-1)));
                 line.setTransactionQuantity(line.getTransactionQuantity().multiply(new BigDecimal(-1)));
-                //System.out.println("三个冲销数是：" + line.getJs() + "-" + line.getLtjs() + "=" + line.getTransactionQuantity());
             } else {
                 transaction.setTransactionFlag(1); // 库存增加
             }
@@ -425,13 +439,19 @@ public class StorageCoreServiceImpl implements IStorageCoreService {
             WmTransaction transaction = new WmTransaction();
             transaction.setTransactionType(transactionType);
             BeanUtils.copyBeanProp(transaction, bean);
-            transaction.setTransactionFlag(-1); // 库存减少
+            if(bean.getCountPackage() < 0 || bean.getTransactionQuantity().compareTo(BigDecimal.ZERO) < 0) {
+                transaction.setTransactionFlag(1); // 冲销
+                bean.setCountPackage(-bean.getCountPackage());
+                bean.setTransactionQuantity(bean.getTransactionQuantity().multiply(BigDecimal.valueOf(-1)));
+                transaction.setTransactionQuantity(bean.getTransactionQuantity());
+            } else {
+                transaction.setTransactionFlag(-1); // 库存减少
+            }
             transaction.setTransactionDate(new Date());
             transaction.setAttr4(bean.getCountPackage());
             transaction.setAttr1(bean.getAmount());
             transaction.setAttr2(bean.getAttr4());
             transaction.setAttr3(0);
-            //System.out.println("zzzz" + transaction);
             wmTransactionService.processTransaction(transaction);
         }
     }
@@ -447,7 +467,14 @@ public class StorageCoreServiceImpl implements IStorageCoreService {
             WmTransaction transaction = new WmTransaction();
             transaction.setTransactionType(transactionType);
             BeanUtils.copyBeanProp(transaction, bean);
-            transaction.setTransactionFlag(1); // 库存增加
+            if(bean.getAttr4() < 0 || bean.getTransactionQuantity().compareTo(BigDecimal.ZERO) < 0) {
+                transaction.setTransactionFlag(-1); // 冲销
+                bean.setAttr4(-bean.getAttr4());
+                bean.setTransactionQuantity(bean.getTransactionQuantity().multiply(BigDecimal.valueOf(-1)));
+                transaction.setTransactionQuantity(bean.getTransactionQuantity());
+            } else {
+                transaction.setTransactionFlag(1); // 库存增加
+            }
             transaction.setTransactionDate(new Date());
             transaction.setAttr4(bean.getAttr4());
 //            transaction.setAttr1(bean.getAmount());

@@ -209,17 +209,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <update id="deleteWmProductSalseLineByLineId" parameterType="Long">
-        update wm_product_salse_line set deleted = 1 where line_id = #{lineId}
+        update wm_product_salse_line set deleted = 1,deleteAt = NOW()  where line_id = #{lineId}
     </update>
 
     <update id="deleteWmProductSalseLineByLineIds" parameterType="String">
-        update wm_product_salse_line set deleted = 1 where line_id in
+        update wm_product_salse_line set deleted = 1,deleteAt = NOW()  where line_id in
         <foreach item="lineId" collection="array" open="(" separator="," close=")">
             #{lineId}
         </foreach>
     </update>
 
     <update id="deleteBySalseId" parameterType="Long">
-        update wm_product_salse_line set deleted = 1 where salse_id = #{salseId}
+        update wm_product_salse_line set deleted = 1,deleteAt = NOW()  where salse_id = #{salseId}
     </update>
 </mapper>

@@ -11,15 +11,20 @@ import com.t3rik.common.core.page.TableDataInfo;
 import com.t3rik.common.enums.BusinessType;
 import com.t3rik.common.enums.mes.OrderStatusEnum;
 import com.t3rik.common.exception.BusinessException;
+import com.t3rik.common.utils.StringUtils;
 import com.t3rik.common.utils.poi.ExcelUtil;
+import com.t3rik.mes.pro.domain.ProFeedback;
 import com.t3rik.mes.wm.domain.WmItemRecpt;
 import com.t3rik.mes.wm.domain.WmItemRecptLine;
+import com.t3rik.mes.wm.mapper.WmTransactionMapper;
 import com.t3rik.mes.wm.service.IWmItemRecptLineService;
 import com.t3rik.mes.wm.service.IWmItemRecptService;
 import com.t3rik.mes.wm.utils.WmWarehouseUtil;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -38,6 +43,8 @@ import java.util.Optional;
 public class WmItemRecptController extends BaseController {
     @Resource
     private IWmItemRecptService wmItemRecptService;
+    @Autowired
+    private WmTransactionMapper wmTransactionMapper;
 
     @Resource
     private IWmItemRecptLineService wmItemRecptLineService;
@@ -140,7 +147,30 @@ public class WmItemRecptController extends BaseController {
     public AjaxResult execute(@PathVariable Long recptId) {
         WmItemRecpt recpt = wmItemRecptService.selectWmItemRecptByRecptId(recptId);
         Optional.ofNullable(recpt).orElseThrow(() -> new BusinessException(MsgConstants.PARAM_ERROR));
+        if(!OrderStatusEnum.PREPARE.getCode().equals(recpt.getStatus())) {
+            return AjaxResult.error("此单据无法执行出库");
+        }
         this.wmItemRecptService.execute(recptId);
+        return AjaxResult.success();
+    }
+
+    /**
+     * 执行冲销
+     *
+     * @return
+     */
+    @PreAuthorize("@ss.hasPermi('mes:wm:itemrecpt:edit')")
+    @Log(title = "物料入库单", businessType = BusinessType.UPDATE)
+    @PutMapping("/reverse/{recptId}")
+    public AjaxResult reversexecute(@PathVariable Long recptId) {
+        if (!StringUtils.isNotNull(recptId)) {
+            return AjaxResult.error("采购入库单据不存在");
+        }
+        WmItemRecpt recpt = wmItemRecptService.selectWmItemRecptByRecptId(recptId);
+        if(!OrderStatusEnum.FINISHED.getCode().equals(recpt.getStatus())) {
+            return AjaxResult.error("只能冲销完成单据");
+        }
+        this.wmItemRecptService.reverseexecute(recptId);
         return AjaxResult.success();
     }
 
@@ -151,23 +181,23 @@ public class WmItemRecptController extends BaseController {
     @PreAuthorize("@ss.hasPermi('mes:wm:itemrecpt:remove')")
     @Log(title = "物料入库单", businessType = BusinessType.DELETE)
     @DeleteMapping("/{recptIds}")
+    @Transactional
     public AjaxResult remove(@PathVariable Long[] recptIds) {
         if (recptIds.length == 0) {
             return AjaxResult.error(MsgConstants.PARAM_ERROR);
         }
-        List<Long> ids = Arrays.stream(recptIds).toList();
-        // 校验 只能删除草稿状态的单据
-        List<WmItemRecpt> deleteList = this.wmItemRecptService.lambdaQuery()
-                .in(WmItemRecpt::getRecptId, ids)
-                .ne(WmItemRecpt::getStatus, OrderStatusEnum.PREPARE.getCode())
-                .list();
-        if (CollectionUtils.isNotEmpty(deleteList)) {
-            return AjaxResult.error(MsgConstants.CAN_ONLY_BE_DELETED_BY_PARAM(OrderStatusEnum.PREPARE.getDesc()));
+        Long ircCount = wmItemRecptService.lambdaQuery().eq(WmItemRecpt::getStatus, OrderStatusEnum.FINISHED.getCode())
+                .in(WmItemRecpt::getRecptId, recptIds).count();
+        // 退料数量
+        if(ircCount> 0) {
+            return AjaxResult.error("存在已完成存档数据，无法删除!");
         }
+        List<Long> ids = Arrays.stream(recptIds).toList();
         for(Long lids : ids) {
             this.wmItemRecptLineService.deleteByRecptId(lids);
+            wmTransactionMapper.deleteWmTransactionByTypeAndSourceId(lids,"IR");
         }
-        this.wmItemRecptService.removeByIds(ids);
+        this.wmItemRecptService.deleteWmItemRecptByRecptIds(recptIds);
         return AjaxResult.success();
     }
 }

@@ -167,18 +167,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where line_id = #{lineId}
     </update>
 
-    <delete id="deleteWmProductProduceLineByLineId" parameterType="Long">
-        delete from wm_product_produce_line where line_id = #{lineId}
-    </delete>
+    <update id="deleteWmProductProduceLineByLineId" parameterType="Long">
+        update wm_product_produce_line set deleted = 1,deleteAt = NOW() where line_id = #{lineId}
+    </update>
 
-    <delete id="deleteWmProductProduceLineByLineIds" parameterType="String">
-        delete from wm_product_produce_line where line_id in 
+    <update id="deleteWmProductProduceLineByLineIds" parameterType="String">
+        update wm_product_produce_line set deleted = 1,deleteAt = NOW() where line_id in
         <foreach item="lineId" collection="array" open="(" separator="," close=")">
             #{lineId}
         </foreach>
-    </delete>
+    </update>
 
-    <delete id="deleteByRecordId" parameterType="Long">
-        delete from wm_product_produce_line where record_id = #{record_id}
-    </delete>
+    <update id="deleteByRecordId" parameterType="Long">
+        update wm_product_produce_line set deleted = 1,deleteAt = NOW() where record_id = #{record_id}
+    </update>
 </mapper>

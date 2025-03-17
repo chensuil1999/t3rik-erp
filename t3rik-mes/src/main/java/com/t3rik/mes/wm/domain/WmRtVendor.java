@@ -1,6 +1,8 @@
 package com.t3rik.mes.wm.domain;
 
 import java.util.Date;
+
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.t3rik.common.annotation.Excel;
 import com.t3rik.common.core.domain.BaseEntity;
@@ -16,6 +18,7 @@ public class WmRtVendor extends BaseEntity
     private static final long serialVersionUID = 1L;
 
     /** 退货单ID */
+    @TableId
     private Long rtId;
 
     /** 退货单编号 */
