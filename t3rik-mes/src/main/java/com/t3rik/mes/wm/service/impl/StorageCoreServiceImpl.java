@@ -51,12 +51,10 @@ public class StorageCoreServiceImpl implements IStorageCoreService {
             transaction.setTransactionType(transactionType);
             BeanUtils.copyBeanProp(transaction, line);
             if(line.getAttr4() < 0 || line.getTransactionQuantity().compareTo(BigDecimal.ZERO) < 0) {
-                //System.out.println("ooo1: " + (line.getTransactionQuantity().compareTo(BigDecimal.ZERO) < 0));
                 transaction.setTransactionFlag(-1); // 冲销
                 line.setAttr4(-line.getAttr4());
                 line.setTransactionQuantity(line.getTransactionQuantity().multiply(BigDecimal.valueOf(-1)));
                 transaction.setTransactionQuantity(line.getTransactionQuantity());
-                //System.out.println("wode: " + line);
             } else {
                 transaction.setTransactionFlag(1); // 库存增加
             }
@@ -65,7 +63,6 @@ public class StorageCoreServiceImpl implements IStorageCoreService {
             transaction.setAttr2(line.getAttr3());
             transaction.setAttr3(0);
             transaction.setAttr1(line.getAmount());
-
             wmTransactionService.processTransaction(transaction);
         }
 
@@ -477,7 +474,6 @@ public class StorageCoreServiceImpl implements IStorageCoreService {
             }
             transaction.setTransactionDate(new Date());
             transaction.setAttr4(bean.getAttr4());
-//            transaction.setAttr1(bean.getAmount());
             transaction.setAttr2(bean.getAttr3());
             transaction.setAttr3(0);
             wmTransactionService.processTransaction(transaction);

@@ -102,7 +102,6 @@ public class WmRtSalseServiceImpl implements IWmRtSalseService
     public int updateWmRtSalse(WmRtSalse wmRtSalse)
     {
         wmRtSalse.setUpdateTime(DateUtils.getNowDate());
-//        wmRtSalse.setCreateTime(DateUtils.getNowDate());
         wmRtSalse.setUpdateBy(getUsername());
         return wmRtSalseMapper.updateWmRtSalse(wmRtSalse);
     }

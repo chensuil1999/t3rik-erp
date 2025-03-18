@@ -129,7 +129,7 @@ public class WmRtSalseController extends BaseController {
                 return AjaxResult.error("存在归档数据！无法删除");
             }
             wmRtSalseLineService.deleteByRtId(rtId);
-            wmTransactionMapper.deleteWmTransactionByTypeAndSourceId(rtId,"PSALSE");
+            wmTransactionMapper.deleteWmTransactionByTypeAndSourceId(rtId,"RTSALSE");
         }
         return toAjax(wmRtSalseService.deleteWmRtSalseByRtIds(rtIds));
     }
@@ -142,7 +142,6 @@ public class WmRtSalseController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('mes:wm:rtsalse:edit')")
     @Log(title = "产品销售退货单", businessType = BusinessType.UPDATE)
-    @Transactional
     @PutMapping("/{rtId}")
     public AjaxResult execute(@PathVariable Long rtId) {
         //判断单据状态

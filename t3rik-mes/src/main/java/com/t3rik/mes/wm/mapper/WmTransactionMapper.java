@@ -54,7 +54,7 @@ public interface WmTransactionMapper
     /**
      * 删除库存事务
      *
-     * @param transactionId 库存事务主键
+     * @param  库存事务主键
      * @return 结果
      */
     public int deleteWmTransactionByTypeAndSourceId(@Param("sourceDocId") Long sourceDocId,

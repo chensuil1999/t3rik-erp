@@ -228,11 +228,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <update id="deleteWmRtSalseByRtId" parameterType="Long">
-        update wm_rt_salse set deleted = 1 where rt_id = #{rtId}
+        update wm_rt_salse set deleted = 1,deleteAt = NOW()  where rt_id = #{rtId}
     </update>
 
     <update id="deleteWmRtSalseByRtIds" parameterType="String">
-        update wm_rt_salse set deleted = 1 where rt_id in
+        update wm_rt_salse set deleted = 1,deleteAt = NOW()  where rt_id in
         <foreach item="rtId" collection="array" open="(" separator="," close=")">
             #{rtId}
         </foreach>

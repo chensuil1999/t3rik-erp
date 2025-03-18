@@ -94,9 +94,8 @@ class FeedbackServiceImpl : IFeedbackService {
     override fun getPageByCurrentIndex(task: ProTask, page: Page<ProTask>): Page<ProTask> {
         // 获取要查询的单据状态
         val paramByCurrentIndex = this.getParamByCurrentIndex(task.currentIndex)
-        //println(SecurityUtils.getUserId())
         return this.taskService.lambdaQuery()
-            .eq(ProTask::getTaskUserId, SecurityUtils.getUserId())
+            .eq(ProTask::getTaskUserId, SecurityUtils.getUserId()).eq(ProTask::getDeleted, 0)
             .like(StringUtils.isNotBlank(task.taskName), ProTask::getTaskName, task.taskName)
             .`in`(CollectionUtils.isNotEmpty(paramByCurrentIndex), ProTask::getStatus, paramByCurrentIndex)
             .orderByAsc(ProTask::getStatus)

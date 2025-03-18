@@ -18,6 +18,8 @@ import com.t3rik.mes.wm.mapper.WmTransactionMapper;
 import com.t3rik.mes.wm.domain.WmTransaction;
 import com.t3rik.mes.wm.service.IWmTransactionService;
 
+import static com.t3rik.common.utils.SecurityUtils.getUsername;
+
 /**
  * 库存事务Service业务层处理
  *
@@ -76,6 +78,11 @@ public class WmTransactionServiceImpl implements IWmTransactionService
         wmTransaction.setMaterialStockId(stock.getMaterialStockId());
         wmTransaction.setTransactionQuantity(quantity);//事务数量
         wmTransaction.setAttr4(quantityjs);//事务件量
+        wmTransaction.setCreateTime(DateUtils.getNowDate());
+        wmTransaction.setCreateBy(getUsername());
+        wmTransaction.setUpdateTime(DateUtils.getNowDate());
+        wmTransaction.setUpdateBy(getUsername());
+//        wmTransaction.setCreateBy();
         wmTransactionMapper.insertWmTransaction(wmTransaction);
 
         return wmTransaction;

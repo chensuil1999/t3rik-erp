@@ -169,17 +169,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <update id="deleteWmRtSalseLineByLineId" parameterType="Long">
-        update wm_rt_salse_line set deleted = 1 where line_id = #{lineId}
+        update wm_rt_salse_line set deleted = 1,deleteAt = NOW() where line_id = #{lineId}
     </update>
 
     <delete id="deleteWmRtSalseLineByLineIds" parameterType="String">
-        update wm_rt_salse_line set deleted = 1 where line_id in
+        update wm_rt_salse_line set deleted = 1,deleteAt = NOW() where line_id in
         <foreach item="lineId" collection="array" open="(" separator="," close=")">
             #{lineId}
         </foreach>
     </delete>
 
     <update id="deleteByRtId" parameterType="Long">
-        update wm_rt_salse_line set deleted = 1 where rt_id = #{rtId}
+        update wm_rt_salse_line set deleted = 1,deleteAt = NOW() where rt_id = #{rtId}
     </update>
 </mapper>
