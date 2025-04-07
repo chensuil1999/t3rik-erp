@@ -69,7 +69,7 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
         if (ifHasField(metaObject, CREATE_USER)) {
 //            metaObject.setValue(CREATE_USER, currentUsername);
             this.setFieldValByName(CREATE_USER, currentUsername, metaObject);
-            System.out.println("oooooo: " + this.getFieldValByName(CREATE_USER, metaObject));
+            //System.out.println("oooooo: " + this.getFieldValByName(CREATE_USER, metaObject));
         }
         // 创建时间
         if (ifHasField(metaObject, CREATE_TIME)) {

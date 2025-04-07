@@ -11,8 +11,10 @@ import com.t3rik.mes.md.domain.MdClient;
 import com.t3rik.mes.md.domain.MdVendor;
 import com.t3rik.mes.md.service.IMdClientService;
 import com.t3rik.mes.wm.utils.WmBarCodeUtil;
+import com.t3rik.system.strategy.AutoCodeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -35,6 +37,9 @@ public class MdClientController extends BaseController
 
     @Autowired
     private WmBarCodeUtil barCodeUtil;
+
+    @Autowired
+    private AutoCodeUtil autoCodeUtil;
 
     /**
      * 查询客户列表
@@ -101,6 +106,7 @@ public class MdClientController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('mes:md:client:add')")
     @Log(title = "客户", businessType = BusinessType.INSERT)
+    @Transactional
     @PostMapping
     public AjaxResult add(@RequestBody MdClient mdClient)
     {
@@ -116,6 +122,7 @@ public class MdClientController extends BaseController
             return AjaxResult.error("客户简称已存在！");
         }
 
+        autoCodeUtil.saveSerialCode("CLIENT_CODE", null);
         mdClientService.insertMdClient(mdClient);
         barCodeUtil.generateBarCode(UserConstants.BARCODE_TYPE_CLIENT,mdClient.getClientId(),mdClient.getClientCode(),mdClient.getClientName());
 

@@ -19,6 +19,7 @@ import com.t3rik.mes.wm.mapper.WmTransactionMapper;
 import com.t3rik.mes.wm.service.IStorageCoreService;
 import com.t3rik.mes.wm.service.IWmRtVendorLineService;
 import com.t3rik.mes.wm.service.IWmRtVendorService;
+import com.t3rik.system.strategy.AutoCodeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,6 +49,9 @@ public class WmRtVendorController extends BaseController
 
     @Autowired
     private WmTransactionMapper wmTransactionMapper;
+
+    @Autowired
+    private AutoCodeUtil autoCodeUtil;
 
     /**
      * 查询供应商退货列表
@@ -89,12 +93,14 @@ public class WmRtVendorController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('mes:wm:rtvendor:add')")
     @Log(title = "供应商退货", businessType = BusinessType.INSERT)
+    @Transactional
     @PostMapping
     public AjaxResult add(@RequestBody WmRtVendor wmRtVendor)
     {
         if(UserConstants.NOT_UNIQUE.equals(wmRtVendorService.checkCodeUnique(wmRtVendor))){
             return AjaxResult.error("退货单编号已经存在！");
         }
+        autoCodeUtil.saveSerialCode(UserConstants.WM_RTVENDOR_CODE, null);
         return toAjax(wmRtVendorService.insertWmRtVendor(wmRtVendor));
     }
 

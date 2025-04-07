@@ -61,6 +61,7 @@ public class AutoCodeUtil {
             // 根据当前组成部分，获取当前组成部分的结果
             String partStr = partTypeHandler.choiceExecute(codePart);
 
+            //System.out.println("zzzzz: " + partStr);
             // 如果是流水号部分，则进行记录
             if (StringUtils.equals(codePart.getPartType(), PartTypeEnum.PART_TYPE_SERIALNO.getCode())) {
                 lastSerialNo = partStr;
@@ -72,7 +73,49 @@ public class AutoCodeUtil {
         Assert.notBlank(buff.toString(), "规则：[{}]生成的编码为空！", ruleCode);
 
         String autoCode = paddingStr(rule, buff);
+        //System.out.println("wodeairen: " + autoCode);
+        // 将生成结果保存到数据库
+        //saveAutoCodeResult(rule, autoCode, inputCharacter);
+        return autoCode;
+    }
 
+    @Log(title = "生成业务编号", businessType = BusinessType.INSERT)
+    synchronized
+    public String saveSerialCode(String ruleCode, String inputCharacter) {
+
+        // 查找编码规则
+        SysAutoCodeRule rule = iAutoCodeRuleService.getOne(ruleCode);
+        Assert.notNull(rule, "未获取到指定类型:[{}]的业务编码生成规则", ruleCode);
+
+        // 查找规则组成
+        SysAutoCodePart partParam = new SysAutoCodePart();
+        partParam.setRuleId(rule.getRuleId());
+        List<SysAutoCodePart> parts = iAutoCodePartService.listPart(partParam);
+        List<SysAutoCodePart> collect = parts.stream()
+                .filter(part -> PartTypeEnum.PART_TYPE_SERIALNO.getCode().equals(part.getPartType()))
+                .toList();
+
+        Assert.isTrue(collect.size() < 2, "编码规则[{}]流水号方式的组成只能存在一个", ruleCode);
+
+        StringBuilder buff = new StringBuilder();
+        parts.forEach(codePart -> {
+            codePart.setInputCharacter(inputCharacter);
+            // 根据当前组成部分，获取当前组成部分的结果
+            String partStr = partTypeHandler.choiceExecute(codePart);
+
+            //System.out.println("zzzzz: " + partStr);
+            // 如果是流水号部分，则进行记录
+            if (StringUtils.equals(codePart.getPartType(), PartTypeEnum.PART_TYPE_SERIALNO.getCode())) {
+                lastSerialNo = partStr;
+            }
+            // 将获取到的部分组装进整体编码中
+            buff.append(partStr);
+        });
+
+        Assert.notBlank(buff.toString(), "规则：[{}]生成的编码为空！", ruleCode);
+
+        String autoCode = paddingStr(rule, buff);
+        //System.out.println("wodeairen: " + autoCode);
         // 将生成结果保存到数据库
         saveAutoCodeResult(rule, autoCode, inputCharacter);
         return autoCode;

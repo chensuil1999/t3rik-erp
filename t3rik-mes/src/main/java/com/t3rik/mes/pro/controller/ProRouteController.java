@@ -12,6 +12,7 @@ import com.t3rik.mes.pro.service.IProRouteProcessService;
 import com.t3rik.mes.pro.service.IProRouteProductBomService;
 import com.t3rik.mes.pro.service.IProRouteProductService;
 import com.t3rik.mes.pro.service.IProRouteService;
+import com.t3rik.system.strategy.AutoCodeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +42,9 @@ public class ProRouteController extends BaseController
 
     @Autowired
     private IProRouteProductBomService proRouteProductBomService;
+
+    @Autowired
+    private AutoCodeUtil autoCodeUtil;
 
     /**
      * 查询工艺路线列表
@@ -88,6 +92,7 @@ public class ProRouteController extends BaseController
         if(UserConstants.NOT_UNIQUE.equals(proRouteService.checkRouteCodeUnique(proRoute))){
             return AjaxResult.error("工艺路线编号已存在！");
         }
+        autoCodeUtil.saveSerialCode("ROUTE_CODE", null);
         return toAjax(proRouteService.insertProRoute(proRoute));
     }
 

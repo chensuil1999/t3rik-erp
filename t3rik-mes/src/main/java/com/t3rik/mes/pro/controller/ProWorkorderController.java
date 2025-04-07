@@ -24,6 +24,7 @@ import com.t3rik.mes.pro.service.IProClientOrderService;
 import com.t3rik.mes.pro.service.IProTaskService;
 import com.t3rik.mes.pro.service.IProWorkorderBomService;
 import com.t3rik.mes.pro.service.IProWorkorderService;
+import com.t3rik.system.strategy.AutoCodeUtil;
 import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -60,6 +61,9 @@ public class ProWorkorderController extends BaseController {
 
     @Resource
     private IProClientOrderService proClientOrderService;
+
+    @Autowired
+    private AutoCodeUtil autoCodeUtil;
 
     /**
      * 查询生产工单列表
@@ -110,6 +114,7 @@ public class ProWorkorderController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('mes:pro:workorder:add')")
     @Log(title = "生产工单", businessType = BusinessType.INSERT)
+    @Transactional
     @PostMapping
     public AjaxResult add(@RequestBody ProWorkorder proWorkorder) {
         if (UserConstants.NOT_UNIQUE.equals(proWorkorderService.checkWorkorderCodeUnique(proWorkorder))) {
@@ -119,7 +124,7 @@ public class ProWorkorderController extends BaseController {
         if (proWorkorder.getParentId() == null || proWorkorder.getParentId() == 0) {
             proWorkorder.setAncestors("0");
         }
-        //proWorkorder.setCreateBy(getUsername());
+        autoCodeUtil.saveSerialCode(UserConstants.WORKORDER_CODE, null);
         proWorkorderService.insertProWorkorder(proWorkorder);
         Long workorderId = proWorkorder.getWorkorderId();
         generateBomLine(workorderId);

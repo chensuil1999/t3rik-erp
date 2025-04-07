@@ -122,10 +122,8 @@ public class ProFeedbackController extends BaseController {
                 return AjaxResult.error("请输入合格品和不良品数量！");
             }
         }
-        String feedbackCode = autoCodeUtil.genSerialCode(UserConstants.FEEDBACK_CODE, "");
+        String feedbackCode = autoCodeUtil.saveSerialCode(UserConstants.FEEDBACK_CODE, "");
         proFeedback.setFeedbackCode(feedbackCode);
-//        proFeedback.setCreateBy(getUsername());
-//        System.out.println("我的新增" + proFeedback);
         proFeedback.setQuantity(task.getQuantity());
         proFeedbackService.insertProFeedback(proFeedback);
         return AjaxResult.success(proFeedback.getRecordId());

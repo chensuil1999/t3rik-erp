@@ -20,6 +20,7 @@ import com.t3rik.mes.wm.service.IStorageCoreService;
 import com.t3rik.mes.wm.service.IWmProductSalseLineService;
 import com.t3rik.mes.wm.service.IWmProductSalseService;
 import com.t3rik.mes.wm.utils.WmWarehouseUtil;
+import com.t3rik.system.strategy.AutoCodeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,6 +50,9 @@ public class WmProductSalseController extends BaseController {
 
     @Resource
     private WmWarehouseUtil warehouseUtil;
+    //
+    @Autowired
+    private AutoCodeUtil autoCodeUtil;
 
     /**
      * 查询销售出库单列表
@@ -87,6 +91,7 @@ public class WmProductSalseController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('mes:wm:productsalse:add')")
     @Log(title = "销售出库单", businessType = BusinessType.INSERT)
+    @Transactional
     @PostMapping
     public AjaxResult add(@RequestBody WmProductSalse wmProductSalse) {
         if (UserConstants.NOT_UNIQUE.equals(wmProductSalseService.checkUnique(wmProductSalse))) {
@@ -94,7 +99,7 @@ public class WmProductSalseController extends BaseController {
         }
         // 设置仓库信息
         this.warehouseUtil.setWarehouseInfo(wmProductSalse);
-
+        autoCodeUtil.saveSerialCode(UserConstants.PRODUCTSALSE_CODE, null);
         return toAjax(wmProductSalseService.insertWmProductSalse(wmProductSalse));
     }
 

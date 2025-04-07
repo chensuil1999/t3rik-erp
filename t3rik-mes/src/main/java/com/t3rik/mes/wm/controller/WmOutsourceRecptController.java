@@ -21,6 +21,7 @@ import com.t3rik.mes.wm.service.IStorageCoreService;
 import com.t3rik.mes.wm.service.IWmOutsourceRecptLineService;
 import com.t3rik.mes.wm.service.IWmOutsourceRecptService;
 import com.t3rik.mes.wm.utils.WmWarehouseUtil;
+import com.t3rik.system.strategy.AutoCodeUtil;
 import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -57,6 +58,9 @@ public class WmOutsourceRecptController extends BaseController {
     private IProTaskService proTaskService;
     @Resource
     private WmWarehouseUtil warehouseUtil;
+
+    @Autowired
+    private AutoCodeUtil autoCodeUtil;
 
     /**
      * 查询外协入库单列表
@@ -95,10 +99,14 @@ public class WmOutsourceRecptController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('mes:wm:outsourcerecpt:add')")
     @Log(title = "外协入库单", businessType = BusinessType.INSERT)
+    @Transactional
     @PostMapping
     public AjaxResult add(@RequestBody WmOutsourceRecpt wmOutsourceRecpt) {
+//        if (UserConstants.NOT_UNIQUE.equals(wmOutsourceRecptService.c(wmOutsourceRecpt))) {
+//            return AjaxResult.error(MsgConstants.CODE_ALREADY_EXISTS);
+//        }
         warehouseUtil.setWarehouseInfo(wmOutsourceRecpt);
-
+        autoCodeUtil.saveSerialCode("OUTSOURCE_RECPT_CODE", null);
         return toAjax(wmOutsourceRecptService.insertWmOutsourceRecpt(wmOutsourceRecpt));
     }
 

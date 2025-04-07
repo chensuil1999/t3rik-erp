@@ -17,6 +17,7 @@ import com.t3rik.mes.wm.service.IStorageCoreService;
 import com.t3rik.mes.wm.service.IWmOutsourceIssueLineService;
 import com.t3rik.mes.wm.service.IWmOutsourceIssueService;
 import com.t3rik.mes.wm.utils.WmWarehouseUtil;
+import com.t3rik.system.strategy.AutoCodeUtil;
 import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -45,6 +46,9 @@ public class WmOutsourceIssueController extends BaseController {
     private IStorageCoreService storageCoreService;
     @Resource
     private WmWarehouseUtil warehouseUtil;
+
+    @Autowired
+    private AutoCodeUtil autoCodeUtil;
     /**
      * 查询外协领料单头列表
      */
@@ -82,6 +86,7 @@ public class WmOutsourceIssueController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('mes:wm:outsourceissue:add')")
     @Log(title = "外协领料单头", businessType = BusinessType.INSERT)
+    @Transactional
     @PostMapping
     public AjaxResult add(@RequestBody WmOutsourceIssue wmOutsourceIssue) {
         if (UserConstants.NOT_UNIQUE.equals(wmOutsourceIssueService.checkOutsourceIssueCodeUnique(wmOutsourceIssue))) {
@@ -89,7 +94,7 @@ public class WmOutsourceIssueController extends BaseController {
         }
 //        // 设置仓库相关信息
         warehouseUtil.setWarehouseInfo(wmOutsourceIssue);
-
+        autoCodeUtil.saveSerialCode("OUTSOURCE_ISSUE_CODE", null);
         return toAjax(wmOutsourceIssueService.insertWmOutsourceIssue(wmOutsourceIssue));
     }
 

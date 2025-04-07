@@ -65,7 +65,7 @@ class IssueServiceImpl : IIssueService {
             // copy前端属性
             BeanUtil.copyProperties(issueRequestDTO, this)
             // 领料单 编码
-            issueCode = autoCodeUtil.genSerialCode(UserConstants.ISSUE_CODE, null)
+            issueCode = autoCodeUtil.saveSerialCode(UserConstants.ISSUE_CODE, null)
             // 领料单 名称
             issueName = "${workorder.productName}---领料单"
             issueDate = DateUtils.getNowDate()

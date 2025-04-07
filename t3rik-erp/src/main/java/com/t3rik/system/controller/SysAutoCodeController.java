@@ -26,6 +26,7 @@ public class SysAutoCodeController {
     })
     @GetMapping(value = {"/get/{ruleCode}/{inputCharacter}", "/get/{ruleCode}"})
     public String getAutoCode(@PathVariable String ruleCode, @PathVariable(required = false) String inputCharacter) {
+        //System.out.println("pppp: " + inputCharacter);
         return autoCodeUtil.genSerialCode(ruleCode, inputCharacter);
     }
 

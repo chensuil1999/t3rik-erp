@@ -292,7 +292,7 @@ class FeedbackServiceImpl : IFeedbackService {
         proFeedback.processId = workstation.processId
         proFeedback.processCode = workstation.processCode
         proFeedback.processName = workstation.processName
-        proFeedback.feedbackCode = autoCodeUtil.genSerialCode(UserConstants.FEEDBACK_CODE, "")
+        proFeedback.feedbackCode = autoCodeUtil.saveSerialCode(UserConstants.FEEDBACK_CODE, "")
         // 报工数量 = 合格数量+不合格数量
         if(!proFeedback.quantityQualified.isGreater(BigDecimal.ZERO) || !proFeedback.quantityUnquanlified.isGreaterOrEqual(BigDecimal.ZERO))
         {

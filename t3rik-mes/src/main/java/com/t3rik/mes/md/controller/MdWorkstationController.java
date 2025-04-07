@@ -20,6 +20,7 @@ import com.t3rik.mes.wm.service.IWmStorageAreaService;
 import com.t3rik.mes.wm.service.IWmStorageLocationService;
 import com.t3rik.mes.wm.service.IWmWarehouseService;
 import com.t3rik.mes.wm.utils.WmBarCodeUtil;
+import com.t3rik.system.strategy.AutoCodeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,6 +68,9 @@ public class MdWorkstationController extends BaseController
 
     @Autowired
     private WmBarCodeUtil barCodeUtil;
+
+    @Autowired
+    private AutoCodeUtil autoCodeUtil;
 
     /**
      * 查询工作站列表
@@ -152,6 +156,7 @@ public class MdWorkstationController extends BaseController
         mdWorkstation.setAreaId(area.getAreaId());
         mdWorkstation.setAreaCode(area.getAreaCode());
         mdWorkstation.setAreaName(area.getAreaName());
+        autoCodeUtil.saveSerialCode("WORKSTATION_CODE", null);
         mdWorkstationService.insertMdWorkstation(mdWorkstation);
         barCodeUtil.generateBarCode(UserConstants.BARCODE_TYPE_WORKSTATION,mdWorkstation.getWorkstationId(), mdWorkstation.getWorkstationCode(),mdWorkstation.getWorkstationName());
         return AjaxResult.success(mdWorkstation.getWorkstationId());

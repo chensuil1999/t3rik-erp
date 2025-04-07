@@ -16,8 +16,10 @@ import com.t3rik.mes.wm.domain.WmIssueLine;
 import com.t3rik.mes.wm.service.IWmIssueHeaderService;
 import com.t3rik.mes.wm.service.IWmIssueLineService;
 import com.t3rik.mes.wm.utils.WmWarehouseUtil;
+import com.t3rik.system.strategy.AutoCodeUtil;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -43,6 +45,9 @@ public class WmIssueHeaderController extends BaseController {
 
     @Resource
     private WmWarehouseUtil warehouseUtil;
+
+    @Autowired
+    private AutoCodeUtil autoCodeUtil;
 
     /**
      * 查询生产领料单头列表
@@ -81,6 +86,7 @@ public class WmIssueHeaderController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('mes:wm:issueheader:add')")
     @Log(title = "生产领料单头", businessType = BusinessType.INSERT)
+    @Transactional
     @PostMapping
     public AjaxResult add(@RequestBody WmIssueHeader wmIssueHeader) {
         if (UserConstants.NOT_UNIQUE.equals(wmIssueHeaderService.checkIssueCodeUnique(wmIssueHeader))) {
@@ -88,7 +94,7 @@ public class WmIssueHeaderController extends BaseController {
         }
         // 设置仓库相关信息
         warehouseUtil.setWarehouseInfo(wmIssueHeader);
-
+        autoCodeUtil.saveSerialCode(UserConstants.ISSUE_CODE, null);
         return toAjax(wmIssueHeaderService.insertWmIssueHeader(wmIssueHeader));
     }
 

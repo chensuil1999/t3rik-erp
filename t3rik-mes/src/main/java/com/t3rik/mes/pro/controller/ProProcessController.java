@@ -9,6 +9,7 @@ import com.t3rik.common.enums.BusinessType;
 import com.t3rik.common.utils.poi.ExcelUtil;
 import com.t3rik.mes.pro.domain.ProProcess;
 import com.t3rik.mes.pro.service.IProProcessService;
+import com.t3rik.system.strategy.AutoCodeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +29,8 @@ public class ProProcessController extends BaseController
 {
     @Autowired
     private IProProcessService proProcessService;
+    @Autowired
+    private AutoCodeUtil autoCodeUtil;
 
     /**
      * 查询生产工序列表
@@ -89,6 +92,7 @@ public class ProProcessController extends BaseController
         if(UserConstants.NOT_UNIQUE.equals(proProcessService.checkProcessNameUnique(proProcess))){
             return AjaxResult.error("工序名称已存在！");
         }
+        autoCodeUtil.saveSerialCode("PROCESS_CODE", null);
         return toAjax(proProcessService.insertProProcess(proProcess));
     }
 

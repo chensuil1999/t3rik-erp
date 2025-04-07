@@ -1,6 +1,8 @@
 package com.t3rik.mes.md.controller;
 
 import java.util.List;
+
+import com.t3rik.system.strategy.AutoCodeUtil;
 import jakarta.servlet.http.HttpServletResponse;
 
 import com.t3rik.common.constant.UserConstants;
@@ -40,6 +42,9 @@ public class MdVendorController extends BaseController
 
     @Autowired
     private WmBarCodeUtil barCodeUtil;
+
+    @Autowired
+    private AutoCodeUtil autoCodeUtil;
 
     /**
      * 查询供应商列表
@@ -112,7 +117,7 @@ public class MdVendorController extends BaseController
         if(UserConstants.NOT_UNIQUE.equals(mdVendorService.checkVendorNickUnique(mdVendor))){
             return AjaxResult.error("供应商简称已存在！");
         }
-
+        autoCodeUtil.saveSerialCode("VENDOR_CODE", null);
         mdVendorService.insertMdVendor(mdVendor);
         barCodeUtil.generateBarCode(UserConstants.BARCODE_TYPE_VENDOR,mdVendor.getVendorId(),mdVendor.getVendorCode(),mdVendor.getVendorName());
 

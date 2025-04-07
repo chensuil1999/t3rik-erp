@@ -20,6 +20,7 @@ import com.t3rik.mes.wm.mapper.WmTransactionMapper;
 import com.t3rik.mes.wm.service.IWmItemRecptLineService;
 import com.t3rik.mes.wm.service.IWmItemRecptService;
 import com.t3rik.mes.wm.utils.WmWarehouseUtil;
+import com.t3rik.system.strategy.AutoCodeUtil;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,7 @@ import java.util.Optional;
 public class WmItemRecptController extends BaseController {
     @Resource
     private IWmItemRecptService wmItemRecptService;
+
     @Autowired
     private WmTransactionMapper wmTransactionMapper;
 
@@ -51,6 +53,9 @@ public class WmItemRecptController extends BaseController {
 
     @Resource
     private WmWarehouseUtil warehouseUtil;
+
+    @Autowired
+    private AutoCodeUtil autoCodeUtil;
 
     /**
      * 查询物料入库单列表
@@ -89,6 +94,7 @@ public class WmItemRecptController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('mes:wm:itemrecpt:add')")
     @Log(title = "物料入库单", businessType = BusinessType.INSERT)
+    @Transactional
     @PostMapping
     public AjaxResult add(@RequestBody WmItemRecpt wmItemRecpt) {
         if (UserConstants.NOT_UNIQUE.equals(wmItemRecptService.checkRecptCodeUnique(wmItemRecpt))) {
@@ -96,6 +102,7 @@ public class WmItemRecptController extends BaseController {
         }
         // 设置仓库相关信息
         warehouseUtil.setWarehouseInfo(wmItemRecpt);
+        autoCodeUtil.saveSerialCode(UserConstants.ITEMRECPT_CODE, null);
         return toAjax(wmItemRecptService.insertWmItemRecpt(wmItemRecpt));
     }
 

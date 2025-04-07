@@ -17,6 +17,8 @@ import com.t3rik.mes.wm.service.IStorageCoreService;
 import com.t3rik.mes.wm.service.IWmRtIssueLineService;
 import com.t3rik.mes.wm.service.IWmRtIssueService;
 import com.t3rik.mes.wm.utils.WmWarehouseUtil;
+import com.t3rik.system.strategy.AutoCodeUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -45,6 +47,9 @@ public class WmRtIssueController extends BaseController {
 
     @Resource
     private WmWarehouseUtil warehouseUtil;
+
+    @Autowired
+    private AutoCodeUtil autoCodeUtil;
 
     /**
      * 查询生产退料单头列表
@@ -83,6 +88,7 @@ public class WmRtIssueController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('mes:wm:rtissue:add')")
     @Log(title = "生产退料单头", businessType = BusinessType.INSERT)
+    @Transactional
     @PostMapping
     public AjaxResult add(@RequestBody WmRtIssue wmRtIssue) {
         if (UserConstants.NOT_UNIQUE.equals(wmRtIssueService.checkUnique(wmRtIssue))) {
@@ -90,6 +96,7 @@ public class WmRtIssueController extends BaseController {
         }
         // 设置仓库信息
         this.warehouseUtil.setWarehouseInfo(wmRtIssue);
+        autoCodeUtil.saveSerialCode(UserConstants.RTISSUE_CODE, null);
         return toAjax(wmRtIssueService.insertWmRtIssue(wmRtIssue));
     }
 

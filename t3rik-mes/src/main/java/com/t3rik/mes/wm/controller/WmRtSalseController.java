@@ -18,6 +18,7 @@ import com.t3rik.mes.wm.domain.tx.RtSalseTxBean;
 import com.t3rik.mes.wm.mapper.WmTransactionMapper;
 import com.t3rik.mes.wm.service.*;
 import com.t3rik.mes.wm.utils.WmWarehouseUtil;
+import com.t3rik.system.strategy.AutoCodeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,6 +49,9 @@ public class WmRtSalseController extends BaseController {
 
     @Autowired
     private WmTransactionMapper wmTransactionMapper;
+
+    @Autowired
+    private AutoCodeUtil autoCodeUtil;
 
     /**
      * 查询产品销售退货单列表
@@ -86,6 +90,7 @@ public class WmRtSalseController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('mes:wm:rtsalse:add')")
     @Log(title = "产品销售退货单", businessType = BusinessType.INSERT)
+    @Transactional
     @PostMapping
     public AjaxResult add(@RequestBody WmRtSalse wmRtSalse) {
         if (UserConstants.NOT_UNIQUE.equals(wmRtSalseService.checkUnique(wmRtSalse))) {
@@ -93,6 +98,7 @@ public class WmRtSalseController extends BaseController {
         }
         // 设置仓库信息
         this.warehouseUtil.setWarehouseInfo(wmRtSalse);
+        autoCodeUtil.saveSerialCode(UserConstants.RTSALSE_CODE, null);
         return toAjax(wmRtSalseService.insertWmRtSalse(wmRtSalse));
     }
 

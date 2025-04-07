@@ -22,6 +22,8 @@ public class SysAutoCodeRuleServiceImpl implements IAutoCodeRuleService {
         SysAutoCodeRule param = new SysAutoCodeRule();
         param.setRuleCode(ruleCode);
         List<SysAutoCodeRule> rules = sysAutoCodeRuleMapper.selectSysAutoCodeResultList(param);
+        //System.out.println("wodeairen: " + ruleCode);
+        //System.out.println("wodeairen: " + rules);
         if(CollectionUtil.isNotEmpty(rules)){
             return rules.get(0);
         }

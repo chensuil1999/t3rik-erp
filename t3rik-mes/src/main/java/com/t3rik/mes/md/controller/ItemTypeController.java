@@ -90,7 +90,7 @@ public class ItemTypeController extends BaseController {
             itemType.setParentTypeId(0L);
         }
         // 自动生成一个唯一编码
-        itemType.setItemTypeCode(autoCodeUtil.genSerialCode(UserConstants.ITEM_TYPE_CODE, null));
+        itemType.setItemTypeCode(autoCodeUtil.saveSerialCode(UserConstants.ITEM_TYPE_CODE, null));
         itemType.setCreateBy(getUsername());
         return AjaxResult.success(iItemTypeService.insertItemType(itemType));
     }

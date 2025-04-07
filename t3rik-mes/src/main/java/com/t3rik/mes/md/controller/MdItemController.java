@@ -20,6 +20,7 @@ import com.t3rik.mes.md.service.IItemTypeService;
 import com.t3rik.mes.md.service.IMdItemService;
 import com.t3rik.mes.md.service.IMdProductBomService;
 import com.t3rik.mes.wm.utils.WmBarCodeUtil;
+import com.t3rik.system.strategy.AutoCodeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -43,6 +44,9 @@ public class MdItemController extends BaseController {
 
     @Autowired
     private IMdProductBomService mdProductBomService;
+
+    @Autowired
+    private AutoCodeUtil autoCodeUtil;
     /**
      * 列表查询
      *
@@ -103,6 +107,7 @@ public class MdItemController extends BaseController {
         if (UserConstants.NOT_UNIQUE.equals(mdItemService.checkItemCodeUnique(mdItem))) {
             return AjaxResult.error("新增物料" + mdItem.getItemCode() + "失败，物料编码已存在");
         }
+
         //此处删掉同名判断函数，此注释仅作标记。
         ItemType type = iItemTypeService.selectItemTypeById(mdItem.getItemTypeId());
         if (StringUtils.isNotNull(type)) {
@@ -111,6 +116,11 @@ public class MdItemController extends BaseController {
             mdItem.setItemOrProduct(type.getItemOrProduct());
         }
         mdItem.setCreateBy(getUsername());
+        if(mdItem.getItemOrProduct().equals("ITEM")) {
+            autoCodeUtil.saveSerialCode("ITEM_CODE", null);
+        } else {
+            autoCodeUtil.saveSerialCode("PRODUCT_CODE", null);
+        }
         mdItemService.insertMdItem(mdItem);
         //barcodeUtil.generateBarCode(UserConstants.BARCODE_TYPE_ITEM, mdItem.getItemId(), mdItem.getItemCode(), mdItem.getItemName());
         return AjaxResult.success(mdItem.getItemId());

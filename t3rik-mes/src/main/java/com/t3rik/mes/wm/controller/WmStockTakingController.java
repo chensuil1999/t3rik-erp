@@ -77,6 +77,7 @@ public class WmStockTakingController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('mes:wm:stocktaking:add')")
     @Log(title = "库存盘点记录", businessType = BusinessType.INSERT)
+    @Transactional
     @PostMapping
     public AjaxResult add(@RequestBody WmStockTaking wmStockTaking)
     {
@@ -85,7 +86,7 @@ public class WmStockTakingController extends BaseController {
                 return AjaxResult.error("单据编号已存在!");
             }
         }else {
-            wmStockTaking.setTakingCode(autoCodeUtil.genSerialCode(UserConstants.STOCKTAKING_CODE,""));
+            wmStockTaking.setTakingCode(autoCodeUtil.saveSerialCode(UserConstants.STOCKTAKING_CODE,""));
         }
 
         if(StringUtils.isNotNull(wmStockTaking.getWarehouseId())){
